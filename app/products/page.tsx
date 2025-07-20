@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Filter, Star, ShoppingCart, Plus, Minus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 import { products, categories, sizes, Product } from '@/lib/products';
 
 export default function Products() {
@@ -17,10 +18,12 @@ export default function Products() {
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   // Load cart items on component mount
-  useState(() => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCartItems(cart);
-  });
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartItems(cart);
+    }
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
@@ -68,18 +71,20 @@ export default function Products() {
       return;
     }
 
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.id === product.id && item.size === size);
+    if (typeof window !== 'undefined') {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const existingItem = cart.find((item: any) => item.id === product.id && item.size === size);
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.push({ ...product, size, quantity });
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        cart.push({ ...product, size, quantity });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cartUpdated'));
+      setCartItems(cart);
     }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    window.dispatchEvent(new Event('cartUpdated'));
-    setCartItems(cart);
     
     if (selectedProduct) {
       setSelectedProduct(null);
@@ -167,9 +172,11 @@ export default function Products() {
                 onClick={() => setSelectedProduct(product)}
               >
                 <div className="relative">
-                  <img
+                  <Image
                     src={product.image}
                     alt={product.title}
+                    width={600}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                   {product.originalPrice && (
@@ -294,9 +301,11 @@ export default function Products() {
                   <X className="w-5 h-5" />
                 </button>
 
-                <img
+                <Image
                   src={selectedProduct.image}
                   alt={selectedProduct.title}
+                  width={600}
+                  height={256}
                   className="w-full h-64 object-cover rounded-t-2xl"
                 />
 

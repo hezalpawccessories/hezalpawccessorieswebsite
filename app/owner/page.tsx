@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Heart, Award, Calendar } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 export default function Owner() {
   return (
@@ -35,10 +36,13 @@ export default function Owner() {
                 className="relative"
               >
                 <div className="bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl">
-                  <img
+                  <Image
                     src="https://images.pexels.com/photos/3992656/pexels-photo-3992656.jpeg?auto=compress&cs=tinysrgb&w=600"
                     alt="Owner with pets"
+                    width={600}
+                    height={384}
                     className="w-full h-96 object-cover rounded-2xl"
+                    priority
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-soft-yellow p-4 rounded-2xl shadow-lg">
@@ -59,7 +63,7 @@ export default function Owner() {
                 </div>
                 
                 <p className="text-text-light leading-relaxed">
-                  Hello! I'm Priya, a lifelong pet enthusiast and the founder of Hezal Accessories. My journey began when I adopted my first rescue dog, Max, and realized how difficult it was to find quality, stylish, and affordable pet accessories.
+                  Hello! I&apos;m Priya, a lifelong pet enthusiast and the founder of Hezal Accessories. My journey began when I adopted my first rescue dog, Max, and realized how difficult it was to find quality, stylish, and affordable pet accessories.
                 </p>
                 
                 <p className="text-text-light leading-relaxed">
@@ -120,7 +124,7 @@ export default function Owner() {
                   breed: "Persian Cat",
                   age: "3 years",
                   image: "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=600",
-                  story: "Our princess who tests all our cat accessories. She's very particular about comfort and style!"
+                  story: "Our princess who tests all our cat accessories. She&apos;s very particular about comfort and style!"
                 },
                 {
                   name: "Rocky",
@@ -137,16 +141,18 @@ export default function Owner() {
                   transition={{ duration: 0.8, delay: index * 0.1 }}
                   className="bg-soft-gray rounded-2xl overflow-hidden shadow-lg card-hover"
                 >
-                  <img
+                  <Image
                     src={pet.image}
                     alt={pet.name}
+                    width={600}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-text-dark mb-1">{pet.name}</h3>
                     <p className="text-primary-pink font-semibold mb-1">{pet.breed}</p>
                     <p className="text-text-light text-sm mb-3">{pet.age}</p>
-                    <p className="text-text-light text-sm">{pet.story}</p>
+                    <p className="text-text-light text-sm">{pet.story.replace(/'/g, "&apos;")}</p>
                   </div>
                 </motion.div>
               ))}
@@ -166,14 +172,14 @@ export default function Owner() {
               >
                 <h2 className="text-3xl font-bold text-text-dark">My Vision</h2>
                 <p className="text-text-light leading-relaxed">
-                  I envision a world where every pet owner has access to high-quality, affordable accessories that enhance their pet's life. Through Hezal Accessories, I want to create a community of pet lovers who share the same passion for giving their furry friends the best.
+                  I envision a world where every pet owner has access to high-quality, affordable accessories that enhance their pet&apos;s life. Through Hezal Accessories, I want to create a community of pet lovers who share the same passion for giving their furry friends the best.
                 </p>
                 <p className="text-text-light leading-relaxed">
                   My goal is not just to sell products, but to build lasting relationships with pet families and contribute to the overall well-being of pets everywhere. Every purchase supports our mission to make pet care more accessible and enjoyable.
                 </p>
                 <div className="bg-primary-blue/10 p-6 rounded-2xl">
                   <p className="text-primary-blue font-semibold italic">
-                    "Every pet deserves to feel loved, comfortable, and special. That's not just our tagline – it's my personal promise to every customer."
+                    &quot;Every pet deserves to feel loved, comfortable, and special. That&apos;s not just our tagline &ndash; it&apos;s my personal promise to every customer.&quot;
                   </p>
                 </div>
               </motion.div>
@@ -183,10 +189,13 @@ export default function Owner() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <img
+                <Image
                   src="https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Pet care vision"
+                  width={600}
+                  height={384}
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
+                  priority
                 />
               </motion.div>
             </div>
@@ -202,10 +211,10 @@ export default function Owner() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Let's Connect!
+                Let&apos;s Connect!
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                I'd love to hear from you and your pets! Feel free to reach out with any questions, suggestions, or just to share your pet's story.
+                I&apos;d love to hear from you and your pets! Feel free to reach out with any questions, suggestions, or just to share your pet&apos;s story.
               </p>
               <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
                 <div className="flex items-center space-x-2 text-white">

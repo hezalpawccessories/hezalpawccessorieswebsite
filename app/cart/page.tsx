@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Product } from '@/lib/products'
+import Image from 'next/image';
 
 interface CartItem extends Product {
    quantity: number
@@ -35,13 +36,17 @@ export default function Cart() {
 
    useEffect(() => {
       const loadCart = () => {
-         const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-         setCartItems(cart)
+         if (typeof window !== 'undefined') {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+            setCartItems(cart)
+         }
       }
 
       loadCart()
-      window.addEventListener('cartUpdated', loadCart)
-      return () => window.removeEventListener('cartUpdated', loadCart)
+      if (typeof window !== 'undefined') {
+         window.addEventListener('cartUpdated', loadCart)
+         return () => window.removeEventListener('cartUpdated', loadCart)
+      }
    }, [])
 
    const updateQuantity = (id: string, newQuantity: number) => {
@@ -52,15 +57,19 @@ export default function Cart() {
 
       const updatedCart = cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item))
       setCartItems(updatedCart)
-      localStorage.setItem('cart', JSON.stringify(updatedCart))
-      window.dispatchEvent(new Event('cartUpdated'))
+      if (typeof window !== 'undefined') {
+         localStorage.setItem('cart', JSON.stringify(updatedCart))
+         window.dispatchEvent(new Event('cartUpdated'))
+      }
    }
 
    const removeItem = (id: string) => {
       const updatedCart = cartItems.filter((item) => item.id !== id)
       setCartItems(updatedCart)
-      localStorage.setItem('cart', JSON.stringify(updatedCart))
-      window.dispatchEvent(new Event('cartUpdated'))
+      if (typeof window !== 'undefined') {
+         localStorage.setItem('cart', JSON.stringify(updatedCart))
+         window.dispatchEvent(new Event('cartUpdated'))
+      }
    }
 
    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -72,8 +81,10 @@ export default function Cart() {
       // Here you would typically process the order
       alert('Order placed successfully! You will receive a confirmation email shortly.')
       setCartItems([])
-      localStorage.removeItem('cart')
-      window.dispatchEvent(new Event('cartUpdated'))
+      if (typeof window !== 'undefined') {
+         localStorage.removeItem('cart')
+         window.dispatchEvent(new Event('cartUpdated'))
+      }
       setShowCheckout(false)
       setCheckoutForm({
          name: '',
@@ -95,7 +106,7 @@ export default function Cart() {
                      <ShoppingBag className='w-24 h-24 text-text-light mx-auto mb-6' />
                      <h1 className='text-3xl font-bold text-text-dark mb-4'>Your Cart is Empty</h1>
                      <p className='text-xl text-text-light mb-8'>
-                        Looks like you haven't added any items to your cart yet.
+                        Looks like you haven&apos;t added any items to your cart yet.
                      </p>
                      <a
                         href='/products'
@@ -140,9 +151,11 @@ export default function Cart() {
                            className='bg-white rounded-2xl p-6 shadow-lg'
                         >
                            <div className='flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6'>
-                              <img
+                              <Image
                                  src={item.image}
                                  alt={item.title}
+                                 width={96}
+                                 height={96}
                                  className='w-24 h-24 object-cover rounded-xl'
                               />
 

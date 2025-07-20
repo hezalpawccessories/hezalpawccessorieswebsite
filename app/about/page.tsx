@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Heart, Award, Users, Truck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -30,7 +31,7 @@ export default function About() {
                 About <span className="text-primary-pink">Hezal Accessories</span>
               </h1>
               <p className="text-xl text-text-light max-w-3xl mx-auto">
-                We're passionate about providing premium pet accessories that bring joy, comfort, and style to your beloved companions.
+                We&apos;re passionate about providing premium pet accessories that bring joy, comfort, and style to your beloved companions.
               </p>
             </motion.div>
 
@@ -40,10 +41,13 @@ export default function About() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <img
+                <Image
                   src="https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Pet accessories collection"
+                  width={600}
+                  height={384}
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
+                  priority
                 />
               </motion.div>
 
@@ -58,10 +62,10 @@ export default function About() {
                   Founded with a simple belief that every pet deserves the best, Hezal Accessories started as a small dream to create beautiful, functional, and safe accessories for our furry friends.
                 </p>
                 <p className="text-text-light leading-relaxed">
-                  We understand the special bond between pets and their families. That's why every product in our collection is carefully selected and tested to ensure it meets our high standards of quality, safety, and style.
+                  We understand the special bond between pets and their families. That&apos;s why every product in our collection is carefully selected and tested to ensure it meets our high standards of quality, safety, and style.
                 </p>
                 <p className="text-text-light leading-relaxed">
-                  From premium collars and leashes to cozy beds and fun toys, we're committed to enhancing the lives of pets and bringing smiles to pet parents everywhere.
+                  From premium collars and leashes to cozy beds and fun toys, we&apos;re committed to enhancing the lives of pets and bringing smiles to pet parents everywhere.
                 </p>
               </motion.div>
             </div>

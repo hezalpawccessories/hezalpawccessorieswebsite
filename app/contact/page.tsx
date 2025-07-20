@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -72,7 +73,7 @@ export default function Contact() {
                 Get in <span className="text-primary-pink">Touch</span>
               </h1>
               <p className="text-xl text-text-light max-w-3xl mx-auto">
-                Have questions about our products or need help with your order? We're here to help!
+                Have questions about our products or need help with your order? We&apos;re here to help!
               </p>
             </motion.div>
 
@@ -210,10 +211,13 @@ export default function Contact() {
                 className="space-y-8"
               >
                 <div className="bg-gradient-to-br from-primary-blue to-light-purple p-2 rounded-2xl">
-                  <img
+                  <Image
                     src="https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=600"
                     alt="Customer service"
+                    width={600}
+                    height={256}
                     className="w-full h-64 object-cover rounded-xl"
+                    priority
                   />
                 </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
    Eye,
@@ -60,8 +61,10 @@ export default function AdminDashboard() {
 
    useEffect(() => {
       // Load orders from localStorage
-      const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]')
-      setOrders(savedOrders)
+      if (typeof window !== 'undefined') {
+         const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]')
+         setOrders(savedOrders)
+      }
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -117,7 +120,9 @@ export default function AdminDashboard() {
    const updateOrderStatus = (orderId: string, status: Order['status']) => {
       const updatedOrders = orders.map((order) => (order.id === orderId ? { ...order, status } : order))
       setOrders(updatedOrders)
-      localStorage.setItem('orders', JSON.stringify(updatedOrders))
+      if (typeof window !== 'undefined') {
+         localStorage.setItem('orders', JSON.stringify(updatedOrders))
+      }
    }
 
    const filteredProducts = products.filter(
@@ -242,9 +247,11 @@ export default function AdminDashboard() {
                               key={product.id}
                               className='bg-white rounded-lg shadow-lg overflow-hidden'
                            >
-                              <img
+                              <Image
                                  src={product.image}
                                  alt={product.title}
+                                 width={600}
+                                 height={192}
                                  className='w-full h-48 object-cover'
                               />
                               <div className='p-4'>

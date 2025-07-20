@@ -15,19 +15,23 @@ export default function Navbar() {
 
   useEffect(() => {
     const updateCartCount = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const count = cart.reduce((total: number, item: any) => total + item.quantity, 0);
-      setCartCount(count);
+      if (typeof window !== 'undefined') {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const count = cart.reduce((total: number, item: any) => total + item.quantity, 0);
+        setCartCount(count);
+      }
     };
 
     updateCartCount();
-    window.addEventListener('storage', updateCartCount);
-    window.addEventListener('cartUpdated', updateCartCount);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', updateCartCount);
+      window.addEventListener('cartUpdated', updateCartCount);
 
-    return () => {
-      window.removeEventListener('storage', updateCartCount);
-      window.removeEventListener('cartUpdated', updateCartCount);
-    };
+      return () => {
+        window.removeEventListener('storage', updateCartCount);
+        window.removeEventListener('cartUpdated', updateCartCount);
+      };
+    }
   }, []);
 
   const navItems = [
