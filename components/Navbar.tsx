@@ -72,7 +72,7 @@ export default function Navbar() {
                   />
                   <div>
                      <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>
-                        Hezal Accessories
+                        Hezal Pawccessories
                      </h1>
                      <p className='text-xs font-dm-sans text-text-light -mt-1 tracking-wide'>
                         Your pet deserves only the BEST
