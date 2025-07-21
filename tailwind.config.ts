@@ -10,6 +10,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         'nunito': ['Nunito', 'sans-serif'],
+        'dm-sans': ['DM Sans', 'sans-serif'],
+        'sans': ['DM Sans', 'Nunito', 'sans-serif'],
       },
       colors: {
         'primary-pink': '#ff6b9d',
@@ -20,7 +22,8 @@ const config: Config = {
         'cream': '#fef7f0',
         'soft-gray': '#f8f9fa',
         'text-dark': '#2d3436',
-        'text-light': '#636e72',
+        'text-light': '#6A6A6A',
+        'text-body': '#4D4D4D',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

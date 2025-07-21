@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             >
                <div className='text-center mb-8'>
                   <Lock className='w-16 h-16 text-primary-pink mx-auto mb-4' />
-                  <h1 className='text-2xl font-bold text-text-dark'>Admin Access</h1>
+                                    <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Admin Access</h1>
                   <p className='text-text-light'>Enter password to continue</p>
                </div>
 
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
          <div className='bg-white shadow-lg'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                <div className='flex justify-between items-center h-16'>
-                  <h1 className='text-2xl font-bold text-text-dark'>Admin Dashboard</h1>
+                                    <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Admin Dashboard</h1>
                   <button
                      onClick={() => setIsAuthenticated(false)}
                      className='text-text-light hover:text-primary-pink'
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                      className='space-y-6'
                   >
                      <div className='flex justify-between items-center'>
-                        <h2 className='text-2xl font-bold text-text-dark'>Products Management</h2>
+                                                <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Products Management</h2>
                         <div className='relative'>
                            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5' />
                            <input

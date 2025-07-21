@@ -27,10 +27,10 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-text-dark mb-6">
+              <h1 className="text-4xl md:text-6xl font-nunito font-extrabold text-text-dark mb-6 leading-tight tracking-wide">
                 About <span className="text-primary-pink">Hezal Accessories</span>
               </h1>
-              <p className="text-xl text-text-light max-w-3xl mx-auto">
+              <p className="text-xl font-dm-sans text-text-body max-w-3xl mx-auto">
                 We&apos;re passionate about providing premium pet accessories that bring joy, comfort, and style to your beloved companions.
               </p>
             </motion.div>
@@ -57,14 +57,14 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="space-y-6"
               >
-                <h2 className="text-3xl font-bold text-text-dark">Our Story</h2>
-                <p className="text-text-light leading-relaxed">
+                <h2 className="text-3xl font-nunito font-bold text-text-dark">Our Story</h2>
+                <p className="font-dm-sans text-text-body leading-relaxed">
                   Founded with a simple belief that every pet deserves the best, Hezal Accessories started as a small dream to create beautiful, functional, and safe accessories for our furry friends.
                 </p>
-                <p className="text-text-light leading-relaxed">
+                <p className="font-dm-sans text-text-body leading-relaxed">
                   We understand the special bond between pets and their families. That&apos;s why every product in our collection is carefully selected and tested to ensure it meets our high standards of quality, safety, and style.
                 </p>
-                <p className="text-text-light leading-relaxed">
+                <p className="font-dm-sans text-text-body leading-relaxed">
                   From premium collars and leashes to cozy beds and fun toys, we&apos;re committed to enhancing the lives of pets and bringing smiles to pet parents everywhere.
                 </p>
               </motion.div>
@@ -81,10 +81,10 @@ export default function About() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-text-dark mb-4">
+              <h2 className="text-3xl md:text-4xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide">
                 Our Impact
               </h2>
-              <p className="text-xl text-text-light">
+              <p className="text-xl font-dm-sans text-text-body">
                 Numbers that reflect our commitment to pets and their families
               </p>
             </motion.div>

@@ -69,10 +69,10 @@ export default function Contact() {
               transition={{ duration: 0.8 }}
               className="text-center mb-16"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-text-dark mb-6">
+              <h1 className="text-4xl md:text-6xl font-nunito font-extrabold text-text-dark mb-6 leading-tight tracking-wide">
                 Get in <span className="text-primary-pink">Touch</span>
               </h1>
-              <p className="text-xl text-text-light max-w-3xl mx-auto">
+              <p className="text-xl font-dm-sans text-text-body max-w-3xl mx-auto">
                 Have questions about our products or need help with your order? We&apos;re here to help!
               </p>
             </motion.div>
@@ -90,13 +90,13 @@ export default function Contact() {
                   <div className="text-primary-blue mb-4 flex justify-center">
                     {info.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-text-dark mb-2">
+                  <h3 className="text-lg font-nunito font-bold text-text-dark mb-2">
                     {info.title}
                   </h3>
-                  <p className="text-primary-pink font-semibold mb-1">
+                  <p className="font-dm-sans text-primary-pink font-semibold mb-1">
                     {info.details}
                   </p>
-                  <p className="text-text-light text-sm">
+                  <p className="font-dm-sans text-text-body text-sm">
                     {info.description}
                   </p>
                 </motion.div>

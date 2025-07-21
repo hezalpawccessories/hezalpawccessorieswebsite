@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 @import 'nprogress/nprogress.css';
 @tailwind base;
 @tailwind components;
@@ -13,7 +14,8 @@
   --cream: #fef7f0;
   --soft-gray: #f8f9fa;
   --text-dark: #2d3436;
-  --text-light: #636e72;
+  --text-light: #6A6A6A;
+  --text-body: #4D4D4D;
 }
 
 * {
@@ -23,8 +25,8 @@
 }
 
 body {
-  font-family: 'Nunito', sans-serif;
-  color: var(--text-dark);
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  color: var(--text-body);
   background: var(--cream);
   line-height: 1.6;
 }
@@ -48,6 +50,7 @@ body {
   border: none;
   padding: 12px 24px;
   border-radius: 25px;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -64,6 +67,7 @@ body {
   border: none;
   padding: 10px 20px;
   border-radius: 20px;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -82,6 +86,7 @@ body {
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 500;
 }
 

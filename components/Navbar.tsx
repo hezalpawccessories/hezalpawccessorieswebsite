@@ -68,11 +68,15 @@ export default function Navbar() {
                      alt='Hezal Accessories Logo'
                      width={50}
                      height={50}
-                     className='rounded-full'
+                     className='rounded-full mb-1'
                   />
                   <div>
-                     <h1 className='text-xl font-bold text-primary-pink'>Hezal Accessories</h1>
-                     <p className='text-xs text-[#88807C] -mt-1'>Your pet deserves only the BEST</p>
+                     <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>
+                        Hezal Accessories
+                     </h1>
+                     <p className='text-xs font-dm-sans text-text-light -mt-1 tracking-wide'>
+                        Your pet deserves only the BEST
+                     </p>
                   </div>
                </Link>
 
@@ -82,7 +86,7 @@ export default function Navbar() {
                      <button
                         key={item.href}
                         onClick={() => handleNavigation(item.href)}
-                        className={`font-medium transition-colors duration-200 ${
+                        className={`font-dm-sans font-medium transition-colors duration-200 ${
                            pathname === item.href
                               ? 'text-primary-pink border-b-2 border-primary-pink pb-1'
                               : 'text-text-dark hover:text-primary-pink'
@@ -129,7 +133,7 @@ export default function Navbar() {
                         <button
                            key={item.href}
                            onClick={() => handleNavigation(item.href)}
-                           className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                           className={`block w-full text-left px-3 py-2 rounded-md text-base font-dm-sans font-medium transition-colors duration-200 ${
                               pathname === item.href
                                  ? 'text-primary-pink bg-pink-50'
                                  : 'text-text-dark hover:text-primary-pink hover:bg-pink-50'

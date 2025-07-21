@@ -13,11 +13,11 @@ export default function Footer() {
                 <Heart className="w-6 h-6 text-white" fill="currentColor" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-primary-pink">Hezal Accessories</h3>
-                <p className="text-sm text-gray-300">Your pet deserves only the BEST</p>
+                <h3 className="text-xl font-nunito font-bold text-primary-pink">Hezal Accessories</h3>
+                <p className="text-sm font-dm-sans text-gray-300">Your pet deserves only the BEST</p>
               </div>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="font-dm-sans text-gray-300 mb-4">
               We provide premium quality pet accessories to keep your furry friends happy, healthy, and stylish.
             </p>
             <div className="flex items-center space-x-2 text-sm text-gray-300">
@@ -28,7 +28,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-primary-blue">Quick Links</h4>
+            <h4 className="text-lg font-dm-sans font-semibold mb-4 text-primary-blue">Quick Links</h4>
             <ul className="space-y-2">
               <li><Link href="/" className="text-gray-300 hover:text-primary-pink transition-colors">Home</Link></li>
               <li><Link href="/about" className="text-gray-300 hover:text-primary-pink transition-colors">About</Link></li>
@@ -39,7 +39,7 @@ export default function Footer() {
 
           {/* Policies */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-primary-blue">Support</h4>
+            <h4 className="text-lg font-dm-sans font-semibold mb-4 text-primary-blue">Support</h4>
             <ul className="space-y-2">
               <li><Link href="#" className="text-gray-300 hover:text-primary-pink transition-colors">FAQs</Link></li>
               <li><Link href="#" className="text-gray-300 hover:text-primary-pink transition-colors">Privacy Policy</Link></li>

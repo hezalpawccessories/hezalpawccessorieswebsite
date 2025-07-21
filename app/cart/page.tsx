@@ -104,7 +104,7 @@ export default function Cart() {
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
                   <div className='text-center'>
                      <ShoppingBag className='w-24 h-24 text-text-light mx-auto mb-6' />
-                     <h1 className='text-3xl font-bold text-text-dark mb-4'>Your Cart is Empty</h1>
+                     <h1 className='text-3xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>Your Cart is Empty</h1>
                      <p className='text-xl text-text-light mb-8'>
                         Looks like you haven&apos;t added any items to your cart yet.
                      </p>
@@ -133,10 +133,10 @@ export default function Cart() {
                   transition={{ duration: 0.8 }}
                   className='mb-8'
                >
-                  <h1 className='text-4xl md:text-5xl font-bold text-text-dark mb-4'>
+                  <h1 className='text-4xl md:text-5xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
                      Shopping <span className='text-primary-pink'>Cart</span>
                   </h1>
-                  <p className='text-xl text-text-light'>Review your items and proceed to checkout</p>
+                  <p className='text-xl font-dm-sans text-text-body'>Review your items and proceed to checkout</p>
                </motion.div>
 
                <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
