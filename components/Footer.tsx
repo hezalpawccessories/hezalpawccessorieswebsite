@@ -16,7 +16,7 @@ export default function Footer() {
                         />
                      </div>
                      <div>
-                        <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal Pawccessories</h3>
+                        <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal's Pawccessories</h3>
                         <p className='text-sm font-dm-sans text-gray-300'>Your pet deserves only the BEST</p>
                      </div>
                   </div>
