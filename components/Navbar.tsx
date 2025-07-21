@@ -64,10 +64,10 @@ export default function Navbar() {
               <Heart className="w-6 h-6 text-white" fill="currentColor" />
             </div> */}
                   <Image
-                     src='/logo3.png'
+                     src='/logo.png'
                      alt='Hezal Accessories Logo'
-                     width={50}
-                     height={50}
+                     width={70}
+                     height={70}
                      className='rounded-full mb-1'
                   />
                   <div>
