@@ -141,7 +141,9 @@ export default function AdminDashboard() {
             >
                <div className='text-center mb-8'>
                   <Lock className='w-16 h-16 text-primary-pink mx-auto mb-4' />
-                                    <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Admin Access</h1>
+                  <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                     Admin Access
+                  </h1>
                   <p className='text-text-light'>Enter password to continue</p>
                </div>
 
@@ -184,7 +186,9 @@ export default function AdminDashboard() {
          <div className='bg-white shadow-lg'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                <div className='flex justify-between items-center h-16'>
-                                    <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Admin Dashboard</h1>
+                  <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                     Admin Dashboard
+                  </h1>
                   <button
                      onClick={() => setIsAuthenticated(false)}
                      className='text-text-light hover:text-primary-pink'
@@ -228,7 +232,9 @@ export default function AdminDashboard() {
                      className='space-y-6'
                   >
                      <div className='flex justify-between items-center'>
-                                                <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>Products Management</h2>
+                        <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                           Products Management
+                        </h2>
                         <div className='relative'>
                            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5' />
                            <input
@@ -447,103 +453,124 @@ export default function AdminDashboard() {
                )}
 
                {activeTab === 'orders' && (
-                  <motion.div
-                     key='orders'
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -20 }}
-                  >
-                     <h2 className='text-2xl font-bold text-text-dark mb-6'>Orders Management</h2>
-                     {orders.length === 0 ? (
-                        <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
-                           <ShoppingBag className='w-16 h-16 text-text-light mx-auto mb-4' />
-                           <p className='text-xl text-text-light'>No orders yet</p>
+                  <>
+                     <motion.div
+                        key='analytics'
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                     >
+                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Analytics Dashboard</h2>
+                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+                           <div className='bg-white rounded-lg shadow-lg p-6'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Products</h3>
+                              <p className='text-3xl font-bold text-primary-blue'>{products.length}</p>
+                           </div>
+                           <div className='bg-white rounded-lg shadow-lg p-6'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Orders</h3>
+                              <p className='text-3xl font-bold text-primary-pink'>{orders.length}</p>
+                           </div>
+                           <div className='bg-white rounded-lg shadow-lg p-6'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Revenue</h3>
+                              <p className='text-3xl font-bold text-warm-orange'>
+                                 ₹{orders.reduce((sum, order) => sum + order.total, 0)}
+                              </p>
+                           </div>
+                           <div className='bg-white rounded-lg shadow-lg p-6'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Completed Orders</h3>
+                              <p className='text-3xl font-bold text-light-purple'>
+                                 {orders.filter((order) => order.status === 'Completed').length}
+                              </p>
+                           </div>
                         </div>
-                     ) : (
-                        <div className='space-y-4'>
-                           {orders.map((order) => (
-                              <div
-                                 key={order.id}
-                                 className='bg-white rounded-lg shadow-lg p-6'
-                              >
-                                 <div className='flex justify-between items-start mb-4'>
-                                    <div>
-                                       <h3 className='font-bold text-text-dark'>Order #{order.id}</h3>
-                                       <p className='text-text-light'>
-                                          {order.customerName} • {order.date}
-                                       </p>
+                     </motion.div>
+                     <motion.div
+                        key='orders'
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                     >
+                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Orders Management</h2>
+                        {orders.length === 0 ? (
+                           <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
+                              <ShoppingBag className='w-16 h-16 text-text-light mx-auto mb-4' />
+                              <p className='text-xl text-text-light'>No orders yet</p>
+                           </div>
+                        ) : (
+                           <div className='space-y-4'>
+                              {orders.map((order) => (
+                                 <div
+                                    key={order.id}
+                                    className='bg-white rounded-lg shadow-lg p-6'
+                                 >
+                                    <div className='flex justify-between items-start mb-4'>
+                                       <div>
+                                          <h3 className='font-bold text-text-dark'>Order #{order.id}</h3>
+                                          <p className='text-text-light'>
+                                             {order.customerName} • {order.date}
+                                          </p>
+                                       </div>
+                                       <div className='flex items-center space-x-4'>
+                                          <select
+                                             value={order.status}
+                                             onChange={(e) =>
+                                                updateOrderStatus(order.id, e.target.value as Order['status'])
+                                             }
+                                             className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                order.status === 'Not Initiated'
+                                                   ? 'bg-gray-100 text-gray-800'
+                                                   : order.status === 'Progress'
+                                                   ? 'bg-yellow-100 text-yellow-800'
+                                                   : 'bg-green-100 text-green-800'
+                                             }`}
+                                          >
+                                             <option value='Not Initiated'>Not Initiated</option>
+                                             <option value='Progress'>Progress</option>
+                                             <option value='Completed'>Completed</option>
+                                          </select>
+                                          <button
+                                             onClick={() => {
+                                                setSelectedOrder(order)
+                                                setShowOrderModal(true)
+                                             }}
+                                             className='btn-secondary'
+                                          >
+                                             View Details
+                                          </button>
+                                       </div>
                                     </div>
-                                    <div className='flex items-center space-x-4'>
-                                       <select
-                                          value={order.status}
-                                          onChange={(e) =>
-                                             updateOrderStatus(order.id, e.target.value as Order['status'])
-                                          }
-                                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                             order.status === 'Not Initiated'
-                                                ? 'bg-gray-100 text-gray-800'
-                                                : order.status === 'Progress'
-                                                ? 'bg-yellow-100 text-yellow-800'
-                                                : 'bg-green-100 text-green-800'
-                                          }`}
-                                       >
-                                          <option value='Not Initiated'>Not Initiated</option>
-                                          <option value='Progress'>Progress</option>
-                                          <option value='Completed'>Completed</option>
-                                       </select>
-                                       <button
-                                          onClick={() => {
-                                             setSelectedOrder(order)
-                                             setShowOrderModal(true)
-                                          }}
-                                          className='btn-secondary'
-                                       >
-                                          View Details
-                                       </button>
+                                    <div className='flex justify-between items-center'>
+                                       <span className='text-text-light'>{order.items.length} items</span>
+                                       <span className='text-xl font-bold text-primary-pink'>₹{order.total}</span>
                                     </div>
                                  </div>
-                                 <div className='flex justify-between items-center'>
-                                    <span className='text-text-light'>{order.items.length} items</span>
-                                    <span className='text-xl font-bold text-primary-pink'>₹{order.total}</span>
-                                 </div>
-                              </div>
-                           ))}
-                        </div>
-                     )}
-                  </motion.div>
+                              ))}
+                           </div>
+                        )}
+                     </motion.div>
+                  </>
                )}
 
                {activeTab === 'analytics' && (
-                  <motion.div
-                     key='analytics'
-                     initial={{ opacity: 0, y: 20 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     exit={{ opacity: 0, y: -20 }}
-                  >
-                     <h2 className='text-2xl font-bold text-text-dark mb-6'>Analytics Dashboard</h2>
-                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                           <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Products</h3>
-                           <p className='text-3xl font-bold text-primary-blue'>{products.length}</p>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                           <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Orders</h3>
-                           <p className='text-3xl font-bold text-primary-pink'>{orders.length}</p>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                           <h3 className='text-lg font-semibold text-text-dark mb-2'>Revenue</h3>
-                           <p className='text-3xl font-bold text-warm-orange'>
-                              ₹{orders.reduce((sum, order) => sum + order.total, 0)}
-                           </p>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                           <h3 className='text-lg font-semibold text-text-dark mb-2'>Completed Orders</h3>
-                           <p className='text-3xl font-bold text-light-purple'>
-                              {orders.filter((order) => order.status === 'Completed').length}
-                           </p>
-                        </div>
+                  <div className='py-12'>
+                     <h1 className='text-3xl font-bold text-primary-blue mb-6'>Vercel Analytics</h1>
+                     {/* Vercel Analytics Preview */}
+                     {/* You must have @vercel/analytics installed and set up in your project for this to work */}
+                     {/* If using the new Vercel Analytics SDK for Next.js App Router: */}
+                     {/*
+                     import { Analytics } from '@vercel/analytics/react';
+                     ...
+                     <Analytics mode="dashboard" />
+                     */}
+                     {/* For now, we show a placeholder. Uncomment above if Analytics is set up. */}
+                     <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
+                        <p className='text-xl text-text-light mb-4'>Analytics dashboard will appear here if enabled.</p>
+                        <p className='text-sm text-text-light'>
+                           Analytics Dashboard
+                           {/* <Analytics mode="dashboard" /> */}
+                        </p>
                      </div>
-                  </motion.div>
+                  </div>
                )}
             </AnimatePresence>
          </div>
