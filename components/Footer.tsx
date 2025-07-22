@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Heart, Mail, Phone } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Footer() {
    return (
@@ -9,12 +10,19 @@ export default function Footer() {
                {/* Brand */}
                <div className='col-span-1 md:col-span-2'>
                   <div className='flex items-center space-x-2 mb-4'>
-                     <div className='w-10 h-10 bg-gradient-to-br from-primary-pink to-warm-orange rounded-full flex items-center justify-center'>
+                     {/* <div className='w-10 h-10 bg-gradient-to-br from-primary-pink to-warm-orange rounded-full flex items-center justify-center'>
                         <Heart
                            className='w-6 h-6 text-white'
                            fill='currentColor'
                         />
-                     </div>
+                     </div> */}
+                     <Image
+                        src='/logo.png'
+                        alt='Hezal Accessories Logo'
+                        width={70}
+                        height={70}
+                        className='rounded-full mb-1'
+                     />
                      <div>
                         <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal Pawccessories</h3>
                         <p className='text-sm font-dm-sans text-gray-300'>Your pet deserves only the BEST</p>
@@ -25,7 +33,7 @@ export default function Footer() {
                   </p>
                   <div className='flex items-center space-x-2 text-sm text-gray-300'>
                      <Mail className='w-4 h-4' />
-                     <span>hezal.accessories@gmail.com</span>
+                     <span>hezalpawccessories@gmail.com</span>
                   </div>
                </div>
 
