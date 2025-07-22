@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   image: string;
+  images?: string[]; // Optional array for additional images
   category: string;
   description: string;
   details: string[];

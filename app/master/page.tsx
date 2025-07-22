@@ -24,6 +24,13 @@ import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integra
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
 
+// Declare cloudinary widget
+declare global {
+   interface Window {
+      cloudinary: any
+   }
+}
+
 interface Order {
    id: string
    customerName: string
@@ -55,6 +62,7 @@ export default function AdminDashboard() {
       price: 0,
       originalPrice: 0,
       image: '',
+      images: [''], // Array for multiple images
       category: 'Collars',
       description: '',
       details: [''],
@@ -62,6 +70,72 @@ export default function AdminDashboard() {
       rating: 4.5,
       reviews: 0,
    })
+
+   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
+
+   useEffect(() => {
+      // Load Cloudinary widget script
+      const script = document.createElement('script')
+      script.src = 'https://widget.cloudinary.com/v2.0/global/all.js'
+      script.async = true
+      document.head.appendChild(script)
+
+      return () => {
+         document.head.removeChild(script)
+      }
+   }, [])
+
+   const showUploadWidget = () => {
+      if (typeof window !== 'undefined' && window.cloudinary) {
+         window.cloudinary.openUploadWidget(
+            {
+               cloudName: 'dt2qyj4lj', // Replace with your cloudinary cloud name
+               uploadPreset: 'product_images', // Replace with your upload preset
+               sources: ['local', 'url', 'camera'],
+               multiple: true,
+               maxFiles: 10,
+               resourceType: 'image',
+               clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+               maxFileSize: 10000000, // 10MB
+               styles: {
+                  palette: {
+                     window: '#FFFFFF',
+                     windowBorder: '#90A0B3',
+                     tabIcon: '#0078FF',
+                     menuIcons: '#5A616A',
+                     textDark: '#000000',
+                     textLight: '#FFFFFF',
+                     link: '#0078FF',
+                     action: '#FF620C',
+                     inactiveTabIcon: '#0E2F5A',
+                     error: '#F44235',
+                     inProgress: '#0078FF',
+                     complete: '#20B832',
+                     sourceBg: '#E4EBF1',
+                  },
+               },
+            },
+            (error: any, result: any) => {
+               if (!error && result && result.event === 'success') {
+                  console.log('Upload successful:', result.info)
+                  setUploadedImages((prev) => [...prev, result.info.secure_url])
+               }
+            }
+         )
+      } else {
+         alert('Cloudinary widget is not loaded yet. Please try again in a moment.')
+      }
+   }
+
+   const copyToClipboard = (text: string) => {
+      navigator.clipboard.writeText(text).then(() => {
+         alert('URL copied to clipboard!')
+      })
+   }
+
+   const clearUploadedImages = () => {
+      setUploadedImages([])
+   }
 
    useEffect(() => {
       // Load orders from localStorage
@@ -105,6 +179,7 @@ export default function AdminDashboard() {
          ...newProduct,
          id: uuidv4(),
          details: newProduct.details.filter((detail) => detail.trim() !== ''),
+         images: newProduct.images.filter((imageUrl) => imageUrl.trim() !== ''),
       }
       setProducts([...products, product])
 
@@ -120,6 +195,7 @@ export default function AdminDashboard() {
          price: 0,
          originalPrice: 0,
          image: '',
+         images: [''],
          category: 'Collars',
          description: '',
          details: [''],
@@ -127,14 +203,19 @@ export default function AdminDashboard() {
          rating: 4.5,
          reviews: 0,
       })
+      setUploadedImages([]) // Clear uploaded images
       setShowAddModal(false)
    }
 
    const handleEditProduct = (e: React.FormEvent) => {
       e.preventDefault()
       if (selectedProduct) {
-         const updatedProducts = products.map((p) => (p.id === selectedProduct.id ? selectedProduct : p))
-         updateProduct(selectedProduct.id, selectedProduct)
+         const updatedProduct = {
+            ...selectedProduct,
+            images: selectedProduct.images?.filter((imageUrl) => imageUrl.trim() !== '') || [],
+         }
+         const updatedProducts = products.map((p) => (p.id === selectedProduct.id ? updatedProduct : p))
+         updateProduct(selectedProduct.id, updatedProduct)
             .then(() => {
                console.log('Product updated successfully')
             })
@@ -304,7 +385,10 @@ export default function AdminDashboard() {
                                  <div className='flex space-x-2'>
                                     <button
                                        onClick={() => {
-                                          setSelectedProduct(product)
+                                          setSelectedProduct({
+                                             ...product,
+                                             images: product.images || [''], // Ensure images array exists
+                                          })
                                           setShowEditModal(true)
                                        }}
                                        className='flex-1 bg-primary-blue text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-1'
@@ -396,15 +480,115 @@ export default function AdminDashboard() {
                               </div>
                            </div>
 
-                           <div>
-                              <label className='block text-sm font-medium text-text-dark mb-2'>Image URL *</label>
-                              <input
-                                 type='url'
-                                 required
-                                 value={newProduct.image}
-                                 onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                              />
+                           {/* Image Upload Section */}
+                           <div className='space-y-4'>
+                              <div className='flex items-center justify-between'>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>Product Images</label>
+                                 <div className='flex space-x-2'>
+                                    <button
+                                       type='button'
+                                       onClick={showUploadWidget}
+                                       className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors'
+                                    >
+                                       Upload Images
+                                    </button>
+                                    {uploadedImages.length > 0 && (
+                                       <button
+                                          type='button'
+                                          onClick={clearUploadedImages}
+                                          className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+                                       >
+                                          Clear
+                                       </button>
+                                    )}
+                                 </div>
+                              </div>
+
+                              {/* Display uploaded images */}
+                              {uploadedImages.length > 0 && (
+                                 <div className='bg-gray-50 p-4 rounded-lg'>
+                                    <h4 className='text-sm font-medium text-text-dark mb-3'>
+                                       Uploaded Images ({uploadedImages.length})
+                                    </h4>
+                                    <div className='space-y-2 max-h-40 overflow-y-auto'>
+                                       {uploadedImages.map((url, index) => (
+                                          <div
+                                             key={index}
+                                             className='flex items-center justify-between bg-white p-2 rounded border'
+                                          >
+                                             <span className='text-xs text-gray-600 truncate flex-1 mr-2'>
+                                                {index + 1}. {url}
+                                             </span>
+                                             <button
+                                                type='button'
+                                                onClick={() => copyToClipboard(url)}
+                                                className='px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600'
+                                                title='Copy URL'
+                                             >
+                                                Copy
+                                             </button>
+                                          </div>
+                                       ))}
+                                    </div>
+                                 </div>
+                              )}
+
+                              {/* Main Image URL */}
+                              <div>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Main Image URL *
+                                 </label>
+                                 <input
+                                    type='url'
+                                    required
+                                    value={newProduct.image}
+                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                    placeholder='Paste main image URL here'
+                                 />
+                              </div>
+
+                              {/* Additional Images */}
+                              <div>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Additional Images
+                                 </label>
+                                 {newProduct.images.map((imageUrl, index) => (
+                                    <div
+                                       key={index}
+                                       className='flex space-x-2 mb-2'
+                                    >
+                                       <input
+                                          type='url'
+                                          value={imageUrl}
+                                          onChange={(e) => {
+                                             const newImages = [...newProduct.images]
+                                             newImages[index] = e.target.value
+                                             setNewProduct({ ...newProduct, images: newImages })
+                                          }}
+                                          className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                          placeholder='Additional image URL'
+                                       />
+                                       <button
+                                          type='button'
+                                          onClick={() => {
+                                             const newImages = newProduct.images.filter((_, i) => i !== index)
+                                             setNewProduct({ ...newProduct, images: newImages })
+                                          }}
+                                          className='px-3 py-2 bg-red-500 text-white rounded-lg'
+                                       >
+                                          <X className='w-4 h-4' />
+                                       </button>
+                                    </div>
+                                 ))}
+                                 <button
+                                    type='button'
+                                    onClick={() => setNewProduct({ ...newProduct, images: [...newProduct.images, ''] })}
+                                    className='btn-secondary'
+                                 >
+                                    Add Image URL
+                                 </button>
+                              </div>
                            </div>
 
                            <div>
@@ -686,8 +870,10 @@ export default function AdminDashboard() {
                               />
                            </div>
                         </div>
+
+                        {/* Images Section in Edit Modal */}
                         <div>
-                           <label className='block text-sm font-medium text-text-dark mb-2'>Image URL *</label>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Main Image URL *</label>
                            <input
                               type='url'
                               required
@@ -696,6 +882,52 @@ export default function AdminDashboard() {
                               className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                            />
                         </div>
+
+                        {/* Additional Images in Edit Modal */}
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Additional Images</label>
+                           {(selectedProduct.images || ['']).map((imageUrl, index) => (
+                              <div
+                                 key={index}
+                                 className='flex space-x-2 mb-2'
+                              >
+                                 <input
+                                    type='url'
+                                    value={imageUrl}
+                                    onChange={(e) => {
+                                       const newImages = [...(selectedProduct.images || [''])]
+                                       newImages[index] = e.target.value
+                                       setSelectedProduct({ ...selectedProduct, images: newImages })
+                                    }}
+                                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                                    placeholder='Additional image URL'
+                                 />
+                                 <button
+                                    type='button'
+                                    onClick={() => {
+                                       const newImages = (selectedProduct.images || ['']).filter((_, i) => i !== index)
+                                       setSelectedProduct({ ...selectedProduct, images: newImages })
+                                    }}
+                                    className='px-3 py-2 bg-red-500 text-white rounded-lg'
+                                 >
+                                    <X className='w-4 h-4' />
+                                 </button>
+                              </div>
+                           ))}
+                           <button
+                              type='button'
+                              onClick={() =>
+                                 setSelectedProduct({
+                                    ...selectedProduct,
+                                    images: [...(selectedProduct.images || ['']), ''],
+                                 })
+                              }
+                              className='btn-secondary mt-2'
+                           >
+                              Add Image URL
+                           </button>
+                        </div>
+
                         <div>
                            <label className='block text-sm font-medium text-text-dark mb-2'>Description *</label>
                            <textarea

@@ -63,13 +63,15 @@ export default function Navbar() {
                   {/* <div className="w-10 h-10 bg-gradient-to-br from-primary-pink to-warm-orange rounded-full flex items-center justify-center">
               <Heart className="w-6 h-6 text-white" fill="currentColor" />
             </div> */}
-                  <Image
-                     src='/logo.png'
-                     alt='Hezal Accessories Logo'
-                     width={70}
-                     height={70}
-                     className='rounded-full mb-1'
-                  />
+                  <div className='w-10 h-10 bg-black/10 rounded-full flex items-center justify-center'>
+                     <Image
+                        src='/logo.png'
+                        alt='Hezal Accessories Logo'
+                        width={70}
+                        height={70}
+                        className='rounded-full mb-1'
+                     />
+                  </div>
                   <div>
                      <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>
                         Hezal Pawccessories
