@@ -23,6 +23,7 @@ import { products as initialProducts, Product } from '@/lib/products'
 import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
+import { toast } from 'sonner'
 
 // Declare cloudinary widget
 declare global {
@@ -119,22 +120,42 @@ export default function AdminDashboard() {
                if (!error && result && result.event === 'success') {
                   console.log('Upload successful:', result.info)
                   setUploadedImages((prev) => [...prev, result.info.secure_url])
+                  toast.success(`Image uploaded successfully!`, {
+                     description: `${result.info.original_filename || 'New image'} is ready to use`,
+                     duration: 3000,
+                  })
+               } else if (error) {
+                  toast.error('Upload failed', {
+                     description: 'Please try uploading the image again',
+                     duration: 4000,
+                  })
                }
             }
          )
       } else {
-         alert('Cloudinary widget is not loaded yet. Please try again in a moment.')
+         toast.error('Upload widget not ready', {
+            description: 'Please wait a moment and try again',
+            duration: 3000,
+         })
       }
    }
 
    const copyToClipboard = (text: string) => {
       navigator.clipboard.writeText(text).then(() => {
-         alert('URL copied to clipboard!')
+         toast.success('URL copied to clipboard!', {
+            duration: 2000,
+         })
+      }).catch(() => {
+         toast.error('Failed to copy URL')
       })
    }
 
    const clearUploadedImages = () => {
       setUploadedImages([])
+      toast.info('Uploaded images cleared', {
+         description: 'All uploaded image URLs have been removed',
+         duration: 2000,
+      })
    }
 
    useEffect(() => {
@@ -147,8 +168,20 @@ export default function AdminDashboard() {
       getProducts()
          .then((fetchedProducts) => {
             setProducts(fetchedProducts)
+            if (fetchedProducts.length > 0) {
+               toast.success('Products loaded successfully', {
+                  description: `${fetchedProducts.length} products found in your catalog`,
+                  duration: 3000,
+               })
+            }
          })
-         .catch((error) => console.error('Error fetching products:', error))
+         .catch((error) => {
+            console.error('Error fetching products:', error)
+            toast.error('Failed to load products', {
+               description: 'There was an issue loading your products from the database',
+               duration: 4000,
+            })
+         })
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -156,18 +189,36 @@ export default function AdminDashboard() {
       if (password === '123') {
          setIsAuthenticated(true)
          setPassword('')
+         toast.success('Welcome to Admin Dashboard!', {
+            description: 'You have successfully logged in',
+            duration: 3000,
+         })
       } else {
-         alert('Incorrect password!')
+         toast.error('Access denied', {
+            description: 'Incorrect password entered',
+            duration: 3000,
+         })
       }
    }
 
    const handleDeleteProduct = (productId: string) => {
+      const productToDelete = products.find(p => p.id === productId)
       if (confirm('Are you sure you want to delete this product?')) {
          deleteProduct(productId)
             .then(() => {
                console.log('Product deleted successfully')
+               toast.success('Product deleted successfully!', {
+                  description: `${productToDelete?.title || 'Product'} has been removed from your catalog`,
+                  duration: 4000,
+               })
             })
-            .catch((error) => console.error('Error deleting product:', error))
+            .catch((error) => {
+               console.error('Error deleting product:', error)
+               toast.error('Failed to delete product', {
+                  description: 'There was an issue deleting the product. Please try again.',
+                  duration: 4000,
+               })
+            })
          const updatedProducts = products.filter((p) => p.id !== productId)
          setProducts(updatedProducts)
       }
@@ -187,8 +238,18 @@ export default function AdminDashboard() {
       addProduct(product)
          .then(() => {
             console.log('Product added successfully')
+            toast.success('Product added successfully!', {
+               description: `${product.title} has been added to your catalog`,
+               duration: 4000,
+            })
          })
-         .catch((error) => console.error('Error adding product:', error))
+         .catch((error) => {
+            console.error('Error adding product:', error)
+            toast.error('Failed to add product', {
+               description: 'There was an issue saving the product. Please try again.',
+               duration: 4000,
+            })
+         })
 
       setNewProduct({
          title: '',
@@ -218,8 +279,18 @@ export default function AdminDashboard() {
          updateProduct(selectedProduct.id, updatedProduct)
             .then(() => {
                console.log('Product updated successfully')
+               toast.success('Product updated successfully!', {
+                  description: `${updatedProduct.title} has been updated`,
+                  duration: 4000,
+               })
             })
-            .catch((error) => console.error('Error updating product:', error))
+            .catch((error) => {
+               console.error('Error updating product:', error)
+               toast.error('Failed to update product', {
+                  description: 'There was an issue updating the product. Please try again.',
+                  duration: 4000,
+               })
+            })
          setProducts(updatedProducts)
          setShowEditModal(false)
          setSelectedProduct(null)
@@ -510,23 +581,44 @@ export default function AdminDashboard() {
                                     <h4 className='text-sm font-medium text-text-dark mb-3'>
                                        Uploaded Images ({uploadedImages.length})
                                     </h4>
-                                    <div className='space-y-2 max-h-40 overflow-y-auto'>
+                                    <div className='space-y-3 max-h-60 overflow-y-auto'>
                                        {uploadedImages.map((url, index) => (
                                           <div
                                              key={index}
-                                             className='flex items-center justify-between bg-white p-2 rounded border'
+                                             className='flex items-center gap-3 bg-white p-3 rounded border shadow-sm'
                                           >
-                                             <span className='text-xs text-gray-600 truncate flex-1 mr-2'>
-                                                {index + 1}. {url}
-                                             </span>
-                                             <button
-                                                type='button'
-                                                onClick={() => copyToClipboard(url)}
-                                                className='px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600'
-                                                title='Copy URL'
-                                             >
-                                                Copy
-                                             </button>
+                                             {/* Image Preview */}
+                                             <div className='flex-shrink-0'>
+                                                <img
+                                                   src={url.replace('/upload/', '/upload/w_64,h_64,c_fill,q_auto,f_auto/')}
+                                                   alt={`Upload ${index + 1}`}
+                                                   className='w-16 h-16 object-cover rounded-lg border-2 border-gray-200'
+                                                   onError={(e) => {
+                                                      const target = e.target as HTMLImageElement;
+                                                      target.style.display = 'none';
+                                                   }}
+                                                />
+                                             </div>
+                                             
+                                             {/* URL and Controls */}
+                                             <div className='flex-1 min-w-0'>
+                                                <div className='flex items-center justify-between'>
+                                                   <span className='text-sm font-medium text-gray-800 mb-1'>
+                                                      Image {index + 1}
+                                                   </span>
+                                                   <button
+                                                      type='button'
+                                                      onClick={() => copyToClipboard(url)}
+                                                      className='px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors'
+                                                      title='Copy URL'
+                                                   >
+                                                      Copy URL
+                                                   </button>
+                                                </div>
+                                                <p className='text-xs text-gray-500 truncate' title={url}>
+                                                   {url}
+                                                </p>
+                                             </div>
                                           </div>
                                        ))}
                                     </div>
