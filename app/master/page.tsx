@@ -17,6 +17,7 @@ import {
    Save,
    Search,
    Filter,
+   ExternalLink,
 } from 'lucide-react'
 import { products as initialProducts, Product } from '@/lib/products'
 
@@ -460,7 +461,7 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                      >
-                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Analytics Dashboard</h2>
+                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Orders Dashboard</h2>
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
                            <div className='bg-white rounded-lg shadow-lg p-6'>
                               <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Products</h3>
@@ -490,7 +491,7 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                      >
-                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Orders Management</h2>
+                        <h2 className='text-2xl font-bold text-text-dark my-6'>Orders Management</h2>
                         {orders.length === 0 ? (
                            <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
                               <ShoppingBag className='w-16 h-16 text-text-light mx-auto mb-4' />
@@ -553,27 +554,184 @@ export default function AdminDashboard() {
 
                {activeTab === 'analytics' && (
                   <div className='py-12'>
-                     <h1 className='text-3xl font-bold text-primary-blue mb-6'>Vercel Analytics</h1>
-                     {/* Vercel Analytics Preview */}
-                     {/* You must have @vercel/analytics installed and set up in your project for this to work */}
-                     {/* If using the new Vercel Analytics SDK for Next.js App Router: */}
-                     {/*
-                     import { Analytics } from '@vercel/analytics/react';
-                     ...
-                     <Analytics mode="dashboard" />
-                     */}
-                     {/* For now, we show a placeholder. Uncomment above if Analytics is set up. */}
-                     <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
-                        <p className='text-xl text-text-light mb-4'>Analytics dashboard will appear here if enabled.</p>
-                        <p className='text-sm text-text-light'>
-                           Analytics Dashboard
-                           {/* <Analytics mode="dashboard" /> */}
-                        </p>
+                     <h1 className='text-3xl font-bold text-primary-blue mb-6'>Analytics</h1>
+                     <p className='text-text-light mb-6'>
+                        View your website analytics on Google Analytics. This includes real-time data on page views,
+                        unique visitors, and more.
+                     </p>
+                     <div className='flex items-center justify-center mb-6 p-3 rounded-lg font-medium  bg-primary-blue text-white shadow-lg w-72 mx-auto'>
+                        <a
+                           href='https://analytics.google.com/analytics/web/?authuser=1&hl=en-US#/p497612222/reports/dashboard?r=firebase-overview'
+                           target='_blank'
+                           rel='noopener noreferrer'
+                           className='flex items-center justify-center w-full h-full'
+                           title='Open Google Analytics Dashboard'
+                        >
+                           Open Analytics Dashboard
+                           <ExternalLink className='ml-2 mb-0.5 w-4 h-5' />
+                        </a>
                      </div>
                   </div>
                )}
             </AnimatePresence>
          </div>
+
+         {/* Edit Product Modal */}
+         <AnimatePresence>
+            {showEditModal && selectedProduct && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='modal-overlay'
+                  onClick={() => setShowEditModal(false)}
+               >
+                  <motion.div
+                     initial={{ scale: 0.8, opacity: 0 }}
+                     animate={{ scale: 1, opacity: 1 }}
+                     exit={{ scale: 0.8, opacity: 0 }}
+                     className='modal-content max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative'
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <button
+                        onClick={() => setShowEditModal(false)}
+                        className='absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg'
+                        title='Close'
+                     >
+                        <X className='w-5 h-5' />
+                     </button>
+                     <h2 className='text-2xl font-bold text-text-dark mb-6 font-nunito'>Edit Product</h2>
+                     <form
+                        onSubmit={handleEditProduct}
+                        className='space-y-6'
+                     >
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>Product Title *</label>
+                              <input
+                                 type='text'
+                                 required
+                                 value={selectedProduct.title}
+                                 onChange={e => setSelectedProduct({ ...selectedProduct, title: e.target.value })}
+                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                              />
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>Category *</label>
+                              <select
+                                 required
+                                 value={selectedProduct.category}
+                                 onChange={e => setSelectedProduct({ ...selectedProduct, category: e.target.value })}
+                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                              >
+                                 <option value='Bandana/neck scarf'>Bandana/neck scarf</option>
+                                 <option value='Bow ties'>Bow ties</option>
+                                 <option value='Collars'>Collars</option>
+                                 <option value='Collar-leash set'>Collar-leash set</option>
+                                 <option value='Treat Jars'>Treat Jars</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>Price *</label>
+                              <input
+                                 type='number'
+                                 required
+                                 value={selectedProduct.price}
+                                 onChange={e => setSelectedProduct({ ...selectedProduct, price: Number(e.target.value) })}
+                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                              />
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>Original Price (Optional)</label>
+                              <input
+                                 type='number'
+                                 value={selectedProduct.originalPrice}
+                                 onChange={e => setSelectedProduct({ ...selectedProduct, originalPrice: Number(e.target.value) })}
+                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                              />
+                           </div>
+                        </div>
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Image URL *</label>
+                           <input
+                              type='url'
+                              required
+                              value={selectedProduct.image}
+                              onChange={e => setSelectedProduct({ ...selectedProduct, image: e.target.value })}
+                              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                           />
+                        </div>
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Description *</label>
+                           <textarea
+                              required
+                              rows={3}
+                              value={selectedProduct.description}
+                              onChange={e => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
+                              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                           />
+                        </div>
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Product Details</label>
+                           {selectedProduct.details.map((detail, index) => (
+                              <div key={index} className='flex space-x-2 mb-2'>
+                                 <input
+                                    type='text'
+                                    value={detail}
+                                    onChange={e => {
+                                       const newDetails = [...selectedProduct.details]
+                                       newDetails[index] = e.target.value
+                                       setSelectedProduct({ ...selectedProduct, details: newDetails })
+                                    }}
+                                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                                    placeholder='Product detail'
+                                 />
+                                 <button
+                                    type='button'
+                                    onClick={() => {
+                                       const newDetails = selectedProduct.details.filter((_, i) => i !== index)
+                                       setSelectedProduct({ ...selectedProduct, details: newDetails })
+                                    }}
+                                    className='px-3 py-2 bg-red-500 text-white rounded-lg'
+                                    title='Remove detail'
+                                 >
+                                    <X className='w-4 h-4' />
+                                 </button>
+                              </div>
+                           ))}
+                           <button
+                              type='button'
+                              onClick={() => setSelectedProduct({ ...selectedProduct, details: [...selectedProduct.details, ''] })}
+                              className='btn-secondary mt-2'
+                           >
+                              Add Detail
+                           </button>
+                        </div>
+                        <div className='flex items-center space-x-4'>
+                           <label className='flex items-center'>
+                              <input
+                                 type='checkbox'
+                                 checked={selectedProduct.inStock}
+                                 onChange={e => setSelectedProduct({ ...selectedProduct, inStock: e.target.checked })}
+                                 className='mr-2'
+                              />
+                              In Stock
+                           </label>
+                        </div>
+                        <button
+                           type='submit'
+                           className='btn-primary w-full mt-4 flex items-center justify-center space-x-2'
+                        >
+                           <Save className='w-5 h-5' />
+                           <span>Update Product</span>
+                        </button>
+                     </form>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
 
          {/* Order Details Modal */}
          <AnimatePresence>
