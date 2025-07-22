@@ -20,6 +20,9 @@ import {
    ExternalLink,
 } from 'lucide-react'
 import { products as initialProducts, Product } from '@/lib/products'
+import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
+import { v4 as uuidv4 } from 'uuid'
+import { get } from 'node:http'
 
 interface Order {
    id: string
@@ -38,7 +41,7 @@ export default function AdminDashboard() {
    const [password, setPassword] = useState('')
    const [showPassword, setShowPassword] = useState(false)
    const [activeTab, setActiveTab] = useState('products')
-   const [products, setProducts] = useState<Product[]>(initialProducts)
+   const [products, setProducts] = useState<Product[]>([])
    const [orders, setOrders] = useState<Order[]>([])
    const [showAddModal, setShowAddModal] = useState(false)
    const [showEditModal, setShowEditModal] = useState(false)
@@ -66,11 +69,17 @@ export default function AdminDashboard() {
          const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]')
          setOrders(savedOrders)
       }
+      // Load products from Firestore
+      getProducts()
+         .then((fetchedProducts) => {
+            setProducts(fetchedProducts)
+         })
+         .catch((error) => console.error('Error fetching products:', error))
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
       e.preventDefault()
-      if (password === 'hezal2025') {
+      if (password === '123') {
          setIsAuthenticated(true)
          setPassword('')
       } else {
@@ -80,6 +89,11 @@ export default function AdminDashboard() {
 
    const handleDeleteProduct = (productId: string) => {
       if (confirm('Are you sure you want to delete this product?')) {
+         deleteProduct(productId)
+            .then(() => {
+               console.log('Product deleted successfully')
+            })
+            .catch((error) => console.error('Error deleting product:', error))
          const updatedProducts = products.filter((p) => p.id !== productId)
          setProducts(updatedProducts)
       }
@@ -89,10 +103,18 @@ export default function AdminDashboard() {
       e.preventDefault()
       const product: Product = {
          ...newProduct,
-         id: Date.now().toString(),
+         id: uuidv4(),
          details: newProduct.details.filter((detail) => detail.trim() !== ''),
       }
       setProducts([...products, product])
+
+      //~ adding product to Firestore
+      addProduct(product)
+         .then(() => {
+            console.log('Product added successfully')
+         })
+         .catch((error) => console.error('Error adding product:', error))
+
       setNewProduct({
          title: '',
          price: 0,
@@ -112,6 +134,11 @@ export default function AdminDashboard() {
       e.preventDefault()
       if (selectedProduct) {
          const updatedProducts = products.map((p) => (p.id === selectedProduct.id ? selectedProduct : p))
+         updateProduct(selectedProduct.id, selectedProduct)
+            .then(() => {
+               console.log('Product updated successfully')
+            })
+            .catch((error) => console.error('Error updating product:', error))
          setProducts(updatedProducts)
          setShowEditModal(false)
          setSelectedProduct(null)
@@ -612,7 +639,7 @@ export default function AdminDashboard() {
                                  type='text'
                                  required
                                  value={selectedProduct.title}
-                                 onChange={e => setSelectedProduct({ ...selectedProduct, title: e.target.value })}
+                                 onChange={(e) => setSelectedProduct({ ...selectedProduct, title: e.target.value })}
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               />
                            </div>
@@ -621,7 +648,7 @@ export default function AdminDashboard() {
                               <select
                                  required
                                  value={selectedProduct.category}
-                                 onChange={e => setSelectedProduct({ ...selectedProduct, category: e.target.value })}
+                                 onChange={(e) => setSelectedProduct({ ...selectedProduct, category: e.target.value })}
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               >
                                  <option value='Bandana/neck scarf'>Bandana/neck scarf</option>
@@ -639,16 +666,22 @@ export default function AdminDashboard() {
                                  type='number'
                                  required
                                  value={selectedProduct.price}
-                                 onChange={e => setSelectedProduct({ ...selectedProduct, price: Number(e.target.value) })}
+                                 onChange={(e) =>
+                                    setSelectedProduct({ ...selectedProduct, price: Number(e.target.value) })
+                                 }
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               />
                            </div>
                            <div>
-                              <label className='block text-sm font-medium text-text-dark mb-2'>Original Price (Optional)</label>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Original Price (Optional)
+                              </label>
                               <input
                                  type='number'
                                  value={selectedProduct.originalPrice}
-                                 onChange={e => setSelectedProduct({ ...selectedProduct, originalPrice: Number(e.target.value) })}
+                                 onChange={(e) =>
+                                    setSelectedProduct({ ...selectedProduct, originalPrice: Number(e.target.value) })
+                                 }
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               />
                            </div>
@@ -659,7 +692,7 @@ export default function AdminDashboard() {
                               type='url'
                               required
                               value={selectedProduct.image}
-                              onChange={e => setSelectedProduct({ ...selectedProduct, image: e.target.value })}
+                              onChange={(e) => setSelectedProduct({ ...selectedProduct, image: e.target.value })}
                               className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                            />
                         </div>
@@ -669,18 +702,21 @@ export default function AdminDashboard() {
                               required
                               rows={3}
                               value={selectedProduct.description}
-                              onChange={e => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
+                              onChange={(e) => setSelectedProduct({ ...selectedProduct, description: e.target.value })}
                               className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                            />
                         </div>
                         <div>
                            <label className='block text-sm font-medium text-text-dark mb-2'>Product Details</label>
                            {selectedProduct.details.map((detail, index) => (
-                              <div key={index} className='flex space-x-2 mb-2'>
+                              <div
+                                 key={index}
+                                 className='flex space-x-2 mb-2'
+                              >
                                  <input
                                     type='text'
                                     value={detail}
-                                    onChange={e => {
+                                    onChange={(e) => {
                                        const newDetails = [...selectedProduct.details]
                                        newDetails[index] = e.target.value
                                        setSelectedProduct({ ...selectedProduct, details: newDetails })
@@ -703,7 +739,9 @@ export default function AdminDashboard() {
                            ))}
                            <button
                               type='button'
-                              onClick={() => setSelectedProduct({ ...selectedProduct, details: [...selectedProduct.details, ''] })}
+                              onClick={() =>
+                                 setSelectedProduct({ ...selectedProduct, details: [...selectedProduct.details, ''] })
+                              }
                               className='btn-secondary mt-2'
                            >
                               Add Detail
@@ -714,7 +752,7 @@ export default function AdminDashboard() {
                               <input
                                  type='checkbox'
                                  checked={selectedProduct.inStock}
-                                 onChange={e => setSelectedProduct({ ...selectedProduct, inStock: e.target.checked })}
+                                 onChange={(e) => setSelectedProduct({ ...selectedProduct, inStock: e.target.checked })}
                                  className='mr-2'
                               />
                               In Stock
