@@ -77,14 +77,19 @@ export default function AdminDashboard() {
    const [openProductModal, setOpenProductModal] = useState(false)
 
    useEffect(() => {
-      // Load Cloudinary widget script
-      const script = document.createElement('script')
-      script.src = 'https://widget.cloudinary.com/v2.0/global/all.js'
-      script.async = true
-      document.head.appendChild(script)
+      // Only run on client side
+      if (typeof window !== 'undefined') {
+         // Load Cloudinary widget script
+         const script = document.createElement('script')
+         script.src = 'https://widget.cloudinary.com/v2.0/global/all.js'
+         script.async = true
+         document.head.appendChild(script)
 
-      return () => {
-         document.head.removeChild(script)
+         return () => {
+            if (document.head.contains(script)) {
+               document.head.removeChild(script)
+            }
+         }
       }
    }, [])
 
@@ -143,16 +148,20 @@ export default function AdminDashboard() {
    }
 
    const copyToClipboard = (text: string) => {
-      navigator.clipboard
-         .writeText(text)
-         .then(() => {
-            toast.success('URL copied to clipboard!', {
-               duration: 2000,
+      if (typeof window !== 'undefined' && navigator.clipboard) {
+         navigator.clipboard
+            .writeText(text)
+            .then(() => {
+               toast.success('URL copied to clipboard!', {
+                  duration: 2000,
+               })
             })
-         })
-         .catch(() => {
-            toast.error('Failed to copy URL')
-         })
+            .catch(() => {
+               toast.error('Failed to copy URL')
+            })
+      } else {
+         toast.error('Clipboard not supported')
+      }
    }
 
    const clearUploadedImages = () => {
@@ -633,12 +642,14 @@ export default function AdminDashboard() {
                                           >
                                              {/* Image Preview */}
                                              <div className='flex-shrink-0'>
-                                                <img
+                                                <Image
                                                    src={url.replace(
                                                       '/upload/',
                                                       '/upload/w_64,h_64,c_fill,q_auto,f_auto/'
                                                    )}
                                                    alt={`Upload ${index + 1}`}
+                                                   width={64}
+                                                   height={64}
                                                    className='w-16 h-16 object-cover rounded-lg border-2 border-gray-200'
                                                    onError={(e) => {
                                                       const target = e.target as HTMLImageElement
