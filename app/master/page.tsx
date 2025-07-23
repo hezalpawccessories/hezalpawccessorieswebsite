@@ -20,6 +20,7 @@ import {
    ExternalLink,
 } from 'lucide-react'
 import { products as initialProducts, Product } from '@/lib/products'
+import ProductModal from '../../components/ProductModal'
 import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
@@ -73,6 +74,7 @@ export default function AdminDashboard() {
    })
 
    const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
+   const [openProductModal, setOpenProductModal] = useState(false)
 
    useEffect(() => {
       // Load Cloudinary widget script
@@ -141,13 +143,16 @@ export default function AdminDashboard() {
    }
 
    const copyToClipboard = (text: string) => {
-      navigator.clipboard.writeText(text).then(() => {
-         toast.success('URL copied to clipboard!', {
-            duration: 2000,
+      navigator.clipboard
+         .writeText(text)
+         .then(() => {
+            toast.success('URL copied to clipboard!', {
+               duration: 2000,
+            })
          })
-      }).catch(() => {
-         toast.error('Failed to copy URL')
-      })
+         .catch(() => {
+            toast.error('Failed to copy URL')
+         })
    }
 
    const clearUploadedImages = () => {
@@ -202,7 +207,7 @@ export default function AdminDashboard() {
    }
 
    const handleDeleteProduct = (productId: string) => {
-      const productToDelete = products.find(p => p.id === productId)
+      const productToDelete = products.find((p) => p.id === productId)
       if (confirm('Are you sure you want to delete this product?')) {
          deleteProduct(productId)
             .then(() => {
@@ -360,6 +365,14 @@ export default function AdminDashboard() {
       )
    }
 
+   const handleImageClick = (productId: string) => {
+      const product = products.find((p) => p.id === productId)
+      if (product) {
+         setSelectedProduct(product)
+         setOpenProductModal(true)
+      }
+   }
+
    return (
       <div className='min-h-screen bg-soft-gray'>
          {/* Header */}
@@ -401,6 +414,16 @@ export default function AdminDashboard() {
                ))}
             </div>
 
+            {openProductModal && selectedProduct && (
+               <ProductModal
+                  product={selectedProduct}
+                  onClose={() => {
+                     setOpenProductModal(false)
+                     setSelectedProduct(null)
+                  }}
+               />
+            )}
+
             {/* Tab Content */}
             <AnimatePresence mode='wait'>
                {activeTab === 'products' && (
@@ -431,17 +454,38 @@ export default function AdminDashboard() {
                         {filteredProducts.map((product) => (
                            <div
                               key={product.id}
-                              className='bg-white rounded-lg shadow-lg overflow-hidden'
+                              className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 hover:scale-105 '
                            >
+                              {/* {product.images && product.images.length > 0 ? (
+                                 product.images.map((imageUrl) => (
+                                    <Image
+                                       key={imageUrl}
+                                       src={imageUrl}
+                                       alt={product.title}
+                                       width={600}
+                                       height={192}
+                                       className='w-full h-48 object-cover hover:opacity-95 transition-all duration-400'
+                                    />
+                                 ))
+                              ) : (
+                                 <Image
+                                    src={product.image}
+                                    alt={product.title}
+                                    width={600}
+                                    height={192}
+                                    className='w-full h-48 object-cover hover:opacity-95 transition-all duration-400'
+                                 />
+                              )} */}
                               <Image
                                  src={product.image}
                                  alt={product.title}
                                  width={600}
                                  height={192}
-                                 className='w-full h-48 object-cover'
+                                 className='w-full h-48 object-cover hover:opacity-95 transition-all duration-500 cursor-pointer'
+                                 onClick={() => handleImageClick(product.id)}
                               />
                               <div className='p-4'>
-                                 <h3 className='font-bold text-text-dark mb-2'>{product.title}</h3>
+                                 <h3 className='font-bold text-text-dark mb-2 hover:underline'>{product.title}</h3>
                                  <p className='text-text-light text-sm mb-2'>{product.category}</p>
                                  <div className='flex items-center justify-between mb-4'>
                                     <span className='text-lg font-bold text-primary-pink'>₹{product.price}</span>
@@ -590,16 +634,19 @@ export default function AdminDashboard() {
                                              {/* Image Preview */}
                                              <div className='flex-shrink-0'>
                                                 <img
-                                                   src={url.replace('/upload/', '/upload/w_64,h_64,c_fill,q_auto,f_auto/')}
+                                                   src={url.replace(
+                                                      '/upload/',
+                                                      '/upload/w_64,h_64,c_fill,q_auto,f_auto/'
+                                                   )}
                                                    alt={`Upload ${index + 1}`}
                                                    className='w-16 h-16 object-cover rounded-lg border-2 border-gray-200'
                                                    onError={(e) => {
-                                                      const target = e.target as HTMLImageElement;
-                                                      target.style.display = 'none';
+                                                      const target = e.target as HTMLImageElement
+                                                      target.style.display = 'none'
                                                    }}
                                                 />
                                              </div>
-                                             
+
                                              {/* URL and Controls */}
                                              <div className='flex-1 min-w-0'>
                                                 <div className='flex items-center justify-between'>
@@ -615,7 +662,10 @@ export default function AdminDashboard() {
                                                       Copy URL
                                                    </button>
                                                 </div>
-                                                <p className='text-xs text-gray-500 truncate' title={url}>
+                                                <p
+                                                   className='text-xs text-gray-500 truncate'
+                                                   title={url}
+                                                >
                                                    {url}
                                                 </p>
                                              </div>
