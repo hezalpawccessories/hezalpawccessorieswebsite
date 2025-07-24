@@ -13,6 +13,9 @@ export default function Navbar() {
    const router = useRouter()
    const [isMenuOpen, setIsMenuOpen] = useState(false)
    const [cartCount, setCartCount] = useState(0)
+   const [isAuthenticated, setIsAuthenticated] = useState(
+      (typeof window !== 'undefined' && localStorage.getItem('isAuthenticated') === 'true') || false
+   )
 
    useEffect(() => {
       const updateCartCount = () => {
@@ -60,18 +63,14 @@ export default function Navbar() {
                   href='/'
                   className='flex items-center justify-center space-x-2'
                >
-                  {/* <div className="w-10 h-10 bg-gradient-to-br from-primary-pink to-warm-orange rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" fill="currentColor" />
-            </div> */}
-                  <div className='w-10 h-10 bg-black/10 rounded-full flex items-center justify-center'>
-                     <Image
-                        src='/logo.png'
-                        alt='Hezal Accessories Logo'
-                        width={70}
-                        height={70}
-                        className='rounded-full mb-1'
-                     />
-                  </div>
+                  <Image
+                     src='/logo3.png'
+                     alt='Hezal Accessories Logo'
+                     width={50}
+                     height={50}
+                     className='rounded-full mb-1'
+                  />
+
                   <div>
                      <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>
                         Hezal Pawccessories
@@ -97,6 +96,14 @@ export default function Navbar() {
                         {item.label}
                      </button>
                   ))}
+                  {isAuthenticated && (
+                     <Link
+                        href='/master'
+                        className={`font-dm-sans font-medium transition-colors duration-200 bg-primary-pink text-white hover:bg-primary-pink/90 py-1.5 px-3 rounded-md`}
+                     >
+                        Admin
+                     </Link>
+                  )}
                </div>
 
                {/* Cart and Mobile Menu */}
@@ -144,6 +151,14 @@ export default function Navbar() {
                            {item.label}
                         </button>
                      ))}
+                     {isAuthenticated && (
+                        <Link
+                           href='/master'
+                           className={`block w-full text-left px-3 py-2 rounded-md text-base font-dm-sans font-medium transition-colors duration-200 bg-primary-pink text-white hover:bg-primary-pink/90`}
+                        >
+                           Admin
+                        </Link>
+                     )}
                   </div>
                </div>
             )}

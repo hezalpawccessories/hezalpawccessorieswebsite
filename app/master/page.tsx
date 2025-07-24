@@ -25,6 +25,8 @@ import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integra
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
 import { toast } from 'sonner'
+import Link from 'next/link'
+import { link } from 'node:fs'
 
 // Declare cloudinary widget
 declare global {
@@ -46,7 +48,9 @@ interface Order {
 }
 
 export default function AdminDashboard() {
-   const [isAuthenticated, setIsAuthenticated] = useState(false)
+   const [isAuthenticated, setIsAuthenticated] = useState(
+      (typeof window !== 'undefined' && localStorage.getItem('isAuthenticated') === 'true') || false
+   )
    const [password, setPassword] = useState('')
    const [showPassword, setShowPassword] = useState(false)
    const [activeTab, setActiveTab] = useState('products')
@@ -203,6 +207,9 @@ export default function AdminDashboard() {
       if (password === '123') {
          setIsAuthenticated(true)
          setPassword('')
+         if (typeof window !== 'undefined') {
+            localStorage.setItem('isAuthenticated', 'true')
+         }
          toast.success('Welcome to Admin Dashboard!', {
             description: 'You have successfully logged in',
             duration: 3000,
@@ -331,9 +338,25 @@ export default function AdminDashboard() {
             <motion.div
                initial={{ opacity: 0, scale: 0.8 }}
                animate={{ opacity: 1, scale: 1 }}
-               className='bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4'
+               className='relative bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4'
             >
-               <div className='text-center mb-8'>
+               <Link
+                  href='/'
+                  className='absolute top-8 left-8 rounded-lg bg-primary-pink text-white text-center p-2 font-semibold shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 '
+               >
+                  <svg
+                     xmlns='http://www.w3.org/2000/svg'
+                     width='20'
+                     height='20'
+                     viewBox='0 0 20 20'
+                  >
+                     <path
+                        fill='currentColor'
+                        d='M18.178 11.373a.7.7 0 0 1 .7.7v5.874c.027.812-.071 1.345-.434 1.68c-.338.311-.828.4-1.463.366H3.144C2.5 19.961 2 19.7 1.768 19.173c-.154-.347-.226-.757-.226-1.228v-5.873a.7.7 0 0 1 1.4 0v5.873c0 .232.026.42.07.562l.036.098l-.003-.01c.001-.013.03-.008.132-.002h13.84c.245.014.401 0 .456-.001l.004-.001c-.013-.053.012-.27 0-.622v-5.897a.7.7 0 0 1 .701-.7ZM10.434 0c.264 0 .5.104.722.297l8.625 8.139a.7.7 0 1 1-.962 1.017l-8.417-7.944l-9.244 7.965a.7.7 0 0 1-.915-1.06L9.689.277l.086-.064c.214-.134.428-.212.66-.212Z'
+                     />
+                  </svg>
+               </Link>
+               <div className=' text-center mb-8'>
                   <Lock className='w-16 h-16 text-primary-pink mx-auto mb-4' />
                   <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
                      Admin Access
@@ -391,12 +414,18 @@ export default function AdminDashboard() {
                   <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
                      Admin Dashboard
                   </h1>
-                  <button
-                     onClick={() => setIsAuthenticated(false)}
+                  <Link
+                     href='/'
+                     onClick={() => {
+                        if (typeof window !== 'undefined') {
+                           localStorage.setItem('isAuthenticated', 'false')
+                        }
+                        setIsAuthenticated(false)
+                     }}
                      className='text-text-light hover:text-primary-pink'
                   >
                      Logout
-                  </button>
+                  </Link>
                </div>
             </div>
          </div>
@@ -421,6 +450,12 @@ export default function AdminDashboard() {
                      <span>{tab.label}</span>
                   </button>
                ))}
+               <Link
+                  href='/'
+                  className='flex items-center space-x-2 px-6 py-3 rounded-lg font-medium   bg-primary-pink text-white text-center  shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 '
+               >
+                  Website
+               </Link>
             </div>
 
             {openProductModal && selectedProduct && (
