@@ -77,6 +77,8 @@ export default function AdminDashboard() {
       reviews: 0,
    })
 
+   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
    const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
    const [openProductModal, setOpenProductModal] = useState(false)
 
@@ -430,9 +432,9 @@ export default function AdminDashboard() {
             </div>
          </div>
 
-         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 '>
             {/* Tabs */}
-            <div className='flex space-x-1 bg-white p-1 rounded-lg mb-8 shadow-lg'>
+            <div className='flex space-x-1 bg-white p-1 rounded-lg mb-8 shadow-lg w-full sm:justify-center justify-around'>
                {[
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
@@ -442,17 +444,17 @@ export default function AdminDashboard() {
                   <button
                      key={tab.id}
                      onClick={() => setActiveTab(tab.id)}
-                     className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                     className={`flex items-center space-x-1 lg:space-x-2 px-3 py-1.5 lg:px-6 lg:py-3 rounded-lg font-medium transition-colors ${
                         activeTab === tab.id ? 'bg-primary-blue text-white' : 'text-text-light hover:text-primary-blue'
                      }`}
                   >
                      {tab.icon}
-                     <span>{tab.label}</span>
+                     {!isMobile && <span>{tab.label}</span>}
                   </button>
                ))}
                <Link
                   href='/'
-                  className='flex items-center space-x-2 px-6 py-3 rounded-lg font-medium   bg-primary-pink text-white text-center  shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 '
+                  className='flex items-center space-x-2 px-6 py-3 rounded-lg font-medium   bg-primary-pink text-white text-center  shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 sm:text-base text-sm'
                >
                   Website
                </Link>
@@ -479,9 +481,11 @@ export default function AdminDashboard() {
                      className='space-y-6'
                   >
                      <div className='flex justify-between items-center'>
-                        <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
-                           Products Management
-                        </h2>
+                        {!isMobile && (
+                           <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                              Products Management
+                           </h2>
+                        )}
                         <div className='relative'>
                            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5' />
                            <input
