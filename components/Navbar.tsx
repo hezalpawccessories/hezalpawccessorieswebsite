@@ -42,7 +42,7 @@ export default function Navbar() {
       { href: '/', label: 'Home' },
       { href: '/about', label: 'About' },
       { href: '/owner', label: 'Owner' },
-      { href: '/products', label: 'Products' },
+      { href: '/products', label: 'Products', highlight: true },
       { href: '/contact', label: 'Contact' },
    ]
 
@@ -67,17 +67,17 @@ export default function Navbar() {
                      <Image
                         src='/logom.png'
                         alt='Hezal Accessories Logo'
-                        width={34}
-                        height={34}
+                        width={32}
+                        height={32}
                         className='rounded-full'
                      />
                   </div>
 
                   <div>
-                     <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>
+                     <h1 className='text-xl font-nunito font-extrabold text-primary-pink  hover:text-pink-500 leading-tight tracking-wide'>
                         Hezal Pawccessories
                      </h1>
-                     <p className='text-xs font-dm-sans text-text-light -mt-1 tracking-wide'>
+                     <p className='text-xs font-semibold font-dm-sans text-text-body -mt-0.5 tracking-wide'>
                         Your pet deserves only the BEST
                      </p>
                   </div>
@@ -89,11 +89,14 @@ export default function Navbar() {
                      <button
                         key={item.href}
                         onClick={() => handleNavigation(item.href)}
-                        className={`font-dm-sans font-medium transition-colors duration-200 ${
-                           pathname === item.href
-                              ? 'text-primary-pink border-b-2 border-primary-pink pb-1'
-                              : 'text-text-dark hover:text-primary-pink'
+                        className={`font-dm-sans font-medium transition-colors duration-200 px-4 py-1.5 rounded-md ${
+                           item.label === 'Products'
+                              ? 'bg-gradient-to-r from-primary-pink to-primary-blue text-white shadow-md hover:from-primary-blue hover:to-primary-pink border-none scale-105'
+                              : pathname === item.href
+                              ? 'text-primary-pink border-b-2 border-primary-pink pb-1 bg-transparent'
+                              : 'text-text-dark hover:text-primary-pink bg-transparent'
                         }`}
+                        style={item.label === 'Products' ? { fontWeight: 700, letterSpacing: '0.02em' } : {}}
                      >
                         {item.label}
                      </button>
@@ -145,10 +148,13 @@ export default function Navbar() {
                            key={item.href}
                            onClick={() => handleNavigation(item.href)}
                            className={`block w-full text-left px-3 py-2 rounded-md text-base font-dm-sans font-medium transition-colors duration-200 ${
-                              pathname === item.href
+                              item.label === 'Products'
+                                 ? 'bg-gradient-to-r from-primary-pink to-primary-blue text-white shadow-md border-none scale-105'
+                                 : pathname === item.href
                                  ? 'text-primary-pink bg-pink-50'
                                  : 'text-text-dark hover:text-primary-pink hover:bg-pink-50'
                            }`}
+                           style={item.label === 'Products' ? { fontWeight: 700, letterSpacing: '0.02em' } : {}}
                         >
                            {item.label}
                         </button>
