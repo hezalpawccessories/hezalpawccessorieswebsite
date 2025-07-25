@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc } from 'lucide-react'
+import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -27,7 +27,11 @@ export default function Products() {
    const [selectedSize, setSelectedSize] = useState<string>('')
    const [showCount, setShowCount] = useState(8)
    const [cartItems, setCartItems] = useState<any[]>([])
-   const [products, setProducts] = useState<Product[]>([])
+   const [productsList, setProductsList] = useState<Product[]>([])
+   const [loading, setLoading] = useState(true)
+   const [mainImage, setMainImage] = useState<string>('')
+   const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
+   const [shakeProduct, setShakeProduct] = useState<string>('') // Track which product to shake
 
    // Load cart items on component mount
    useEffect(() => {
@@ -37,17 +41,20 @@ export default function Products() {
       }
 
       //Loading products from Firestore
+      setLoading(true)
       getProducts()
          .then((fetchedProducts) => {
-            setProducts(fetchedProducts)
-            if (fetchedProducts.length > 0) {
-               toast.success('Products loaded successfully', {
-                  description: `${fetchedProducts.length} products found in your catalog`,
-                  duration: 3000,
-               })
-            }
+            setProductsList(fetchedProducts)
+            setLoading(false)
+            // if (fetchedProducts.length > 0) {
+            //    toast.success('Products loaded successfully', {
+            //       description: `${fetchedProducts.length} products found in your catalog`,
+            //       duration: 3000,
+            //    })
+            // }
          })
          .catch((error) => {
+            setLoading(false)
             console.error('Error fetching products:', error)
             toast.error('Failed to load products', {
                description: 'There was an issue loading your products from the database',
@@ -57,7 +64,7 @@ export default function Products() {
    }, [])
 
    const filteredProducts = useMemo(() => {
-      let filtered = products
+      let filtered = productsList
 
       // Filter by category
       if (selectedCategory !== 'All') {
@@ -88,7 +95,7 @@ export default function Products() {
       })
 
       return filtered
-   }, [selectedCategory, searchQuery, sortBy])
+   }, [productsList, selectedCategory, searchQuery, sortBy])
 
    const displayedProducts = filteredProducts.slice(0, showCount)
    const hasMoreProducts = filteredProducts.length > showCount
@@ -97,25 +104,39 @@ export default function Products() {
       return cartItems.some((item) => item.id === productId)
    }
 
-   const addToCart = (product: Product, size: string, quantity: number = 1) => {
-      if (!size) {
-         alert('Please select a size before adding to cart')
+   const addToCart = (product: Product, size?: string, quantity: number = 1) => {
+      const sizeToUse = size || selectedSizes[product.id] || selectedSize
+
+      if (!sizeToUse) {
+         toast.error('Please select a size first', {
+            description: 'Choose a size before adding to cart',
+            duration: 3000,
+         })
+
+         // Trigger shake animation
+         setShakeProduct(product.id)
+         setTimeout(() => setShakeProduct(''), 600)
          return
       }
 
       if (typeof window !== 'undefined') {
          const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-         const existingItem = cart.find((item: any) => item.id === product.id && item.size === size)
+         const existingItem = cart.find((item: any) => item.id === product.id && item.size === sizeToUse)
 
          if (existingItem) {
             existingItem.quantity += quantity
          } else {
-            cart.push({ ...product, size, quantity })
+            cart.push({ ...product, size: sizeToUse, quantity })
          }
 
          localStorage.setItem('cart', JSON.stringify(cart))
          window.dispatchEvent(new Event('cartUpdated'))
          setCartItems(cart)
+
+         toast.success('Added to cart!', {
+            description: `${product.title} (Size: ${sizeToUse}) added to your cart`,
+            duration: 3000,
+         })
       }
 
       if (selectedProduct) {
@@ -127,6 +148,18 @@ export default function Products() {
    const showMoreProducts = () => {
       setShowCount((prev) => prev + 8)
    }
+
+   // Initialize main image when selected product changes
+   useEffect(() => {
+      if (selectedProduct) {
+         const allImages = [selectedProduct.image, ...(selectedProduct.images?.filter(Boolean) || [])]
+         setMainImage(allImages[0])
+         // Set the modal size to the product's already selected size if any
+         if (selectedSizes[selectedProduct.id]) {
+            setSelectedSize(selectedSizes[selectedProduct.id])
+         }
+      }
+   }, [selectedProduct, selectedSizes])
 
    return (
       <>
@@ -245,10 +278,9 @@ export default function Products() {
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: index * 0.1 }}
-                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover cursor-pointer'
-                        onClick={() => setSelectedProduct(product)}
+                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover'
                      >
-                        <div className='relative'>
+                        <div className='relative group'>
                            <Image
                               src={product.image}
                               alt={product.title}
@@ -256,6 +288,15 @@ export default function Products() {
                               height={192}
                               className='w-full h-48 object-cover'
                            />
+                           {/* Hover overlay with eye icon */}
+                           <div
+                              className='absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'
+                              onClick={() => setSelectedProduct(product)}
+                           >
+                              <div className='bg-white rounded-full p-3 shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300 cursor-pointer'>
+                                 <Eye className='w-6 h-6 text-primary-blue' />
+                              </div>
+                           </div>
                            {product.originalPrice && (
                               <div className='absolute top-2 right-2 bg-primary-pink text-white px-2 py-1 rounded-full text-xs font-bold'>
                                  {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
@@ -265,11 +306,15 @@ export default function Products() {
                         </div>
 
                         <div className='p-4'>
-                           <h3 className='text-lg font-nunito font-bold text-text-dark mb-2 line-clamp-2 hover:underline transition-all duration-400'>
+                           <h3
+                              className='text-lg font-nunito font-bold text-text-dark mb-2 line-clamp-2 hover:underline transition-all duration-400 cursor-pointer'
+                              onClick={() => setSelectedProduct(product)}
+                           >
                               {product.title}
                            </h3>
 
-                           <div className='flex items-center mb-2'>
+                           {/* Reviews and Ratings Section - removing for now */}
+                           {/* <div className='flex items-center mb-2'>
                               <div className='flex items-center'>
                                  {[...Array(5)].map((_, i) => (
                                     <Star
@@ -283,7 +328,7 @@ export default function Products() {
                                  ))}
                               </div>
                               <span className='text-sm font-dm-sans text-text-light ml-2'>({product.reviews})</span>
-                           </div>
+                           </div> */}
 
                            <div className='flex items-center justify-between mb-4'>
                               <div className='flex items-center space-x-2'>
@@ -299,18 +344,18 @@ export default function Products() {
                            </div>
 
                            {/* Size Selection */}
-                           <div className='mb-6 '>
+                           <div className='mb-6'>
                               <h3 className='font-nunito font-bold text-text-dark mb-3'>Select Size:</h3>
                               <div className='flex flex-wrap gap-1'>
                                  {sizes.map((size) => (
                                     <button
                                        key={size}
-                                       onClick={() => setSelectedSize(size)}
-                                       className={`px-2 py-1 text-sm border rounded-md font-medium transition-colors ${
-                                          selectedSize === size
+                                       onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: size }))}
+                                       className={`px-2 py-1 text-sm border rounded-md font-medium transition-all duration-200 ${
+                                          selectedSizes[product.id] === size
                                              ? 'bg-primary-pink text-white border-primary-pink'
                                              : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
-                                       }`}
+                                       } ${shakeProduct === product.id ? 'animate-shake border-red-500 border-2' : ''}`}
                                     >
                                        {size}
                                     </button>
@@ -324,11 +369,11 @@ export default function Products() {
                                     ? 'bg-primary-blue text-white px-4 py-3 rounded-full font-semibold cursor-default'
                                     : 'btn-primary'
                               }`}
-                              onClick={() => {
-                                 selectedProduct && addToCart(selectedProduct, selectedSize)
+                              onClick={(e) => {
+                                 e.stopPropagation()
+                                 addToCart(product)
                               }}
-                              disabled={(selectedProduct && !selectedProduct.inStock) || !selectedSize}
-                              // disabled={isInCart(product.id)}
+                              disabled={!product.inStock}
                            >
                               <ShoppingCart className='w-4 h-4' />
                               <span>{isInCart(product.id) ? 'In Cart' : 'Add to Cart'}</span>
@@ -350,10 +395,17 @@ export default function Products() {
                   </div>
                )}
 
-               {displayedProducts.length === 0 && (
+               {loading ? (
                   <div className='text-center py-12'>
-                     <p className='text-xl text-text-light'>No products found matching your criteria.</p>
+                     <p className='text-xl text-text-light'>Loading products...</p>
                   </div>
+               ) : (
+                  displayedProducts.length === 0 &&
+                  productsList.length > 0 && (
+                     <div className='text-center py-12'>
+                        <p className='text-xl text-text-light'>No products found matching your criteria.</p>
+                     </div>
+                  )
                )}
             </div>
 
@@ -365,7 +417,10 @@ export default function Products() {
                      animate={{ opacity: 1 }}
                      exit={{ opacity: 0 }}
                      className='modal-overlay'
-                     onClick={() => setSelectedProduct(null)}
+                     onClick={() => {
+                        setSelectedProduct(null)
+                        setSelectedSize('')
+                     }}
                   >
                      <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
@@ -375,26 +430,60 @@ export default function Products() {
                         onClick={(e) => e.stopPropagation()}
                      >
                         <button
-                           onClick={() => setSelectedProduct(null)}
+                           onClick={() => {
+                              setSelectedProduct(null)
+                              setSelectedSize('')
+                           }}
                            className='absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg'
                         >
                            <X className='w-5 h-5' />
                         </button>
 
                         <Image
-                           src={selectedProduct.image}
+                           src={mainImage || selectedProduct.image}
                            alt={selectedProduct.title}
                            width={600}
                            height={256}
-                           className='w-full h-64 object-cover rounded-t-2xl'
+                           className='w-full h-80 object-contain rounded-t-2xl'
                         />
+
+                        {/* Thumbnail Gallery */}
+                        {(() => {
+                           const allImages = [selectedProduct.image, ...(selectedProduct.images?.filter(Boolean) || [])]
+                           return allImages.length > 1 ? (
+                              <div className='px-6 py-4 bg-gray-50'>
+                                 <div className='flex gap-2 overflow-x-auto pb-2'>
+                                    {allImages.map((img, idx) => (
+                                       <button
+                                          key={img + idx}
+                                          onClick={() => setMainImage(img)}
+                                          className={`flex-shrink-0 border-2 rounded-lg p-1 transition-all ${
+                                             mainImage === img
+                                                ? 'border-primary-blue'
+                                                : 'border-transparent hover:border-gray-300'
+                                          }`}
+                                       >
+                                          <Image
+                                             src={img}
+                                             alt={`Thumbnail ${idx + 1}`}
+                                             width={60}
+                                             height={60}
+                                             className='w-15 h-15 rounded-md object-cover bg-white'
+                                          />
+                                       </button>
+                                    ))}
+                                 </div>
+                              </div>
+                           ) : null
+                        })()}
 
                         <div className='p-6'>
                            <h2 className='text-2xl font-nunito font-bold text-text-dark mb-2'>
                               {selectedProduct.title}
                            </h2>
 
-                           <div className='flex items-center mb-4'>
+                           {/* Reviews and Ratings Section */}
+                           {/* <div className='flex items-center mb-4'>
                               <div className='flex items-center'>
                                  {[...Array(5)].map((_, i) => (
                                     <Star
@@ -408,7 +497,7 @@ export default function Products() {
                                  ))}
                               </div>
                               <span className='text-sm text-text-light ml-2'>({selectedProduct.reviews} reviews)</span>
-                           </div>
+                           </div> */}
 
                            <p className='text-text-light mb-4'>{selectedProduct.description}</p>
 
@@ -440,13 +529,36 @@ export default function Products() {
                               </span>
                            </div>
 
+                           {/* Size Selection in Modal */}
+                           <div className='mb-6'>
+                              <h3 className='font-nunito font-bold text-text-dark mb-3'>Select Size:</h3>
+                              <div className='flex flex-wrap gap-2'>
+                                 {sizes.map((size) => (
+                                    <button
+                                       key={size}
+                                       onClick={() => {
+                                          setSelectedSize(size)
+                                          setSelectedSizes((prev) => ({ ...prev, [selectedProduct.id]: size }))
+                                       }}
+                                       className={`px-3 py-2 text-sm border rounded-lg font-medium transition-colors ${
+                                          selectedSize === size
+                                             ? 'bg-primary-pink text-white border-primary-pink'
+                                             : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
+                                       }`}
+                                    >
+                                       {size}
+                                    </button>
+                                 ))}
+                              </div>
+                           </div>
+
                            <button
                               onClick={() => addToCart(selectedProduct, selectedSize)}
-                              disabled={!selectedProduct.inStock || !selectedSize}
+                              disabled={!selectedProduct.inStock}
                               className='btn-primary w-full flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed'
                            >
                               <ShoppingCart className='w-5 h-5' />
-                              <span>{!selectedSize ? 'Select Size First' : 'Add to Cart'}</span>
+                              <span>Add to Cart</span>
                            </button>
                         </div>
                      </motion.div>

@@ -408,7 +408,7 @@ export default function AdminDashboard() {
    }
 
    return (
-      <div className='min-h-screen bg-soft-gray'>
+      <div className='min-h-screen gradient-bg'>
          {/* Header */}
          <div className='bg-white shadow-lg'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -498,11 +498,11 @@ export default function AdminDashboard() {
                         </div>
                      </div>
 
-                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
                         {filteredProducts.map((product) => (
                            <div
                               key={product.id}
-                              className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 hover:scale-105 '
+                              className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 hover:scale-105'
                            >
                               {/* {product.images && product.images.length > 0 ? (
                                  product.images.map((imageUrl) => (
@@ -524,14 +524,16 @@ export default function AdminDashboard() {
                                     className='w-full h-48 object-cover hover:opacity-95 transition-all duration-400'
                                  />
                               )} */}
+
                               <Image
                                  src={product.image}
                                  alt={product.title}
                                  width={600}
                                  height={192}
-                                 className='w-full h-48 object-cover hover:opacity-95 transition-all duration-500 cursor-pointer'
+                                 className='w-full h-48 object-contain hover:opacity-95 transition-all duration-500 cursor-pointer'
                                  onClick={() => handleImageClick(product.id)}
                               />
+
                               <div className='p-4'>
                                  <h3 className='font-bold text-text-dark mb-2 hover:underline'>{product.title}</h3>
                                  <p className='text-text-light text-sm mb-2'>{product.category}</p>
@@ -545,6 +547,7 @@ export default function AdminDashboard() {
                                        {product.inStock ? 'In Stock' : 'Out of Stock'}
                                     </span>
                                  </div>
+
                                  <div className='flex space-x-2'>
                                     <button
                                        onClick={() => {
