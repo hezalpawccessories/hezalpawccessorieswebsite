@@ -67,8 +67,8 @@ export default function Navbar() {
                      <Image
                         src='/logom.png'
                         alt='Hezal Accessories Logo'
-                        width={40}
-                        height={40}
+                        width={34}
+                        height={34}
                         className='rounded-full'
                      />
                   </div>

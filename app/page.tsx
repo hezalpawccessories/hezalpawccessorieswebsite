@@ -150,7 +150,9 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-16'
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>Featured Products</h2>
+                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
+                        Featured Products
+                     </h2>
                      <p className='text-xl font-dm-sans text-text-body'>Discover our most popular pet accessories</p>
                   </motion.div>
 
@@ -192,8 +194,12 @@ export default function Home() {
                            <div className='p-6'>
                               <h3 className='text-xl font-nunito font-bold text-text-dark mb-2'>{product.title}</h3>
                               <div className='flex items-center space-x-2 mb-4'>
-                                 <span className='text-2xl font-dm-sans font-bold text-primary-pink'>{product.price}</span>
-                                 <span className='font-dm-sans text-text-light line-through'>{product.originalPrice}</span>
+                                 <span className='text-2xl font-dm-sans font-bold text-primary-pink'>
+                                    {product.price}
+                                 </span>
+                                 <span className='font-dm-sans text-text-light line-through'>
+                                    {product.originalPrice}
+                                 </span>
                               </div>
                               <button className='btn-primary w-full font-dm-sans font-medium'>Add to Cart</button>
                            </div>
@@ -218,7 +224,9 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-16'
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>What Pet Parents Say</h2>
+                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
+                        What Pet Parents Say
+                     </h2>
                      <p className='text-xl font-dm-sans text-text-body'>Don&apos;t just take our word for it</p>
                   </motion.div>
 
@@ -256,7 +264,9 @@ export default function Home() {
                      whileInView={{ opacity: 1, y: 0 }}
                      transition={{ duration: 0.8 }}
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-white mb-4 leading-tight tracking-wide'>Ready to Spoil Your Pet?</h2>
+                     <h2 className='text-3xl md:text-4xl font-nunito font-extrabold text-white mb-4 leading-tight tracking-wide'>
+                        Ready to Spoil Your Pet?
+                     </h2>
                      <p className='text-xl font-dm-sans text-white/90 mb-8 max-w-2xl mx-auto'>
                         Join thousands of happy pet parents who trust Hezal Accessories for their furry friends
                      </p>
