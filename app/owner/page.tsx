@@ -45,9 +45,9 @@ export default function Owner() {
                               priority
                            />
                         </div>
-                        <div className='absolute -bottom-4 -right-4 bg-soft-yellow p-4 rounded-2xl shadow-lg'>
-                           <p className='font-bold text-text-dark'>🐾 Pet Lover</p>
-                           <p className='text-sm text-text-light'>Since 2018</p>
+                        <div className='absolute -bottom-4 -right-4 bg-soft-yellow p-4 rounded-2xl shadow-lg space-y-1'>
+                           <p className='font-bold text-text-dark text-center'>🐾 Paws & kisses,</p>
+                           <p className='text-sm text-text-light text-center'>Hezal Garg , Founder & CEO </p>
                         </div>
                      </motion.div>
 
@@ -57,21 +57,30 @@ export default function Owner() {
                         transition={{ duration: 0.8, delay: 0.4 }}
                         className='space-y-6'
                      >
-                        <div>
+                        {/* <div>
                            <h2 className='text-3xl font-bold text-text-dark mb-2'>Hezal Garg</h2>
                            <p className='text-xl text-primary-pink font-semibold'>Founder & CEO</p>
-                        </div>
+                        </div> */}
 
                         <p className='text-text-light leading-relaxed'>
-                           Hello! I&apos;m Priya, a lifelong pet enthusiast and the founder of Hezal Accessories. My
-                           journey began when I adopted my first rescue dog, Max, and realized how difficult it was to
-                           find quality, stylish, and affordable pet accessories.
+                           Woof woof! I’m Hezal, a fun-loving Labrador and the proud Top Dog behind Hezal Pawccessories
+                           ! Ever since I was a wiggly pup, I knew life was too short for boring collars and plain
+                           leashes. So, with a wagging tail and a big dream, I convinced my humans to help me create a
+                           pawsome range of stylish bandanas, dapper bow ties, comfy collars, sturdy leashes, and treat
+                           jars full of tail-wagging surprises!
                         </p>
 
                         <p className='text-text-light leading-relaxed'>
-                           With over 6 years of experience in pet care and a deep understanding of what pets and their
-                           parents need, I started Hezal Accessories to bridge this gap. Every product we offer is
-                           something I would personally use for my own furry family.
+                           From playful prints to timeless classics, each piece is designed with love, tested on long
+                           walks (and occasional squirrel chases!), and approved with a happy woof.
+                        </p>
+
+                        <p className='text-text-light leading-relaxed'>
+                           {' '}
+                           When I’m not busy sniffing out new designs, you’ll find me rolling in the grass, sampling
+                           tasty treats, or giving my humans that “one more belly rub, please” look. Thank you for
+                           stopping by my little corner of the internet. I hope my collection adds a little extra wag to
+                           your day. After all, life’s better with style, treats, and a wagging tail!
                         </p>
 
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -79,10 +88,10 @@ export default function Owner() {
                               <Calendar className='w-5 h-5 text-primary-blue' />
                               <span className='text-text-light'>Founded in 2022</span>
                            </div>
-                           <div className='flex items-center space-x-3'>
+                           {/* <div className='flex items-center space-x-3'>
                               <Award className='w-5 h-5 text-primary-blue' />
                               <span className='text-text-light'>Pet Care Expert</span>
-                           </div>
+                           </div> */}
                            {/* <div className='flex items-center space-x-3'>
                               <Heart className='w-5 h-5 text-primary-blue' />
                               <span className='text-text-light'>Animal Welfare Advocate</span>
@@ -98,7 +107,7 @@ export default function Owner() {
             </section>
 
             {/* Personal Story Section */}
-            <section className='py-20 bg-white'>
+            {/* <section className='py-20 bg-white'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}
@@ -158,10 +167,10 @@ export default function Owner() {
                      ))}
                   </div>
                </div>
-            </section>
+            </section> */}
 
             {/* Vision Section */}
-            <section className='py-20'>
+            <section className='py-20 bg-white'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
                      <motion.div
@@ -223,11 +232,11 @@ export default function Owner() {
                      <div className='flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8'>
                         <div className='flex items-center space-x-2 text-white'>
                            <Mail className='w-5 h-5' />
-                           <span>hezal.accessories@gmail.com</span>
+                           <span>hezalpawccessories@gmail.com</span>
                         </div>
                         <div className='flex items-center space-x-2 text-white'>
                            <Phone className='w-5 h-5' />
-                           <span>+91 98765 43210</span>
+                           <span>+91 70602 66900</span>
                         </div>
                      </div>
                   </motion.div>

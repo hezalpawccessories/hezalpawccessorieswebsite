@@ -61,15 +61,17 @@ export default function Navbar() {
                {/* Logo */}
                <Link
                   href='/'
-                  className='flex items-center justify-center space-x-2'
+                  className='flex items-center justify-center space-x-2 '
                >
-                  <Image
-                     src='/logo3.png'
-                     alt='Hezal Accessories Logo'
-                     width={50}
-                     height={50}
-                     className='rounded-full mb-1'
-                  />
+                  <div className='bg-text-light hover:bg-black/50 transition-colors duration-200 rounded-full p-1'>
+                     <Image
+                        src='/logom.png'
+                        alt='Hezal Accessories Logo'
+                        width={40}
+                        height={40}
+                        className='rounded-full'
+                     />
+                  </div>
 
                   <div>
                      <h1 className='text-xl font-nunito font-extrabold text-primary-pink leading-tight tracking-wide'>

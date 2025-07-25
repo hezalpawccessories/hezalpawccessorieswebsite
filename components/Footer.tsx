@@ -17,11 +17,11 @@ export default function Footer() {
                         />
                      </div> */}
                      <Image
-                        src='/logo.png'
+                        src='/logom.png'
                         alt='Hezal Accessories Logo'
-                        width={70}
-                        height={70}
-                        className='rounded-full mb-1'
+                        width={40}
+                        height={40}
+                        className='rounded-full'
                      />
                      <div>
                         <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal Pawccessories</h3>
@@ -82,7 +82,7 @@ export default function Footer() {
                   <ul className='space-y-2'>
                      <li>
                         <Link
-                           href='#'
+                           href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            FAQs
@@ -90,15 +90,15 @@ export default function Footer() {
                      </li>
                      <li>
                         <Link
-                           href='#'
+                           href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Privacy Policy
+                           Feedback
                         </Link>
                      </li>
                      <li>
                         <Link
-                           href='#'
+                           href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Return Policy
@@ -106,7 +106,7 @@ export default function Footer() {
                      </li>
                      <li>
                         <Link
-                           href='#'
+                           href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Shipping Info
@@ -116,9 +116,35 @@ export default function Footer() {
                </div>
             </div>
 
-            <div className='border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center'>
+            <div className='border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-2'>
                <p className='text-gray-300 text-sm'>© 2025 Hezal Accessories. All rights reserved.</p>
                <p className='text-gray-300 text-sm mt-2 md:mt-0'>Developed with ❤️ for pet lovers</p>
+               <a
+                  href='https://www.instagram.com/hezal_accessories/?hl=en'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center space-x-1 text-gray-300 hover:text-primary-pink transition-colors text-sm font-semibold mt-2 md:mt-0'
+                  title='Follow us on Instagram'
+               >
+                  <svg
+                     xmlns='http://www.w3.org/2000/svg'
+                     width='20'
+                     height='20'
+                     viewBox='0 0 14 14'
+                  >
+                     <g
+                        fill='none'
+                        stroke='currentColor'
+                        stroke-linecap='round'
+                        stroke-linejoin='round'
+                     >
+                        <path d='M10.333 3.644a.25.25 0 1 1 0-.5m0 .5a.25.25 0 1 0 0-.5' />
+                        <path d='M.858 3.431A2.573 2.573 0 0 1 3.431.858h6.862a2.573 2.573 0 0 1 2.573 2.573v6.862a2.573 2.573 0 0 1-2.573 2.573H3.43a2.573 2.573 0 0 1-2.573-2.573V3.43Z' />
+                        <path d='M4.312 6.862a2.55 2.55 0 1 0 5.1 0a2.55 2.55 0 1 0-5.1 0' />
+                     </g>
+                  </svg>
+                  <span>Instagram</span>
+               </a>
             </div>
          </div>
       </footer>

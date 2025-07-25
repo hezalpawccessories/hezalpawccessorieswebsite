@@ -19,7 +19,7 @@ export default function Contact() {
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       // WhatsApp redirect with pre-filled data
-      const whatsappNumber = '918171911209' // Use your WhatsApp number without +
+      const whatsappNumber = '917060266900' // Use your WhatsApp number without +
       const subjectMap: { [key: string]: string } = {
          'product-inquiry': 'Product Inquiry',
          'order-support': 'Order Support',
@@ -46,19 +46,19 @@ export default function Contact() {
       {
          icon: <Mail className='w-6 h-6' />,
          title: 'Email Us',
-         details: 'hezal.accessories@gmail.com',
+         details: 'hezalpawccessories@gmail.com',
          description: 'Send us an email anytime!',
       },
       {
          icon: <Phone className='w-6 h-6' />,
          title: 'Call Us',
-         details: '+91 98765 43210',
+         details: '+91 70602 66900',
          description: 'Mon-Sat 9AM-7PM',
       },
       {
          icon: <MapPin className='w-6 h-6' />,
          title: 'Visit Us',
-         details: 'Mumbai, Maharashtra',
+         details: 'Meerut, Uttar Pradesh',
          description: 'India',
       },
       {

@@ -6,9 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
-import { products, categories, sizes, Product } from '@/lib/products'
+import { categories, sizes, Product } from '@/lib/products'
 import Select from 'react-select'
 import { select } from 'framer-motion/client'
+import { toast } from 'sonner'
+import { getProducts } from '@/integrations/firebase/firestoreCollections'
 
 const sortOptions = [
    { value: 'name', label: 'Sort by Name' },
@@ -25,6 +27,7 @@ export default function Products() {
    const [selectedSize, setSelectedSize] = useState<string>('')
    const [showCount, setShowCount] = useState(8)
    const [cartItems, setCartItems] = useState<any[]>([])
+   const [products, setProducts] = useState<Product[]>([])
 
    // Load cart items on component mount
    useEffect(() => {
@@ -32,6 +35,25 @@ export default function Products() {
          const cart = JSON.parse(localStorage.getItem('cart') || '[]')
          setCartItems(cart)
       }
+
+      //Loading products from Firestore
+      getProducts()
+         .then((fetchedProducts) => {
+            setProducts(fetchedProducts)
+            if (fetchedProducts.length > 0) {
+               toast.success('Products loaded successfully', {
+                  description: `${fetchedProducts.length} products found in your catalog`,
+                  duration: 3000,
+               })
+            }
+         })
+         .catch((error) => {
+            console.error('Error fetching products:', error)
+            toast.error('Failed to load products', {
+               description: 'There was an issue loading your products from the database',
+               duration: 4000,
+            })
+         })
    }, [])
 
    const filteredProducts = useMemo(() => {
@@ -134,7 +156,9 @@ export default function Products() {
                         <button
                            key={category}
                            onClick={() => setSelectedCategory(category)}
-                           className={`category-pill font-dm-sans font-medium ${selectedCategory === category ? 'active' : ''}`}
+                           className={`category-pill font-dm-sans font-medium ${
+                              selectedCategory === category ? 'active' : ''
+                           }`}
                         >
                            {category}
                         </button>
@@ -263,7 +287,9 @@ export default function Products() {
 
                            <div className='flex items-center justify-between mb-4'>
                               <div className='flex items-center space-x-2'>
-                                 <span className='text-xl font-dm-sans font-bold text-primary-pink'>₹{product.price}</span>
+                                 <span className='text-xl font-dm-sans font-bold text-primary-pink'>
+                                    ₹{product.price}
+                                 </span>
                                  {product.originalPrice && (
                                     <span className='text-text-light line-through text-sm'>
                                        ₹{product.originalPrice}
@@ -364,7 +390,9 @@ export default function Products() {
                         />
 
                         <div className='p-6'>
-                           <h2 className='text-2xl font-nunito font-bold text-text-dark mb-2'>{selectedProduct.title}</h2>
+                           <h2 className='text-2xl font-nunito font-bold text-text-dark mb-2'>
+                              {selectedProduct.title}
+                           </h2>
 
                            <div className='flex items-center mb-4'>
                               <div className='flex items-center'>
