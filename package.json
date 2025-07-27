@@ -25,6 +25,7 @@
     "next": "^15.4.2",
     "nprogress": "^0.2.0",
     "postcss": "8.4.30",
+    "razorpay": "^2.9.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-select": "^5.10.2",

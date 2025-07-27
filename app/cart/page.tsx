@@ -1,12 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Trash2, Plus, Minus, ShoppingBag, X } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag, X, CheckCircle, ArrowLeft } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Product } from '@/lib/products'
-import Image from 'next/image';
+import Image from 'next/image'
+import { useRazorpay } from '@/hooks/useRazorpay'
+import { toast } from 'sonner'
+import Script from 'next/script'
 
 interface CartItem extends Product {
    quantity: number
@@ -25,6 +28,8 @@ interface CheckoutForm {
 export default function Cart() {
    const [cartItems, setCartItems] = useState<CartItem[]>([])
    const [showCheckout, setShowCheckout] = useState(false)
+   const [orderSuccess, setOrderSuccess] = useState(false)
+   const [orderDetails, setOrderDetails] = useState<any>(null)
    const [checkoutForm, setCheckoutForm] = useState<CheckoutForm>({
       name: '',
       email: '',
@@ -32,6 +37,21 @@ export default function Cart() {
       address: '',
       pincode: '',
       alternatePhone: '',
+   })
+
+   const { initiatePayment, loading: paymentLoading } = useRazorpay({
+      onSuccess: (paymentData) => {
+         setOrderDetails(paymentData.orderDetails)
+         setOrderSuccess(true)
+         setShowCheckout(false)
+         // Clear cart after successful payment
+         localStorage.removeItem('cart')
+         setCartItems([])
+         window.dispatchEvent(new Event('cartUpdated'))
+      },
+      onFailure: (error) => {
+         console.error('Payment failed:', error)
+      },
    })
 
    useEffect(() => {
@@ -76,24 +96,31 @@ export default function Cart() {
    const shipping = subtotal > 1000 ? 0 : 99
    const total = subtotal + shipping
 
-   const handleCheckout = (e: React.FormEvent) => {
+   const handleCheckout = async (e: React.FormEvent) => {
       e.preventDefault()
-      // Here you would typically process the order
-      alert('Order placed successfully! You will receive a confirmation email shortly.')
-      setCartItems([])
-      if (typeof window !== 'undefined') {
-         localStorage.removeItem('cart')
-         window.dispatchEvent(new Event('cartUpdated'))
+      
+      // Validate form
+      if (!checkoutForm.name || !checkoutForm.email || !checkoutForm.phone || !checkoutForm.address || !checkoutForm.pincode) {
+         toast.error('Please fill in all required fields')
+         return
       }
-      setShowCheckout(false)
-      setCheckoutForm({
-         name: '',
-         email: '',
-         phone: '',
-         address: '',
-         pincode: '',
-         alternatePhone: '',
-      })
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(checkoutForm.email)) {
+         toast.error('Please enter a valid email address')
+         return
+      }
+
+      // Validate phone
+      const phoneRegex = /^[0-9]{10}$/
+      if (!phoneRegex.test(checkoutForm.phone)) {
+         toast.error('Please enter a valid 10-digit phone number')
+         return
+      }
+
+      // Initiate Razorpay payment
+      await initiatePayment(total, checkoutForm, cartItems)
    }
 
    if (cartItems.length === 0) {
@@ -124,8 +151,72 @@ export default function Cart() {
 
    return (
       <>
+         <Script
+            id="razorpay-checkout-js"
+            src="https://checkout.razorpay.com/v1/checkout.js"
+         />
          <Navbar />
          <main className='gradient-bg min-h-screen'>
+            {/* Order Success Modal */}
+            <AnimatePresence>
+               {orderSuccess && (
+                  <motion.div
+                     initial={{ opacity: 0 }}
+                     animate={{ opacity: 1 }}
+                     exit={{ opacity: 0 }}
+                     className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
+                  >
+                     <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        className='bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center'
+                     >
+                        <div className='mb-6'>
+                           <CheckCircle className='w-16 h-16 text-green-500 mx-auto mb-4' />
+                           <h2 className='text-2xl font-bold text-text-dark mb-2'>Payment Successful!</h2>
+                           <p className='text-text-light'>
+                              Your order has been placed successfully. You will receive a confirmation email shortly.
+                           </p>
+                        </div>
+
+                        {orderDetails && (
+                           <div className='bg-gray-50 rounded-lg p-4 mb-6 text-left'>
+                              <h3 className='font-semibold text-text-dark mb-2'>Order Details:</h3>
+                              <p className='text-sm text-text-light mb-1'>
+                                 <span className='font-medium'>Order ID:</span> {orderDetails.id}
+                              </p>
+                              <p className='text-sm text-text-light mb-1'>
+                                 <span className='font-medium'>Payment ID:</span> {orderDetails.razorpay_payment_id}
+                              </p>
+                              <p className='text-sm text-text-light'>
+                                 <span className='font-medium'>Total:</span> ₹{orderDetails.total}
+                              </p>
+                           </div>
+                        )}
+
+                        <div className='space-y-3'>
+                           <button
+                              onClick={() => setOrderSuccess(false)}
+                              className='btn-primary w-full'
+                           >
+                              Continue Shopping
+                           </button>
+                           <button
+                              onClick={() => {
+                                 setOrderSuccess(false)
+                                 // You can redirect to orders page here
+                                 window.location.href = '/'
+                              }}
+                              className='w-full px-4 py-2 text-primary-pink border border-primary-pink rounded-lg hover:bg-primary-pink hover:text-white transition-colors'
+                           >
+                              Go to Home
+                           </button>
+                        </div>
+                     </motion.div>
+                  </motion.div>
+               )}
+            </AnimatePresence>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                <motion.div
                   initial={{ opacity: 0, y: 50 }}
@@ -366,9 +457,17 @@ export default function Cart() {
                                  </div>
                                  <button
                                     type='submit'
-                                    className='btn-primary w-full'
+                                    disabled={paymentLoading}
+                                    className='btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2'
                                  >
-                                    Place Order
+                                    {paymentLoading ? (
+                                       <>
+                                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                          <span>Processing Payment...</span>
+                                       </>
+                                    ) : (
+                                       <span>Place Order</span>
+                                    )}
                                  </button>
                               </div>
                            </form>
