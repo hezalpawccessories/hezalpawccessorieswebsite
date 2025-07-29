@@ -26,7 +26,52 @@ export const useRazorpay = ({ onSuccess, onFailure }: UseRazorpayProps) => {
     setLoading(true)
 
     try {
-      // Create order on backend
+      // Check if we're using demo keys
+      const isDemoMode = !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 
+                        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('demo') ||
+                        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('test_demo')
+
+      if (isDemoMode) {
+        // Demo mode - simulate payment success
+        setTimeout(() => {
+          const orderId = uuidv4()
+          const mockPaymentData = {
+            razorpay_payment_id: `pay_demo_${Date.now()}`,
+            razorpay_order_id: `order_demo_${Date.now()}`,
+            razorpay_signature: 'demo_signature',
+            orderId,
+            orderDetails: {
+              id: orderId,
+              customerId: uuidv4(),
+              customerDetails,
+              items: cartItems.map(item => ({
+                id: item.id,
+                title: item.title,
+                price: item.price,
+                quantity: item.quantity,
+                size: item.size,
+                image: item.image,
+              })),
+              total: amount,
+              status: 'completed' as const,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }
+          }
+
+          toast.success('Demo Payment Successful!', {
+            description: 'This is a demo payment. In production, use real Razorpay keys.',
+            duration: 5000,
+          })
+
+          onSuccess(mockPaymentData)
+          setLoading(false)
+        }, 2000) // 2 second delay to simulate payment processing
+
+        return
+      }
+
+      // Real Razorpay flow continues here...
       const response = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {

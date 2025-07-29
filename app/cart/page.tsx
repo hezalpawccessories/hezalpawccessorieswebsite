@@ -438,6 +438,13 @@ export default function Cart() {
 
                               <div className='bg-soft-yellow/20 p-4 rounded-lg'>
                                  <p className='text-sm text-text-dark'>
+                                    <strong>Demo Mode:</strong> This is running in demo mode. No real payment will be processed. 
+                                    To enable real payments, add your Razorpay API keys to the environment variables.
+                                 </p>
+                              </div>
+
+                              <div className='bg-blue-50 p-4 rounded-lg'>
+                                 <p className='text-sm text-text-dark'>
                                     <strong>Note:</strong> After payment is done, you will receive a receipt of payment.
                                     When your product is dispatched, you will receive a mail from there you can track
                                     your order. For any queries, contact{' '}
@@ -466,7 +473,7 @@ export default function Cart() {
                                           <span>Processing Payment...</span>
                                        </>
                                     ) : (
-                                       <span>Place Order</span>
+                                       <span>Place Order (Demo Mode)</span>
                                     )}
                                  </button>
                               </div>
