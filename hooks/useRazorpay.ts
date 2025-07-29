@@ -28,11 +28,17 @@ export const useRazorpay = ({ onSuccess, onFailure }: UseRazorpayProps) => {
     try {
       // Check if we're using demo keys
       const isDemoMode = !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 
+                        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID === 'demo_mode' ||
                         process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('demo') ||
-                        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('test_demo')
+                        !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.startsWith('rzp_')
 
       if (isDemoMode) {
         // Demo mode - simulate payment success
+        toast.info('Demo Payment Processing...', {
+          description: 'Simulating payment in demo mode',
+          duration: 2000,
+        })
+
         setTimeout(() => {
           const orderId = uuidv4()
           const mockPaymentData = {
@@ -59,6 +65,9 @@ export const useRazorpay = ({ onSuccess, onFailure }: UseRazorpayProps) => {
             }
           }
 
+          // Save the demo order
+          saveOrder(mockPaymentData.orderDetails)
+
           toast.success('Demo Payment Successful!', {
             description: 'This is a demo payment. In production, use real Razorpay keys.',
             duration: 5000,
@@ -71,7 +80,7 @@ export const useRazorpay = ({ onSuccess, onFailure }: UseRazorpayProps) => {
         return
       }
 
-      // Real Razorpay flow continues here...
+      // Real Razorpay flow continues here only if not in demo mode...
       const response = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {

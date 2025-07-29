@@ -39,6 +39,12 @@ export default function Cart() {
       alternatePhone: '',
    })
 
+   // Check if we're in demo mode
+   const isDemoMode = !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 
+                     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID === 'demo_mode' ||
+                     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('demo') ||
+                     !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.startsWith('rzp_')
+
    const { initiatePayment, loading: paymentLoading } = useRazorpay({
       onSuccess: (paymentData) => {
          setOrderDetails(paymentData.orderDetails)
@@ -65,9 +71,25 @@ export default function Cart() {
       loadCart()
       if (typeof window !== 'undefined') {
          window.addEventListener('cartUpdated', loadCart)
-         return () => window.removeEventListener('cartUpdated', loadCart)
       }
-   }, [])
+
+      // Only load Razorpay script if not in demo mode
+      if (!isDemoMode && typeof window !== 'undefined') {
+         if (!document.getElementById('razorpay-script')) {
+            const script = document.createElement('script')
+            script.id = 'razorpay-script'
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+            script.async = true
+            document.body.appendChild(script)
+         }
+      }
+
+      return () => {
+         if (typeof window !== 'undefined') {
+            window.removeEventListener('cartUpdated', loadCart)
+         }
+      }
+   }, [isDemoMode])
 
    const updateQuantity = (id: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -227,6 +249,18 @@ export default function Cart() {
                   <h1 className='text-4xl md:text-5xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
                      Shopping <span className='text-primary-pink'>Cart</span>
                   </h1>
+                  
+                  {/* Demo Mode Indicator */}
+                  {isDemoMode && (
+                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <h3 className="text-yellow-800 font-semibold mb-2 flex items-center gap-2">
+                           ⚡ Demo Mode Active
+                        </h3>
+                        <p className="text-yellow-700 text-sm">
+                           Payment integration is running in demo mode. Checkout will simulate the payment flow without processing real transactions.
+                        </p>
+                     </div>
+                  )}
                   <p className='text-xl font-dm-sans text-text-body'>Review your items and proceed to checkout</p>
                </motion.div>
 
@@ -357,7 +391,14 @@ export default function Cart() {
                         </button>
 
                         <div className='p-6'>
-                           <h2 className='text-2xl font-bold text-text-dark mb-6'>Checkout Details</h2>
+                           <h2 className='text-2xl font-bold text-text-dark mb-6 flex items-center gap-3'>
+                              Checkout Details
+                              {isDemoMode && (
+                                 <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                                    Demo Mode
+                                 </span>
+                              )}
+                           </h2>
 
                            <form
                               onSubmit={handleCheckout}
@@ -473,7 +514,9 @@ export default function Cart() {
                                           <span>Processing Payment...</span>
                                        </>
                                     ) : (
-                                       <span>Place Order (Demo Mode)</span>
+                                       <span>
+                                          Place Order {isDemoMode && '(Demo Mode)'}
+                                       </span>
                                     )}
                                  </button>
                               </div>
