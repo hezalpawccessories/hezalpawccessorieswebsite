@@ -39,24 +39,21 @@ export default function Cart() {
       alternatePhone: '',
    })
 
-   // Check if we're in demo mode
-   const isDemoMode = !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 
-                     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID === 'demo_mode' ||
-                     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.includes('demo') ||
-                     !process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID.startsWith('rzp_')
-
+   // Razorpay payment integration
    const { initiatePayment, loading: paymentLoading } = useRazorpay({
-      onSuccess: (paymentData) => {
-         setOrderDetails(paymentData.orderDetails)
+      onSuccess: (data) => {
+         setOrderDetails(data.orderDetails)
          setOrderSuccess(true)
          setShowCheckout(false)
          // Clear cart after successful payment
          localStorage.removeItem('cart')
          setCartItems([])
          window.dispatchEvent(new Event('cartUpdated'))
+         toast.success('Order placed successfully!')
       },
       onFailure: (error) => {
          console.error('Payment failed:', error)
+         toast.error('Payment failed. Please try again.')
       },
    })
 
@@ -73,23 +70,12 @@ export default function Cart() {
          window.addEventListener('cartUpdated', loadCart)
       }
 
-      // Only load Razorpay script if not in demo mode
-      if (!isDemoMode && typeof window !== 'undefined') {
-         if (!document.getElementById('razorpay-script')) {
-            const script = document.createElement('script')
-            script.id = 'razorpay-script'
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-            script.async = true
-            document.body.appendChild(script)
-         }
-      }
-
       return () => {
          if (typeof window !== 'undefined') {
             window.removeEventListener('cartUpdated', loadCart)
          }
       }
-   }, [isDemoMode])
+   }, [])
 
    const updateQuantity = (id: string, newQuantity: number) => {
       if (newQuantity <= 0) {
@@ -173,9 +159,10 @@ export default function Cart() {
 
    return (
       <>
+         {/* Load Razorpay checkout script */}
          <Script
-            id="razorpay-checkout-js"
             src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="lazyOnload"
          />
          <Navbar />
          <main className='gradient-bg min-h-screen'>
@@ -196,9 +183,9 @@ export default function Cart() {
                      >
                         <div className='mb-6'>
                            <CheckCircle className='w-16 h-16 text-green-500 mx-auto mb-4' />
-                           <h2 className='text-2xl font-bold text-text-dark mb-2'>Payment Successful!</h2>
+                           <h2 className='text-2xl font-bold text-text-dark mb-2'>Order Placed Successfully!</h2>
                            <p className='text-text-light'>
-                              Your order has been placed successfully. You will receive a confirmation email shortly.
+                              Your payment has been processed and order has been placed. You will receive a confirmation email shortly.
                            </p>
                         </div>
 
@@ -206,13 +193,13 @@ export default function Cart() {
                            <div className='bg-gray-50 rounded-lg p-4 mb-6 text-left'>
                               <h3 className='font-semibold text-text-dark mb-2'>Order Details:</h3>
                               <p className='text-sm text-text-light mb-1'>
-                                 <span className='font-medium'>Order ID:</span> {orderDetails.id}
+                                 <span className='font-medium'>Order ID:</span> {orderDetails.orderId}
                               </p>
                               <p className='text-sm text-text-light mb-1'>
-                                 <span className='font-medium'>Payment ID:</span> {orderDetails.razorpay_payment_id}
+                                 <span className='font-medium'>Payment ID:</span> {orderDetails.paymentId}
                               </p>
                               <p className='text-sm text-text-light'>
-                                 <span className='font-medium'>Total:</span> ₹{orderDetails.total}
+                                 <span className='font-medium'>Amount:</span> ₹{orderDetails.amount}
                               </p>
                            </div>
                         )}
@@ -227,7 +214,6 @@ export default function Cart() {
                            <button
                               onClick={() => {
                                  setOrderSuccess(false)
-                                 // You can redirect to orders page here
                                  window.location.href = '/'
                               }}
                               className='w-full px-4 py-2 text-primary-pink border border-primary-pink rounded-lg hover:bg-primary-pink hover:text-white transition-colors'
@@ -249,18 +235,6 @@ export default function Cart() {
                   <h1 className='text-4xl md:text-5xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
                      Shopping <span className='text-primary-pink'>Cart</span>
                   </h1>
-                  
-                  {/* Demo Mode Indicator */}
-                  {isDemoMode && (
-                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                        <h3 className="text-yellow-800 font-semibold mb-2 flex items-center gap-2">
-                           ⚡ Demo Mode Active
-                        </h3>
-                        <p className="text-yellow-700 text-sm">
-                           Payment integration is running in demo mode. Checkout will simulate the payment flow without processing real transactions.
-                        </p>
-                     </div>
-                  )}
                   <p className='text-xl font-dm-sans text-text-body'>Review your items and proceed to checkout</p>
                </motion.div>
 
@@ -391,13 +365,8 @@ export default function Cart() {
                         </button>
 
                         <div className='p-6'>
-                           <h2 className='text-2xl font-bold text-text-dark mb-6 flex items-center gap-3'>
+                           <h2 className='text-2xl font-bold text-text-dark mb-6'>
                               Checkout Details
-                              {isDemoMode && (
-                                 <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
-                                    Demo Mode
-                                 </span>
-                              )}
                            </h2>
 
                            <form
@@ -514,9 +483,7 @@ export default function Cart() {
                                           <span>Processing Payment...</span>
                                        </>
                                     ) : (
-                                       <span>
-                                          Place Order {isDemoMode && '(Demo Mode)'}
-                                       </span>
+                                       <span>Place Order</span>
                                     )}
                                  </button>
                               </div>
