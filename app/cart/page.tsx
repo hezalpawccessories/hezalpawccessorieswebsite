@@ -8,6 +8,7 @@ import Footer from '@/components/Footer'
 import { Product } from '@/lib/products'
 import Image from 'next/image'
 import { useRazorpay } from '@/hooks/useRazorpay'
+import { CheckoutDetails } from '@/lib/razorpay-config'
 import { toast } from 'sonner'
 import Script from 'next/script'
 
@@ -51,7 +52,7 @@ export default function Cart() {
          window.dispatchEvent(new Event('cartUpdated'))
          toast.success('Order placed successfully!')
       },
-      onFailure: (error) => {
+      onFailure: (error: Error) => {
          console.error('Payment failed:', error)
          toast.error('Payment failed. Please try again.')
       },
@@ -444,13 +445,6 @@ export default function Cart() {
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, pincode: e.target.value })}
                                     className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
                                  />
-                              </div>
-
-                              <div className='bg-soft-yellow/20 p-4 rounded-lg'>
-                                 <p className='text-sm text-text-dark'>
-                                    <strong>Demo Mode:</strong> This is running in demo mode. No real payment will be processed. 
-                                    To enable real payments, add your Razorpay API keys to the environment variables.
-                                 </p>
                               </div>
 
                               <div className='bg-blue-50 p-4 rounded-lg'>

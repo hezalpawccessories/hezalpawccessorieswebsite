@@ -34,6 +34,11 @@ export interface CartItem {
   quantity: number
   size: string
   image: string
+  category?: string
+  description?: string
+  details?: string[]
+  inStock?: boolean
+  originalPrice?: number
 }
 
 // Razorpay configuration
