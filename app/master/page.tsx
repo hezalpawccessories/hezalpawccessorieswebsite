@@ -18,10 +18,16 @@ import {
    Search,
    Filter,
    ExternalLink,
+   CreditCard,
+   CheckCircle,
+   XCircle,
+   Clock,
 } from 'lucide-react'
 import { products as initialProducts, Product } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
 import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
+import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
+import { getPayments, PaymentLog } from '@/lib/firebase/payments'
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
 import { toast } from 'sonner'
@@ -35,18 +41,6 @@ declare global {
    }
 }
 
-interface Order {
-   id: string
-   customerName: string
-   email: string
-   phone: string
-   address: string
-   items: any[]
-   total: number
-   status: 'Not Initiated' | 'Progress' | 'Completed'
-   date: string
-}
-
 export default function AdminDashboard() {
    const [isAuthenticated, setIsAuthenticated] = useState(
       (typeof window !== 'undefined' && localStorage.getItem('isAuthenticated') === 'true') || false
@@ -56,11 +50,14 @@ export default function AdminDashboard() {
    const [activeTab, setActiveTab] = useState('products')
    const [products, setProducts] = useState<Product[]>([])
    const [orders, setOrders] = useState<Order[]>([])
+   const [payments, setPayments] = useState<PaymentLog[]>([])
    const [showAddModal, setShowAddModal] = useState(false)
    const [showEditModal, setShowEditModal] = useState(false)
    const [showOrderModal, setShowOrderModal] = useState(false)
+   const [showPaymentModal, setShowPaymentModal] = useState(false)
    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+   const [selectedPayment, setSelectedPayment] = useState<PaymentLog | null>(null)
    const [searchQuery, setSearchQuery] = useState('')
 
    const [newProduct, setNewProduct] = useState({
@@ -179,11 +176,45 @@ export default function AdminDashboard() {
    }
 
    useEffect(() => {
-      // Load orders from localStorage
+      // Load orders from Firebase
       if (typeof window !== 'undefined') {
-         const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]')
-         setOrders(savedOrders)
+         getOrders()
+            .then((result) => {
+               if (result.success) {
+                  setOrders(result.orders as Order[])
+                  if (result.orders.length > 0) {
+                     toast.success('Orders loaded successfully', {
+                        description: `${result.orders.length} orders found`,
+                        duration: 3000,
+                     })
+                  }
+               }
+            })
+            .catch((error) => {
+               console.error('Error fetching orders:', error)
+               toast.error('Failed to load orders', {
+                  description: 'There was an issue loading orders from the database',
+                  duration: 4000,
+               })
+            })
+
+         // Load payments from Firebase
+         getPayments()
+            .then((result) => {
+               if (result.success) {
+                  setPayments(result.payments)
+                  console.log('Payments loaded:', result.payments.length)
+               }
+            })
+            .catch((error) => {
+               console.error('Error fetching payments:', error)
+               toast.error('Failed to load payments', {
+                  description: 'There was an issue loading payments from the database',
+                  duration: 4000,
+               })
+            })
       }
+      
       // Load products from Firestore
       getProducts()
          .then((fetchedProducts) => {
@@ -320,11 +351,28 @@ export default function AdminDashboard() {
       }
    }
 
-   const updateOrderStatus = (orderId: string, status: Order['status']) => {
-      const updatedOrders = orders.map((order) => (order.id === orderId ? { ...order, status } : order))
-      setOrders(updatedOrders)
-      if (typeof window !== 'undefined') {
-         localStorage.setItem('orders', JSON.stringify(updatedOrders))
+   const updateOrderStatus = async (orderId: string, status: Order['orderStatus']) => {
+      try {
+         const result = await updateOrderStatusFirebase(orderId, status)
+         if (result.success) {
+            const updatedOrders = orders.map((order) => (order.id === orderId ? { ...order, orderStatus: status } : order))
+            setOrders(updatedOrders)
+            toast.success('Order status updated', {
+               description: `Order status changed to ${status}`,
+               duration: 3000,
+            })
+         } else {
+            toast.error('Failed to update order status', {
+               description: result.error || 'Unknown error occurred',
+               duration: 4000,
+            })
+         }
+      } catch (error) {
+         console.error('Error updating order status:', error)
+         toast.error('Failed to update order status', {
+            description: 'There was an issue updating the order',
+            duration: 4000,
+         })
       }
    }
 
@@ -439,6 +487,7 @@ export default function AdminDashboard() {
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
                   { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
+                  { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
                   { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
                ].map((tab) => (
                   <button
@@ -880,13 +929,13 @@ export default function AdminDashboard() {
                            <div className='bg-white rounded-lg shadow-lg p-6'>
                               <h3 className='text-lg font-semibold text-text-dark mb-2'>Revenue</h3>
                               <p className='text-3xl font-bold text-warm-orange'>
-                                 ₹{orders.reduce((sum, order) => sum + order.total, 0)}
+                                 ₹{orders.reduce((sum, order) => sum + order.orderSummary.total, 0)}
                               </p>
                            </div>
                            <div className='bg-white rounded-lg shadow-lg p-6'>
-                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Completed Orders</h3>
+                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Delivered Orders</h3>
                               <p className='text-3xl font-bold text-light-purple'>
-                                 {orders.filter((order) => order.status === 'Completed').length}
+                                 {orders.filter((order) => order.orderStatus === 'delivered').length}
                               </p>
                            </div>
                         </div>
@@ -912,28 +961,40 @@ export default function AdminDashboard() {
                                  >
                                     <div className='flex justify-between items-start mb-4'>
                                        <div>
-                                          <h3 className='font-bold text-text-dark'>Order #{order.id}</h3>
+                                          <h3 className='font-bold text-text-dark'>Order #{order.orderId}</h3>
                                           <p className='text-text-light'>
-                                             {order.customerName} • {order.date}
+                                             {order.customerDetails.name} • {new Date(order.timestamps.createdAt.seconds * 1000).toLocaleDateString()}
+                                          </p>
+                                          <p className='text-text-light text-sm'>
+                                             Payment: {order.paymentDetails.paymentStatus}
                                           </p>
                                        </div>
                                        <div className='flex items-center space-x-4'>
                                           <select
-                                             value={order.status}
+                                             value={order.orderStatus}
                                              onChange={(e) =>
-                                                updateOrderStatus(order.id, e.target.value as Order['status'])
+                                                updateOrderStatus(order.id!, e.target.value as Order['orderStatus'])
                                              }
                                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                                order.status === 'Not Initiated'
-                                                   ? 'bg-gray-100 text-gray-800'
-                                                   : order.status === 'Progress'
+                                                order.orderStatus === 'placed'
+                                                   ? 'bg-blue-100 text-blue-800'
+                                                   : order.orderStatus === 'confirmed'
+                                                   ? 'bg-cyan-100 text-cyan-800'
+                                                   : order.orderStatus === 'processing'
                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                   : 'bg-green-100 text-green-800'
+                                                   : order.orderStatus === 'shipped'
+                                                   ? 'bg-purple-100 text-purple-800'
+                                                   : order.orderStatus === 'delivered'
+                                                   ? 'bg-green-100 text-green-800'
+                                                   : 'bg-red-100 text-red-800'
                                              }`}
                                           >
-                                             <option value='Not Initiated'>Not Initiated</option>
-                                             <option value='Progress'>Progress</option>
-                                             <option value='Completed'>Completed</option>
+                                             <option value='placed'>Placed</option>
+                                             <option value='confirmed'>Confirmed</option>
+                                             <option value='processing'>Processing</option>
+                                             <option value='shipped'>Shipped</option>
+                                             <option value='delivered'>Delivered</option>
+                                             <option value='cancelled'>Cancelled</option>
                                           </select>
                                           <button
                                              onClick={() => {
@@ -948,7 +1009,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <div className='flex justify-between items-center'>
                                        <span className='text-text-light'>{order.items.length} items</span>
-                                       <span className='text-xl font-bold text-primary-pink'>₹{order.total}</span>
+                                       <span className='text-xl font-bold text-primary-pink'>₹{order.orderSummary.total}</span>
                                     </div>
                                  </div>
                               ))}
@@ -956,6 +1017,114 @@ export default function AdminDashboard() {
                         )}
                      </motion.div>
                   </>
+               )}
+
+               {activeTab === 'payments' && (
+                  <motion.div
+                     key='payments'
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: -20 }}
+                     className='space-y-6'
+                  >
+                     <div className='flex justify-between items-center mb-6'>
+                        <h2 className='text-2xl font-bold text-text-dark'>Payments Management</h2>
+                        
+                        {/* Payment Status Summary */}
+                        <div className='flex space-x-4'>
+                           <div className='flex items-center space-x-2 bg-green-100 px-3 py-1 rounded-full'>
+                              <CheckCircle className='w-4 h-4 text-green-600' />
+                              <span className='text-sm font-medium text-green-800'>
+                                 Success: {payments.filter(p => p.paymentStatus === 'success').length}
+                              </span>
+                           </div>
+                           <div className='flex items-center space-x-2 bg-red-100 px-3 py-1 rounded-full'>
+                              <XCircle className='w-4 h-4 text-red-600' />
+                              <span className='text-sm font-medium text-red-800'>
+                                 Failed: {payments.filter(p => p.paymentStatus === 'failed').length}
+                              </span>
+                           </div>
+                           <div className='flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full'>
+                              <Clock className='w-4 h-4 text-yellow-600' />
+                              <span className='text-sm font-medium text-yellow-800'>
+                                 Pending: {payments.filter(p => p.paymentStatus === 'pending').length}
+                              </span>
+                           </div>
+                        </div>
+                     </div>
+
+                     {payments.length === 0 ? (
+                        <div className='bg-white rounded-lg shadow-lg p-8 text-center'>
+                           <CreditCard className='w-16 h-16 text-text-light mx-auto mb-4' />
+                           <p className='text-xl text-text-light'>No payments yet</p>
+                        </div>
+                     ) : (
+                        <div className='space-y-4'>
+                           {payments.map((payment) => (
+                              <div
+                                 key={payment.id}
+                                 className='bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow'
+                              >
+                                 <div className='flex justify-between items-start mb-4'>
+                                    <div className='flex-1'>
+                                       <div className='flex items-center space-x-3 mb-2'>
+                                          <h3 className='font-bold text-text-dark'>#{payment.transactionId}</h3>
+                                          <span
+                                             className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                payment.paymentStatus === 'success'
+                                                   ? 'bg-green-100 text-green-800'
+                                                   : payment.paymentStatus === 'failed'
+                                                   ? 'bg-red-100 text-red-800'
+                                                   : payment.paymentStatus === 'pending'
+                                                   ? 'bg-yellow-100 text-yellow-800'
+                                                   : 'bg-gray-100 text-gray-800'
+                                             }`}
+                                          >
+                                             {payment.paymentStatus.toUpperCase()}
+                                          </span>
+                                       </div>
+                                       <p className='text-text-light text-sm'>
+                                          {payment.customerDetails.name} • {payment.customerDetails.email}
+                                       </p>
+                                       <p className='text-text-light text-sm'>
+                                          {new Date(payment.timestamps?.createdAt?.seconds * 1000).toLocaleString() || 'N/A'}
+                                       </p>
+                                       {payment.paymentMethod && (
+                                          <p className='text-text-light text-sm capitalize'>
+                                             Payment Method: {payment.paymentMethod}
+                                          </p>
+                                       )}
+                                    </div>
+                                    <div className='text-right'>
+                                       <div className='text-2xl font-bold text-primary-pink mb-2'>
+                                          ₹{payment.amount}
+                                       </div>
+                                       <button
+                                          onClick={() => {
+                                             setSelectedPayment(payment)
+                                             setShowPaymentModal(true)
+                                          }}
+                                          className='btn-secondary text-sm px-4 py-2'
+                                       >
+                                          View Details
+                                       </button>
+                                    </div>
+                                 </div>
+                                 
+                                 {payment.errorDetails && (
+                                    <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
+                                       <p className='text-red-800 text-sm font-medium'>Error Details:</p>
+                                       <p className='text-red-700 text-sm'>{payment.errorDetails.errorDescription}</p>
+                                       {payment.errorDetails.failureReason && (
+                                          <p className='text-red-700 text-sm'>Reason: {payment.errorDetails.failureReason}</p>
+                                       )}
+                                    </div>
+                                 )}
+                              </div>
+                           ))}
+                        </div>
+                     )}
+                  </motion.div>
                )}
 
                {activeTab === 'analytics' && (
@@ -1223,15 +1392,46 @@ export default function AdminDashboard() {
                      </button>
 
                      <div className='p-6'>
-                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Order Details #{selectedOrder.id}</h2>
+                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Order Details #{selectedOrder.orderId}</h2>
 
                         <div className='space-y-4 mb-6'>
                            <div>
                               <h3 className='font-semibold text-text-dark'>Customer Information</h3>
-                              <p className='text-text-light'>Name: {selectedOrder.customerName}</p>
-                              <p className='text-text-light'>Email: {selectedOrder.email}</p>
-                              <p className='text-text-light'>Phone: {selectedOrder.phone}</p>
-                              <p className='text-text-light'>Address: {selectedOrder.address}</p>
+                              <p className='text-text-light'>Name: {selectedOrder.customerDetails.name}</p>
+                              <p className='text-text-light'>Email: {selectedOrder.customerDetails.email}</p>
+                              <p className='text-text-light'>Phone: {selectedOrder.customerDetails.phone}</p>
+                              <p className='text-text-light'>Address: {selectedOrder.customerDetails.address}</p>
+                              <p className='text-text-light'>Pincode: {selectedOrder.customerDetails.pincode}</p>
+                              {selectedOrder.customerDetails.alternatePhone && (
+                                 <p className='text-text-light'>Alternate Phone: {selectedOrder.customerDetails.alternatePhone}</p>
+                              )}
+                           </div>
+
+                           <div>
+                              <h3 className='font-semibold text-text-dark'>Order Status & Timestamps</h3>
+                              <p className='text-text-light'>Status: <span className='font-medium capitalize'>{selectedOrder.orderStatus}</span></p>
+                              <p className='text-text-light'>Order Date: {new Date(selectedOrder.timestamps.createdAt.seconds * 1000).toLocaleString()}</p>
+                              {selectedOrder.timestamps.paidAt && (
+                                 <p className='text-text-light'>Paid At: {new Date(selectedOrder.timestamps.paidAt.seconds * 1000).toLocaleString()}</p>
+                              )}
+                              {selectedOrder.timestamps.shippedAt && (
+                                 <p className='text-text-light'>Shipped At: {new Date(selectedOrder.timestamps.shippedAt.seconds * 1000).toLocaleString()}</p>
+                              )}
+                              {selectedOrder.timestamps.deliveredAt && (
+                                 <p className='text-text-light'>Delivered At: {new Date(selectedOrder.timestamps.deliveredAt.seconds * 1000).toLocaleString()}</p>
+                              )}
+                           </div>
+
+                           <div>
+                              <h3 className='font-semibold text-text-dark'>Payment Information</h3>
+                              <p className='text-text-light'>Payment Status: <span className='font-medium capitalize'>{selectedOrder.paymentDetails.paymentStatus}</span></p>
+                              <p className='text-text-light'>Razorpay Order ID: {selectedOrder.paymentDetails.razorpayOrderId}</p>
+                              {selectedOrder.paymentDetails.razorpayPaymentId && (
+                                 <p className='text-text-light'>Payment ID: {selectedOrder.paymentDetails.razorpayPaymentId}</p>
+                              )}
+                              {selectedOrder.paymentDetails.paymentMethod && (
+                                 <p className='text-text-light'>Payment Method: <span className='capitalize'>{selectedOrder.paymentDetails.paymentMethod}</span></p>
+                              )}
                            </div>
 
                            <div>
@@ -1240,12 +1440,20 @@ export default function AdminDashboard() {
                                  {selectedOrder.items.map((item, index) => (
                                     <div
                                        key={index}
-                                       className='flex justify-between items-center p-2 bg-soft-gray rounded'
+                                       className='flex justify-between items-center p-3 bg-gray-50 rounded-lg'
                                     >
-                                       <span>
-                                          {item.title} (Size: {item.size})
-                                       </span>
-                                       <span>
+                                       <div className='flex items-center space-x-3'>
+                                          <img 
+                                             src={item.image} 
+                                             alt={item.title}
+                                             className='w-10 h-10 object-cover rounded'
+                                          />
+                                          <div>
+                                             <span className='font-medium'>{item.title}</span>
+                                             <p className='text-sm text-text-light'>Size: {item.size} • Category: {item.category}</p>
+                                          </div>
+                                       </div>
+                                       <span className='font-medium'>
                                           Qty: {item.quantity} × ₹{item.price}
                                        </span>
                                     </div>
@@ -1253,11 +1461,201 @@ export default function AdminDashboard() {
                               </div>
                            </div>
 
-                           <div className='flex justify-between items-center text-lg font-bold'>
-                              <span>Total Amount:</span>
-                              <span className='text-primary-pink'>₹{selectedOrder.total}</span>
+                           <div className='bg-gray-50 p-4 rounded-lg'>
+                              <div className='space-y-2'>
+                                 <div className='flex justify-between'>
+                                    <span>Subtotal:</span>
+                                    <span>₹{selectedOrder.orderSummary.subtotal}</span>
+                                 </div>
+                                 <div className='flex justify-between'>
+                                    <span>Shipping:</span>
+                                    <span>₹{selectedOrder.orderSummary.shipping}</span>
+                                 </div>
+                                 <div className='flex justify-between items-center text-lg font-bold border-t pt-2'>
+                                    <span>Total Amount:</span>
+                                    <span className='text-primary-pink'>₹{selectedOrder.orderSummary.total}</span>
+                                 </div>
+                              </div>
+                           </div>
+
+                           {selectedOrder.trackingInfo && (
+                              <div>
+                                 <h3 className='font-semibold text-text-dark'>Tracking Information</h3>
+                                 {selectedOrder.trackingInfo.trackingNumber && (
+                                    <p className='text-text-light'>Tracking Number: {selectedOrder.trackingInfo.trackingNumber}</p>
+                                 )}
+                                 {selectedOrder.trackingInfo.carrier && (
+                                    <p className='text-text-light'>Carrier: {selectedOrder.trackingInfo.carrier}</p>
+                                 )}
+                                 {selectedOrder.trackingInfo.estimatedDelivery && (
+                                    <p className='text-text-light'>Estimated Delivery: {new Date(selectedOrder.trackingInfo.estimatedDelivery.seconds * 1000).toLocaleDateString()}</p>
+                                 )}
+                              </div>
+                           )}
+
+                           {selectedOrder.notes && (
+                              <div>
+                                 <h3 className='font-semibold text-text-dark'>Notes</h3>
+                                 <p className='text-text-light'>{selectedOrder.notes}</p>
+                              </div>
+                           )}
+                        </div>
+                     </div>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+
+         {/* Payment Details Modal */}
+         <AnimatePresence>
+            {showPaymentModal && selectedPayment && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='modal-overlay'
+                  onClick={() => setShowPaymentModal(false)}
+               >
+                  <motion.div
+                     initial={{ scale: 0.8, opacity: 0 }}
+                     animate={{ scale: 1, opacity: 1 }}
+                     exit={{ scale: 0.8, opacity: 0 }}
+                     className='modal-content max-w-3xl'
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <button
+                        onClick={() => setShowPaymentModal(false)}
+                        className='absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg'
+                     >
+                        <X className='w-5 h-5' />
+                     </button>
+
+                     <div className='p-6'>
+                        <div className='flex items-center space-x-3 mb-6'>
+                           <h2 className='text-2xl font-bold text-text-dark'>Payment Details</h2>
+                           <span
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                 selectedPayment.paymentStatus === 'success'
+                                    ? 'bg-green-100 text-green-800'
+                                    : selectedPayment.paymentStatus === 'failed'
+                                    ? 'bg-red-100 text-red-800'
+                                    : selectedPayment.paymentStatus === 'pending'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-gray-100 text-gray-800'
+                              }`}
+                           >
+                              {selectedPayment.paymentStatus.toUpperCase()}
+                           </span>
+                        </div>
+
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+                           <div className='space-y-4'>
+                              <div>
+                                 <h3 className='font-semibold text-text-dark mb-2'>Transaction Information</h3>
+                                 <div className='space-y-1 text-sm'>
+                                    <p><span className='font-medium'>Transaction ID:</span> {selectedPayment.transactionId}</p>
+                                    <p><span className='font-medium'>Razorpay Order ID:</span> {selectedPayment.razorpayOrderId}</p>
+                                    {selectedPayment.razorpayPaymentId && (
+                                       <p><span className='font-medium'>Payment ID:</span> {selectedPayment.razorpayPaymentId}</p>
+                                    )}
+                                    {selectedPayment.razorpaySignature && (
+                                       <p><span className='font-medium'>Signature:</span> <span className='font-mono text-xs break-all'>{selectedPayment.razorpaySignature}</span></p>
+                                    )}
+                                 </div>
+                              </div>
+
+                              <div>
+                                 <h3 className='font-semibold text-text-dark mb-2'>Payment Details</h3>
+                                 <div className='space-y-1 text-sm'>
+                                    <p><span className='font-medium'>Amount:</span> ₹{selectedPayment.amount}</p>
+                                    <p><span className='font-medium'>Currency:</span> {selectedPayment.currency}</p>
+                                    {selectedPayment.paymentMethod && (
+                                       <p><span className='font-medium'>Payment Method:</span> <span className='capitalize'>{selectedPayment.paymentMethod}</span></p>
+                                    )}
+                                    <p><span className='font-medium'>Status:</span> <span className='capitalize'>{selectedPayment.paymentStatus}</span></p>
+                                 </div>
+                              </div>
+                           </div>
+
+                           <div className='space-y-4'>
+                              <div>
+                                 <h3 className='font-semibold text-text-dark mb-2'>Customer Information</h3>
+                                 <div className='space-y-1 text-sm'>
+                                    <p><span className='font-medium'>Name:</span> {selectedPayment.customerDetails.name}</p>
+                                    <p><span className='font-medium'>Email:</span> {selectedPayment.customerDetails.email}</p>
+                                    <p><span className='font-medium'>Phone:</span> {selectedPayment.customerDetails.phone}</p>
+                                 </div>
+                              </div>
+
+                              <div>
+                                 <h3 className='font-semibold text-text-dark mb-2'>Timestamps</h3>
+                                 <div className='space-y-1 text-sm'>
+                                    {selectedPayment.timestamps?.createdAt && (
+                                       <p><span className='font-medium'>Created:</span> {new Date(selectedPayment.timestamps.createdAt.seconds * 1000).toLocaleString()}</p>
+                                    )}
+                                    {selectedPayment.timestamps?.updatedAt && (
+                                       <p><span className='font-medium'>Updated:</span> {new Date(selectedPayment.timestamps.updatedAt.seconds * 1000).toLocaleString()}</p>
+                                    )}
+                                    {selectedPayment.timestamps?.completedAt && (
+                                       <p><span className='font-medium'>Completed:</span> {new Date(selectedPayment.timestamps.completedAt.seconds * 1000).toLocaleString()}</p>
+                                    )}
+                                 </div>
+                              </div>
                            </div>
                         </div>
+
+                        {selectedPayment.orderReference && (
+                           <div className='mb-6'>
+                              <h3 className='font-semibold text-text-dark mb-2'>Order Reference</h3>
+                              <div className='bg-gray-50 p-4 rounded-lg'>
+                                 <p className='text-sm'><span className='font-medium'>Order ID:</span> {selectedPayment.orderReference.orderId}</p>
+                                 <p className='text-sm'><span className='font-medium'>Order Number:</span> {selectedPayment.orderReference.orderNumber}</p>
+                                 {selectedPayment.orderReference.items && selectedPayment.orderReference.items.length > 0 && (
+                                    <div className='mt-3'>
+                                       <p className='text-sm font-medium mb-2'>Items:</p>
+                                       <div className='space-y-1'>
+                                          {selectedPayment.orderReference.items.map((item, index) => (
+                                             <p key={index} className='text-xs text-gray-600'>
+                                                {item.title} × {item.quantity} (₹{item.price})
+                                             </p>
+                                          ))}
+                                       </div>
+                                    </div>
+                                 )}
+                              </div>
+                           </div>
+                        )}
+
+                        {selectedPayment.errorDetails && (
+                           <div className='mb-6'>
+                              <h3 className='font-semibold text-text-dark mb-2'>Error Information</h3>
+                              <div className='bg-red-50 border border-red-200 p-4 rounded-lg'>
+                                 {selectedPayment.errorDetails.errorCode && (
+                                    <p className='text-sm text-red-800'><span className='font-medium'>Error Code:</span> {selectedPayment.errorDetails.errorCode}</p>
+                                 )}
+                                 {selectedPayment.errorDetails.errorDescription && (
+                                    <p className='text-sm text-red-800'><span className='font-medium'>Description:</span> {selectedPayment.errorDetails.errorDescription}</p>
+                                 )}
+                                 {selectedPayment.errorDetails.failureReason && (
+                                    <p className='text-sm text-red-800'><span className='font-medium'>Failure Reason:</span> {selectedPayment.errorDetails.failureReason}</p>
+                                 )}
+                                 {selectedPayment.errorDetails.retryAttempt && (
+                                    <p className='text-sm text-red-800'><span className='font-medium'>Retry Attempts:</span> {selectedPayment.errorDetails.retryAttempt}</p>
+                                 )}
+                              </div>
+                           </div>
+                        )}
+
+                        {selectedPayment.metadata && Object.keys(selectedPayment.metadata).length > 0 && (
+                           <div className='mb-6'>
+                              <h3 className='font-semibold text-text-dark mb-2'>Additional Information</h3>
+                              <div className='bg-gray-50 p-4 rounded-lg'>
+                                 <pre className='text-xs text-gray-700 whitespace-pre-wrap'>
+                                    {JSON.stringify(selectedPayment.metadata, null, 2)}
+                                 </pre>
+                              </div>
+                           </div>
+                        )}
                      </div>
                   </motion.div>
                </motion.div>
