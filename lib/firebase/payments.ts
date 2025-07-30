@@ -204,6 +204,44 @@ export const getPayments = async () => {
   }
 }
 
+// Update payment status by Razorpay Order ID
+export const updatePaymentStatusByRazorpayId = async (
+  razorpayOrderId: string,
+  status: PaymentLog['paymentStatus'],
+  additionalData?: {
+    razorpayPaymentId?: string
+    razorpaySignature?: string
+    errorDetails?: PaymentLog['errorDetails']
+    razorpayResponse?: any
+  }
+) => {
+  try {
+    // Find payment by razorpay order ID
+    const q = query(
+      paymentsCollection,
+      where('razorpayOrderId', '==', razorpayOrderId),
+      limit(1)
+    )
+    const querySnapshot = await getDocs(q)
+    
+    if (querySnapshot.empty) {
+      return { success: false, error: 'Payment log not found' }
+    }
+
+    const doc = querySnapshot.docs[0]
+    const paymentLogId = doc.id
+
+    // Update the payment
+    return await updatePaymentStatus(paymentLogId, status, additionalData)
+  } catch (error) {
+    console.error('Error updating payment status by Razorpay ID:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
 // Get payment logs by customer email
 export const getPaymentsByCustomer = async (customerEmail: string) => {
   try {

@@ -201,6 +201,61 @@ export const getOrders = async () => {
   }
 }
 
+// Get order by Razorpay Order ID
+export const getOrderByRazorpayId = async (razorpayOrderId: string) => {
+  try {
+    const q = query(
+      ordersCollection, 
+      where('paymentDetails.razorpayOrderId', '==', razorpayOrderId),
+      limit(1)
+    )
+    const querySnapshot = await getDocs(q)
+    
+    if (querySnapshot.empty) {
+      return { success: false, error: 'Order not found', order: null }
+    }
+
+    const doc = querySnapshot.docs[0]
+    const order = { id: doc.id, ...doc.data() } as Order
+    
+    return { success: true, order }
+  } catch (error) {
+    console.error('Error fetching order by Razorpay ID:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      order: null
+    }
+  }
+}
+
+// Update payment status by Razorpay Order ID
+export const updatePaymentStatusByRazorpayId = async (
+  razorpayOrderId: string,
+  paymentData: {
+    razorpayPaymentId: string
+    paymentStatus: Order['paymentDetails']['paymentStatus']
+    paymentMethod?: string
+  }
+) => {
+  try {
+    // First find the order
+    const orderResult = await getOrderByRazorpayId(razorpayOrderId)
+    if (!orderResult.success || !orderResult.order) {
+      return { success: false, error: 'Order not found' }
+    }
+
+    // Update the order
+    return await updatePaymentStatus(orderResult.order.id!, paymentData)
+  } catch (error) {
+    console.error('Error updating payment status by Razorpay ID:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
 // Get orders by customer email
 export const getOrdersByCustomer = async (customerEmail: string) => {
   try {
