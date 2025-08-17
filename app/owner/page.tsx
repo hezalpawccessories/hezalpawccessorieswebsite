@@ -63,7 +63,7 @@ export default function Owner() {
                         </div> */}
 
                         <p className='text-text-light leading-relaxed'>
-                           Woof woof! I’m Hezal, a fun-loving Labrador and the proud Top Dog behind Hezal Pawccessories
+                           Woof woof! I’m Hezal, a fun-loving Labrador and the proud Top Dog behind Hezal Accessories
                            ! Ever since I was a wiggly pup, I knew life was too short for boring collars and plain
                            leashes. So, with a wagging tail and a big dream, I convinced my humans to help me create a
                            pawsome range of stylish bandanas, dapper bow ties, comfy collars, sturdy leashes, and treat

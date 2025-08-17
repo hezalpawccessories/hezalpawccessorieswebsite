@@ -1,175 +1,60 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
-import { ShoppingCart, Heart, Menu, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import NProgress from 'nprogress'
+import { useState } from 'react'
 import Image from 'next/image'
 
 export default function Navbar() {
-   const pathname = usePathname()
-   const router = useRouter()
-   const [isMenuOpen, setIsMenuOpen] = useState(false)
-   const [cartCount, setCartCount] = useState(0)
    const [isAuthenticated, setIsAuthenticated] = useState(
       (typeof window !== 'undefined' && localStorage.getItem('isAuthenticated') === 'true') || false
    )
 
-   useEffect(() => {
-      const updateCartCount = () => {
-         if (typeof window !== 'undefined') {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-            const count = cart.reduce((total: number, item: any) => total + item.quantity, 0)
-            setCartCount(count)
-         }
-      }
-
-      updateCartCount()
-      if (typeof window !== 'undefined') {
-         window.addEventListener('storage', updateCartCount)
-         window.addEventListener('cartUpdated', updateCartCount)
-
-         return () => {
-            window.removeEventListener('storage', updateCartCount)
-            window.removeEventListener('cartUpdated', updateCartCount)
-         }
-      }
-   }, [])
-
-   const navItems = [
-      { href: '/', label: 'Home' },
-      { href: '/about', label: 'About' },
-      { href: '/owner', label: 'Owner' },
-      { href: '/products', label: 'Products', highlight: true },
-      { href: '/contact', label: 'Contact' },
-   ]
-
-   const handleNavigation = (href: string) => {
-      if (href !== pathname) {
-         NProgress.start()
-         router.push(href)
-      }
-      setIsMenuOpen(false)
-   }
-
    return (
-      <nav className='bg-white shadow-lg sticky top-0 z-50'>
+      <nav className='bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50'>
          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-            <div className='flex justify-between items-center h-16'>
+            <div className='flex justify-between items-center h-16 sm:h-20'>
                {/* Logo */}
                <Link
                   href='/'
-                  className='flex items-center justify-center space-x-2 '
+                  className='flex items-center space-x-2 sm:space-x-3'
                >
-                  <div className='bg-text-light hover:bg-black/50 transition-colors duration-200 rounded-full p-1'>
+                  <div className='bg-pink-50 rounded-full p-1.5 sm:p-2'>
                      <Image
                         src='/logom.png'
                         alt='Hezal Accessories Logo'
-                        width={32}
-                        height={32}
-                        className='rounded-full'
+                        width={24}
+                        height={24}
+                        className='rounded-full sm:w-7 sm:h-7'
                      />
                   </div>
 
                   <div>
-                     <h1 className='text-xl font-nunito font-extrabold text-primary-pink  hover:text-pink-500 leading-tight tracking-wide'>
-                        Hezal Pawccessories
+                     <h1 className='text-base sm:text-xl font-nunito font-bold text-gray-800 leading-tight'>
+                        Hezal Accessories
                      </h1>
-                     <p className='text-xs font-semibold font-dm-sans text-text-body -mt-0.5 tracking-wide'>
+                     <p className='text-xs font-dm-sans text-gray-500 -mt-0.5 hidden sm:block'>
                         Your pet deserves only the BEST
                      </p>
                   </div>
                </Link>
 
-               {/* Desktop Navigation */}
-               <div className='hidden md:flex items-center space-x-8'>
-                  {navItems.map((item) => (
-                     <button
-                        key={item.href}
-                        onClick={() => handleNavigation(item.href)}
-                        className={`font-dm-sans font-medium transition-colors duration-200 px-4 py-1.5 rounded-md ${
-                           item.label === 'Products'
-                              ? 'bg-gradient-to-r from-primary-pink to-primary-blue text-white shadow-md hover:from-primary-blue hover:to-primary-pink border-none scale-105'
-                              : pathname === item.href
-                              ? 'text-primary-pink border-b-2 border-primary-pink pb-1 bg-transparent'
-                              : 'text-text-dark hover:text-primary-pink bg-transparent'
-                        }`}
-                        style={item.label === 'Products' ? { fontWeight: 700, letterSpacing: '0.02em' } : {}}
-                     >
-                        {item.label}
+               {/* Shop Now Button */}
+               <div className='flex items-center space-x-3'>
+                  <Link href='/products'>
+                     <button className='bg-pink-500 text-white hover:bg-pink-600 font-dm-sans font-medium transition-colors duration-200 px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base'>
+                        Shop Now
                      </button>
-                  ))}
+                  </Link>
                   {isAuthenticated && (
                      <Link
                         href='/master'
-                        className={`font-dm-sans font-medium transition-colors duration-200 bg-primary-pink text-white hover:bg-primary-pink/90 py-1.5 px-3 rounded-md`}
+                        className='font-dm-sans font-medium transition-colors duration-200 bg-gray-800 text-white hover:bg-gray-700 py-2 px-3 sm:px-4 rounded-md text-sm sm:text-base'
                      >
                         Admin
                      </Link>
                   )}
                </div>
-
-               {/* Cart and Mobile Menu */}
-               <div className='flex items-center space-x-4'>
-                  <button
-                     onClick={() => handleNavigation('/cart')}
-                     className='relative'
-                  >
-                     <ShoppingCart className='w-6 h-6 text-text-dark hover:text-primary-pink transition-colors' />
-                     {cartCount > 0 && (
-                        <span className='absolute -top-2 -right-2 bg-primary-pink text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
-                           {cartCount}
-                        </span>
-                     )}
-                  </button>
-
-                  {/* Mobile menu button */}
-                  <button
-                     className='md:hidden'
-                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  >
-                     {isMenuOpen ? (
-                        <X className='w-6 h-6 text-text-dark' />
-                     ) : (
-                        <Menu className='w-6 h-6 text-text-dark' />
-                     )}
-                  </button>
-               </div>
             </div>
-
-            {/* Mobile Navigation */}
-            {isMenuOpen && (
-               <div className='md:hidden'>
-                  <div className='px-2 pt-2 pb-3 space-y-1 bg-white border-t'>
-                     {navItems.map((item) => (
-                        <button
-                           key={item.href}
-                           onClick={() => handleNavigation(item.href)}
-                           className={`block w-full text-left px-3 py-2 rounded-md text-base font-dm-sans font-medium transition-colors duration-200 ${
-                              item.label === 'Products'
-                                 ? 'bg-gradient-to-r from-primary-pink to-primary-blue text-white shadow-md border-none scale-105'
-                                 : pathname === item.href
-                                 ? 'text-primary-pink bg-pink-50'
-                                 : 'text-text-dark hover:text-primary-pink hover:bg-pink-50'
-                           }`}
-                           style={item.label === 'Products' ? { fontWeight: 700, letterSpacing: '0.02em' } : {}}
-                        >
-                           {item.label}
-                        </button>
-                     ))}
-                     {isAuthenticated && (
-                        <Link
-                           href='/master'
-                           className={`block w-full text-left px-3 py-2 rounded-md text-base font-dm-sans font-medium transition-colors duration-200 bg-primary-pink text-white hover:bg-primary-pink/90`}
-                        >
-                           Admin
-                        </Link>
-                     )}
-                  </div>
-               </div>
-            )}
          </div>
       </nav>
    )

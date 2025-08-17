@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      message: 'Hezal Pawccessories Website is running'
+      message: 'Hezal Accessories Website is running'
     }
 
     return NextResponse.json(response, { 

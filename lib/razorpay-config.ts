@@ -44,7 +44,7 @@ export interface CartItem {
 // Razorpay configuration
 export const RAZORPAY_CONFIG = {
    currency: 'INR',
-   company_name: 'Hezal Pawccessories',
+   company_name: 'Hezal Accessories',
    description: 'Pet accessories order payment',
    image: '/logom.png', // Your company logo
    theme: {

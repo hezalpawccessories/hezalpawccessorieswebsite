@@ -24,7 +24,7 @@ export default function Footer() {
                         className='rounded-full'
                      />
                      <div>
-                        <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal Pawccessories</h3>
+                        <h3 className='text-xl font-nunito font-bold text-primary-pink'>Hezal Accessories</h3>
                         <p className='text-sm font-dm-sans text-gray-300'>Your pet deserves only the BEST</p>
                      </div>
                   </div>
@@ -38,8 +38,8 @@ export default function Footer() {
                </div>
 
                {/* Quick Links */}
-               <div>
-                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-primary-blue'>Quick Links</h4>
+               <div >
+                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Quick Links</h4>
                   <ul className='space-y-2'>
                      <li>
                         <Link
@@ -62,24 +62,9 @@ export default function Footer() {
                            href='/products'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Products
-                        </Link>
-                     </li>
-                     <li>
-                        <Link
-                           href='/contact'
-                           className='text-gray-300 hover:text-primary-pink transition-colors'
-                        >
                            Contact
                         </Link>
                      </li>
-                  </ul>
-               </div>
-
-               {/* Policies */}
-               <div>
-                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-primary-blue'>Support</h4>
-                  <ul className='space-y-2'>
                      <li>
                         <Link
                            href='/contact'
@@ -88,12 +73,19 @@ export default function Footer() {
                            FAQs
                         </Link>
                      </li>
+                  </ul>
+               </div>
+
+               {/* Policies */}
+               <div>
+                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Support</h4>
+                  <ul className='space-y-2'>
                      <li>
                         <Link
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Feedback
+                           Privacy Policy
                         </Link>
                      </li>
                      <li>
@@ -101,7 +93,15 @@ export default function Footer() {
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Return Policy
+                           Terms & Conditions
+                        </Link>
+                     </li>
+                     <li>
+                        <Link
+                           href='/contact'
+                           className='text-gray-300 hover:text-primary-pink transition-colors'
+                        >
+                           Refund & Cancellation
                         </Link>
                      </li>
                      <li>
@@ -118,7 +118,7 @@ export default function Footer() {
 
             <div className='border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-2'>
                <p className='text-gray-300 text-sm'>© 2025 Hezal Accessories. All rights reserved.</p>
-               <p className='text-gray-300 text-sm mt-2 md:mt-0'>Developed with ❤️ for pet lovers</p>
+               {/* <p className='text-gray-300 text-sm mt-2 md:mt-0'>Developed with ❤️ for pet lovers</p> */}
                <a
                   href='https://www.instagram.com/hezal_accessories/?hl=en'
                   target='_blank'

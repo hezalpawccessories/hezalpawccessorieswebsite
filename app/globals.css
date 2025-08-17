@@ -6,16 +6,14 @@
 @tailwind utilities;
 
 :root {
-  --primary-pink: #ff6b9d;
-  --primary-blue: #4ecdc4;
-  --soft-yellow: #ffe66d;
-  --warm-orange: #ff8b5a;
-  --light-purple: #a8e6cf;
-  --cream: #fef7f0;
-  --soft-gray: #f8f9fa;
-  --text-dark: #2d3436;
-  --text-light: #6A6A6A;
-  --text-body: #4D4D4D;
+  --primary-pink: #FF69B4;
+  --primary-gray: #2F2F2F;
+  --light-gray: #F5F5F5;
+  --cream: #FFFFFF;
+  --text-dark: #2F2F2F;
+  --text-light: #888888;
+  --text-body: #555555;
+  --border-light: #E5E5E5;
 }
 
 * {
@@ -31,8 +29,8 @@ body {
   line-height: 1.6;
 }
 
-.gradient-bg {
-  background: linear-gradient(135deg, var(--cream) 0%, #fff5f5 50%, var(--soft-gray) 100%);
+.minimal-bg {
+  background: var(--cream);
 }
 
 .card-hover {
@@ -40,50 +38,54 @@ body {
 }
 
 .card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-pink), var(--warm-orange));
+  background: var(--primary-pink);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(255, 107, 157, 0.3);
-}
-
-.btn-secondary {
-  background: var(--primary-blue);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 12px 32px;
+  border-radius: 6px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary:hover {
+  background: #E55A9F;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-gray);
+  border: 1px solid var(--border-light);
+  padding: 11px 31px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
 }
 
 .btn-secondary:hover {
-  background: #45b7aa;
+  background: var(--light-gray);
+  border-color: var(--primary-gray);
   transform: translateY(-1px);
 }
 
 .category-pill {
   background: white;
-  border: 2px solid var(--primary-blue);
-  color: var(--primary-blue);
+  border: 1px solid var(--border-light);
+  color: var(--primary-gray);
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'DM Sans', sans-serif;
@@ -92,8 +94,9 @@ body {
 
 .category-pill:hover,
 .category-pill.active {
-  background: var(--primary-blue);
+  background: var(--primary-pink);
   color: white;
+  border-color: var(--primary-pink);
 }
 
 .modal-overlay {
