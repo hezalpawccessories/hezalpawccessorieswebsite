@@ -78,7 +78,7 @@ export default function Home() {
                               </button>
                            </Link>
                            <Link href='/about'>
-                              <button className='btn-secondary w-full sm:w-auto'>Learn More</button>
+                              <button className='btn-secondary w-full sm:w-auto'>About Us</button>
                            </Link>
                         </div>
                      </motion.div>

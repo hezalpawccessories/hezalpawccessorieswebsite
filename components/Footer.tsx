@@ -62,7 +62,7 @@ export default function Footer() {
                            href='/products'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Contact
+                           Products
                         </Link>
                      </li>
                      <li>
@@ -70,7 +70,7 @@ export default function Footer() {
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           FAQs
+                           Contact
                         </Link>
                      </li>
                   </ul>
@@ -78,11 +78,11 @@ export default function Footer() {
 
                {/* Policies */}
                <div>
-                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Support</h4>
+                  <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Policies</h4>
                   <ul className='space-y-2'>
                      <li>
                         <Link
-                           href='/contact'
+                           href='/privacy-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Privacy Policy
@@ -90,7 +90,7 @@ export default function Footer() {
                      </li>
                      <li>
                         <Link
-                           href='/contact'
+                           href='/terms'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Terms & Conditions
@@ -98,18 +98,18 @@ export default function Footer() {
                      </li>
                      <li>
                         <Link
-                           href='/contact'
+                           href='/return-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Refund & Cancellation
+                           Return & Cancellation
                         </Link>
                      </li>
                      <li>
                         <Link
-                           href='/contact'
+                           href='/shipping-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Shipping Info
+                           Shipping Policy
                         </Link>
                      </li>
                   </ul>
