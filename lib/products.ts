@@ -1,8 +1,15 @@
+export interface SizePricing {
+  size: string;
+  price: number;
+  originalPrice?: number;
+}
+
 export interface Product {
   id: string;
   title: string;
   price: number;
   originalPrice?: number;
+  sizePricing?: SizePricing[]; // Array of size-based pricing
   image: string;
   images?: string[]; // Optional array for additional images
   category: string;

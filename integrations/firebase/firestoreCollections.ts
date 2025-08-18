@@ -1,11 +1,18 @@
 import { db } from './firebaseconfig'
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
 
+export interface SizePricing {
+   size: string
+   price: number
+   originalPrice?: number
+}
+
 export interface Product {
    id: string
    title: string
    price: number
    originalPrice?: number
+   sizePricing?: SizePricing[] // Array of size-based pricing
    image: string
    category: string
    description: string

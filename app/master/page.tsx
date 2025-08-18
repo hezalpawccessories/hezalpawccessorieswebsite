@@ -23,7 +23,7 @@ import {
    XCircle,
    Clock,
 } from 'lucide-react'
-import { products as initialProducts, Product } from '@/lib/products'
+import { products as initialProducts, Product, sizes, SizePricing } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
 import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
 import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
@@ -64,6 +64,7 @@ export default function AdminDashboard() {
       title: '',
       price: 0,
       originalPrice: 0,
+      sizePricing: [{ size: 'XS', price: 0, originalPrice: 0 }], // Default size pricing
       image: '',
       images: [''], // Array for multiple images
       category: 'Collars',
@@ -285,6 +286,7 @@ export default function AdminDashboard() {
          id: uuidv4(),
          details: newProduct.details.filter((detail) => detail.trim() !== ''),
          images: newProduct.images.filter((imageUrl) => imageUrl.trim() !== ''),
+         sizePricing: newProduct.sizePricing?.filter((sp) => sp.price > 0) || undefined, // Only include sizes with prices
       }
       setProducts([...products, product])
 
@@ -309,6 +311,7 @@ export default function AdminDashboard() {
          title: '',
          price: 0,
          originalPrice: 0,
+         sizePricing: [{ size: 'XS', price: 0, originalPrice: 0 }],
          image: '',
          images: [''],
          category: 'Collars',
@@ -693,6 +696,100 @@ export default function AdminDashboard() {
                                     className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
                                  />
                               </div>
+                           </div>
+
+                           {/* Size-Based Pricing Section */}
+                           <div className='space-y-4'>
+                              <div className='flex items-center justify-between'>
+                                 <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing</label>
+                                 <button
+                                    type='button'
+                                    onClick={() => {
+                                       const newSizePricing = [...(newProduct.sizePricing || [])]
+                                       const availableSizes = sizes.filter(size => 
+                                          !newSizePricing.some(sp => sp.size === size)
+                                       )
+                                       if (availableSizes.length > 0) {
+                                          newSizePricing.push({ 
+                                             size: availableSizes[0], 
+                                             price: 0, 
+                                             originalPrice: 0 
+                                          })
+                                          setNewProduct({ ...newProduct, sizePricing: newSizePricing })
+                                       }
+                                    }}
+                                    className='px-3 py-1 bg-primary-blue text-white rounded-lg text-sm hover:bg-primary-blue/80'
+                                 >
+                                    Add Size
+                                 </button>
+                              </div>
+                              
+                              {newProduct.sizePricing && newProduct.sizePricing.length > 0 && (
+                                 <div className='space-y-3'>
+                                    {newProduct.sizePricing.map((sizePrice, index) => (
+                                       <div key={index} className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg'>
+                                          <div className='flex-1'>
+                                             <label className='block text-xs text-text-light mb-1'>Size</label>
+                                             <select
+                                                value={sizePrice.size}
+                                                onChange={(e) => {
+                                                   const newSizePricing = [...(newProduct.sizePricing || [])]
+                                                   newSizePricing[index] = { ...newSizePricing[index], size: e.target.value }
+                                                   setNewProduct({ ...newProduct, sizePricing: newSizePricing })
+                                                }}
+                                                className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                             >
+                                                {sizes.map(size => (
+                                                   <option key={size} value={size}>{size}</option>
+                                                ))}
+                                             </select>
+                                          </div>
+                                          <div className='flex-1'>
+                                             <label className='block text-xs text-text-light mb-1'>Price</label>
+                                             <input
+                                                type='number'
+                                                value={sizePrice.price}
+                                                onChange={(e) => {
+                                                   const newSizePricing = [...(newProduct.sizePricing || [])]
+                                                   newSizePricing[index] = { ...newSizePricing[index], price: Number(e.target.value) }
+                                                   setNewProduct({ ...newProduct, sizePricing: newSizePricing })
+                                                }}
+                                                className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                                placeholder='Price'
+                                             />
+                                          </div>
+                                          <div className='flex-1'>
+                                             <label className='block text-xs text-text-light mb-1'>Original Price</label>
+                                             <input
+                                                type='number'
+                                                value={sizePrice.originalPrice || 0}
+                                                onChange={(e) => {
+                                                   const newSizePricing = [...(newProduct.sizePricing || [])]
+                                                   newSizePricing[index] = { ...newSizePricing[index], originalPrice: Number(e.target.value) }
+                                                   setNewProduct({ ...newProduct, sizePricing: newSizePricing })
+                                                }}
+                                                className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                                placeholder='Original Price'
+                                             />
+                                          </div>
+                                          <button
+                                             type='button'
+                                             onClick={() => {
+                                                const newSizePricing = (newProduct.sizePricing || []).filter((_, i) => i !== index)
+                                                setNewProduct({ ...newProduct, sizePricing: newSizePricing })
+                                             }}
+                                             className='px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 self-end'
+                                          >
+                                             <X className='w-4 h-4' />
+                                          </button>
+                                       </div>
+                                    ))}
+                                 </div>
+                              )}
+                              
+                              <p className='text-xs text-text-light'>
+                                 Note: If size-based pricing is set, it will override the general price above. Leave empty to use general pricing.
+                              </p>
                            </div>
 
                            {/* Image Upload Section */}
@@ -1233,6 +1330,100 @@ export default function AdminDashboard() {
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               />
                            </div>
+                        </div>
+
+                        {/* Size-Based Pricing Section in Edit Modal */}
+                        <div className='space-y-4'>
+                           <div className='flex items-center justify-between'>
+                              <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing</label>
+                              <button
+                                 type='button'
+                                 onClick={() => {
+                                    const newSizePricing = [...(selectedProduct.sizePricing || [])]
+                                    const availableSizes = sizes.filter(size => 
+                                       !newSizePricing.some(sp => sp.size === size)
+                                    )
+                                    if (availableSizes.length > 0) {
+                                       newSizePricing.push({ 
+                                          size: availableSizes[0], 
+                                          price: 0, 
+                                          originalPrice: 0 
+                                       })
+                                       setSelectedProduct({ ...selectedProduct, sizePricing: newSizePricing })
+                                    }
+                                 }}
+                                 className='px-3 py-1 bg-primary-blue text-white rounded-lg text-sm hover:bg-primary-blue/80'
+                              >
+                                 Add Size
+                              </button>
+                           </div>
+                           
+                           {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0 && (
+                              <div className='space-y-3'>
+                                 {selectedProduct.sizePricing.map((sizePrice, index) => (
+                                    <div key={index} className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg'>
+                                       <div className='flex-1'>
+                                          <label className='block text-xs text-text-light mb-1'>Size</label>
+                                          <select
+                                             value={sizePrice.size}
+                                             onChange={(e) => {
+                                                const newSizePricing = [...(selectedProduct.sizePricing || [])]
+                                                newSizePricing[index] = { ...newSizePricing[index], size: e.target.value }
+                                                setSelectedProduct({ ...selectedProduct, sizePricing: newSizePricing })
+                                             }}
+                                             className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                          >
+                                             {sizes.map(size => (
+                                                <option key={size} value={size}>{size}</option>
+                                             ))}
+                                          </select>
+                                       </div>
+                                       <div className='flex-1'>
+                                          <label className='block text-xs text-text-light mb-1'>Price</label>
+                                          <input
+                                             type='number'
+                                             value={sizePrice.price}
+                                             onChange={(e) => {
+                                                const newSizePricing = [...(selectedProduct.sizePricing || [])]
+                                                newSizePricing[index] = { ...newSizePricing[index], price: Number(e.target.value) }
+                                                setSelectedProduct({ ...selectedProduct, sizePricing: newSizePricing })
+                                             }}
+                                             className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                             placeholder='Price'
+                                          />
+                                       </div>
+                                       <div className='flex-1'>
+                                          <label className='block text-xs text-text-light mb-1'>Original Price</label>
+                                          <input
+                                             type='number'
+                                             value={sizePrice.originalPrice || 0}
+                                             onChange={(e) => {
+                                                const newSizePricing = [...(selectedProduct.sizePricing || [])]
+                                                newSizePricing[index] = { ...newSizePricing[index], originalPrice: Number(e.target.value) }
+                                                setSelectedProduct({ ...selectedProduct, sizePricing: newSizePricing })
+                                             }}
+                                             className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-blue text-sm'
+                                             placeholder='Original Price'
+                                          />
+                                       </div>
+                                       <button
+                                          type='button'
+                                          onClick={() => {
+                                             const newSizePricing = (selectedProduct.sizePricing || []).filter((_, i) => i !== index)
+                                             setSelectedProduct({ ...selectedProduct, sizePricing: newSizePricing })
+                                          }}
+                                          className='px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 self-end'
+                                       >
+                                          <X className='w-4 h-4' />
+                                       </button>
+                                    </div>
+                                 ))}
+                              </div>
+                           )}
+                           
+                           <p className='text-xs text-text-light'>
+                              Note: If size-based pricing is set, it will override the general price above.
+                           </p>
                         </div>
 
                         {/* Images Section in Edit Modal */}
