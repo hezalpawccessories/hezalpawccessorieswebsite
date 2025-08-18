@@ -10,7 +10,7 @@ export default function ShippingPolicy() {
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
           <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-8'>
-            <h1 className='text-3xl font-bold text-gray-800 mb-8 text-center'>
+            <h1 className='text-3xl font-heading font-bold text-gray-800 mb-8 text-center'>
               Shipping Policy
             </h1>
             
@@ -21,36 +21,36 @@ export default function ShippingPolicy() {
 
               <div className='space-y-6'>
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Order Processing</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Order Processing</h3>
+                  <p className='font-body text-gray-600'>
                     Orders are dispatched within 2–4 business days after payment.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Shipping Time</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Shipping Time</h3>
+                  <p className='font-body text-gray-600'>
                     Delivery usually takes 3–7 business days from dispatch, depending on location.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Shipping Charges</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Shipping Charges</h3>
+                  <p className='font-body text-gray-600'>
                     Calculated and shown at checkout; charges vary by order size and location.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Tracking</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Tracking</h3>
+                  <p className='font-body text-gray-600'>
                     You will receive a tracking link via email or SMS after dispatch.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Delays</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Delays</h3>
+                  <p className='font-body text-gray-600'>
                     Delivery may be delayed due to unforeseen circumstances; we strive to keep you informed.
                   </p>
                 </div>

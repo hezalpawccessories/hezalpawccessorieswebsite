@@ -20,10 +20,10 @@ export default function Owner() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-16'
                   >
-                     <h1 className='text-4xl md:text-6xl font-nunito font-extrabold text-text-dark mb-6 leading-tight tracking-wide'>
+                     <h1 className='text-4xl md:text-6xl font-heading font-extrabold text-text-dark mb-6 leading-tight tracking-wide'>
                         Meet the <span className='text-primary-pink'>Owner</span>
                      </h1>
-                     <p className='text-xl font-dm-sans text-text-body max-w-3xl mx-auto'>
+                     <p className='text-xl font-body text-text-body max-w-3xl mx-auto'>
                         Get to know the passionate pet lover behind Hezal Accessories
                      </p>
                   </motion.div>

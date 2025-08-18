@@ -82,10 +82,10 @@ export default function Contact() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-16'
                   >
-                     <h1 className='text-4xl md:text-6xl font-nunito font-extrabold text-text-dark mb-6 leading-tight tracking-wide'>
+                     <h1 className='text-4xl md:text-6xl font-heading font-extrabold text-text-dark mb-6 leading-tight tracking-wide'>
                         Get in <span className='text-primary-pink'>Touch</span>
                      </h1>
-                     <p className='text-xl font-dm-sans text-text-body max-w-3xl mx-auto'>
+                     <p className='text-xl font-body text-text-body max-w-3xl mx-auto'>
                         Have questions about our products or need help with your order? We&apos;re here to help!
                      </p>
                   </motion.div>
@@ -101,9 +101,9 @@ export default function Contact() {
                            className='bg-white p-6 rounded-2xl shadow-lg text-center card-hover'
                         >
                            <div className='text-primary-blue mb-4 flex justify-center'>{info.icon}</div>
-                           <h3 className='text-lg font-nunito font-bold text-text-dark mb-2'>{info.title}</h3>
-                           <p className='font-dm-sans text-primary-pink font-semibold mb-1'>{info.details}</p>
-                           <p className='font-dm-sans text-text-body text-sm'>{info.description}</p>
+                           <h3 className='text-lg font-heading font-bold text-text-dark mb-2'>{info.title}</h3>
+                           <p className='font-body text-primary-pink font-semibold mb-1'>{info.details}</p>
+                           <p className='font-body text-text-body text-sm'>{info.description}</p>
                         </motion.div>
                      ))}
                   </div>

@@ -29,10 +29,10 @@ export default function Navbar() {
                   </div>
 
                   <div>
-                     <h1 className='text-base sm:text-xl font-nunito font-bold text-gray-800 leading-tight'>
+                     <h1 className='text-base sm:text-xl font-heading font-bold text-gray-800 leading-tight'>
                         Hezal Accessories
                      </h1>
-                     <p className='text-xs font-dm-sans text-gray-500 -mt-0.5 hidden sm:block'>
+                     <p className='text-xs font-body text-gray-500 -mt-0.5 hidden sm:block'>
                         Your pet deserves only the BEST
                      </p>
                   </div>
@@ -41,14 +41,14 @@ export default function Navbar() {
                {/* Shop Now Button */}
                <div className='flex items-center space-x-3'>
                   <Link href='/products'>
-                     <button className='bg-pink-500 text-white hover:bg-pink-600 font-dm-sans font-medium transition-colors duration-200 px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base'>
+                     <button className='bg-pink-500 text-white hover:bg-pink-600 font-body font-medium transition-colors duration-200 px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base'>
                         Shop Now
                      </button>
                   </Link>
                   {isAuthenticated && (
                      <Link
                         href='/master'
-                        className='font-dm-sans font-medium transition-colors duration-200 bg-gray-800 text-white hover:bg-gray-700 py-2 px-3 sm:px-4 rounded-md text-sm sm:text-base'
+                        className='font-body font-medium transition-colors duration-200 bg-gray-800 text-white hover:bg-gray-700 py-2 px-3 sm:px-4 rounded-md text-sm sm:text-base'
                      >
                         Admin
                      </Link>

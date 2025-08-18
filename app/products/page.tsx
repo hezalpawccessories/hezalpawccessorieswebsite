@@ -173,10 +173,10 @@ export default function Products() {
                   transition={{ duration: 0.8 }}
                   className='text-center mb-12'
                >
-                  <h1 className='text-4xl md:text-5xl font-nunito font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
+                  <h1 className='text-4xl md:text-5xl font-heading font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
                      Our <span className='text-primary-pink'>Products</span>
                   </h1>
-                  <p className='text-xl font-dm-sans text-text-body max-w-2xl mx-auto'>
+                  <p className='text-xl font-body text-text-body max-w-2xl mx-auto'>
                      Discover our carefully curated collection of premium pet accessories
                   </p>
                </motion.div>
@@ -189,7 +189,7 @@ export default function Products() {
                         <button
                            key={category}
                            onClick={() => setSelectedCategory(category)}
-                           className={`category-pill font-dm-sans font-medium ${
+                           className={`category-pill font-body font-medium ${
                               selectedCategory === category ? 'active' : ''
                            }`}
                         >
@@ -207,7 +207,7 @@ export default function Products() {
                            placeholder='Search products...'
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
+                           className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
                         />
                      </div>
 
@@ -297,17 +297,23 @@ export default function Products() {
                                  <Eye className='w-6 h-6 text-primary-blue' />
                               </div>
                            </div>
+                           
+                           {product.originalPrice === 0 ? '' :
+                           <>
                            {product.originalPrice && (
                               <div className='absolute top-2 right-2 bg-primary-pink text-white px-2 py-1 rounded-full text-xs font-bold'>
                                  {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                                  OFF
                               </div>
                            )}
+                           </>
+                           }
+                           
                         </div>
 
                         <div className='p-4'>
                            <h3
-                              className='text-lg font-nunito font-bold text-text-dark mb-2 line-clamp-2 hover:underline transition-all duration-400 cursor-pointer'
+                              className='text-lg font-heading font-bold text-text-dark mb-2 line-clamp-2 hover:underline transition-all duration-400 cursor-pointer'
                               onClick={() => setSelectedProduct(product)}
                            >
                               {product.title}
@@ -327,25 +333,31 @@ export default function Products() {
                                     />
                                  ))}
                               </div>
-                              <span className='text-sm font-dm-sans text-text-light ml-2'>({product.reviews})</span>
+                              <span className='text-sm font-body text-text-light ml-2'>({product.reviews})</span>
                            </div> */}
 
                            <div className='flex items-center justify-between mb-4'>
                               <div className='flex items-center space-x-2'>
-                                 <span className='text-xl font-dm-sans font-bold text-primary-pink'>
+                                 <span className='text-xl font-accent font-bold text-primary-pink'>
                                     ₹{product.price}
                                  </span>
-                                 {product.originalPrice && (
+                                 
+
+                                 {product.originalPrice === 0 ? '' :
+                           <>
+                           {product.originalPrice  && (
                                     <span className='text-text-light line-through text-sm'>
                                        ₹{product.originalPrice}
                                     </span>
                                  )}
+                           </>
+                           }
                               </div>
                            </div>
 
                            {/* Size Selection */}
                            <div className='mb-6'>
-                              <h3 className='font-nunito font-bold text-text-dark mb-3'>Select Size:</h3>
+                              <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
                               <div className='flex flex-wrap gap-1'>
                                  {sizes.map((size) => (
                                     <button
@@ -478,7 +490,7 @@ export default function Products() {
                         })()}
 
                         <div className='p-6'>
-                           <h2 className='text-2xl font-nunito font-bold text-text-dark mb-2'>
+                           <h2 className='text-2xl font-heading font-bold text-text-dark mb-2'>
                               {selectedProduct.title}
                            </h2>
 
@@ -502,7 +514,7 @@ export default function Products() {
                            <p className='text-text-light mb-4'>{selectedProduct.description}</p>
 
                            <div className='mb-4'>
-                              <h3 className='font-nunito font-bold text-text-dark mb-2'>Features:</h3>
+                              {selectedProduct.details.length > 0 && <h3 className='font-heading font-bold text-text-dark mb-2'>Features:</h3>}
                               <ul className='list-disc list-inside space-y-1'>
                                  {selectedProduct.details.map((detail, index) => (
                                     <li
@@ -518,10 +530,15 @@ export default function Products() {
                            <div className='flex items-center justify-between mb-6'>
                               <div className='flex items-center space-x-2'>
                                  <span className='text-2xl font-bold text-primary-pink'>₹{selectedProduct.price}</span>
-                                 {selectedProduct.originalPrice && (
+                                 
+                                 {selectedProduct.originalPrice === 0 ? "" : (
+                                    <>
+                                    {selectedProduct.originalPrice && (
                                     <span className='text-text-light line-through'>
                                        ₹{selectedProduct.originalPrice}
                                     </span>
+                                 )}
+                                    </>
                                  )}
                               </div>
                               <span className='text-sm text-primary-blue font-semibold'>
@@ -531,7 +548,7 @@ export default function Products() {
 
                            {/* Size Selection in Modal */}
                            <div className='mb-6'>
-                              <h3 className='font-nunito font-bold text-text-dark mb-3'>Select Size:</h3>
+                              <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
                               <div className='flex flex-wrap gap-2'>
                                  {sizes.map((size) => (
                                     <button

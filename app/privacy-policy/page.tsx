@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
           <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-8'>
-            <h1 className='text-3xl font-bold text-gray-800 mb-8 text-center'>
+            <h1 className='text-3xl font-heading font-bold text-gray-800 mb-8 text-center'>
               Privacy Policy
             </h1>
             
@@ -21,43 +21,43 @@ export default function PrivacyPolicy() {
 
               <div className='space-y-6'>
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Information We Collect</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Information We Collect</h3>
+                  <p className='font-body text-gray-600'>
                     We collect your name, address, contact details, and payment info only for order fulfillment and notifications.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Use of Information</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Use of Information</h3>
+                  <p className='font-body text-gray-600'>
                     We use your info exclusively to process your orders and provide order updates.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Data Security</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Data Security</h3>
+                  <p className='font-body text-gray-600'>
                     We take reasonable measures to protect your information. Data is never shared with third parties except Shiprocket for shipping and Razorpay for payments.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Communication</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Communication</h3>
+                  <p className='font-body text-gray-600'>
                     You may receive emails about your order status. We do not send promotional emails.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Cookies</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Cookies</h3>
+                  <p className='font-body text-gray-600'>
                     Our website may use cookies to enhance your shopping experience.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Legal Compliance</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Legal Compliance</h3>
+                  <p className='font-body text-gray-600'>
                     We comply with all applicable Indian privacy regulations.
                   </p>
                 </div>

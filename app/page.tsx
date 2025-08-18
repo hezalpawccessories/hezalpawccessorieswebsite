@@ -57,20 +57,20 @@ export default function Home() {
             <section className='relative overflow-hidden hero-bg'>
                {/* Floating Pet Icons */}
                <div className='absolute inset-0 pointer-events-none'>
-                  <div className='absolute top-20 left-10 opacity-10 animate-bounce' style={{ animationDelay: '0s', animationDuration: '3s' }}>
+                  <div className='absolute top-20 left-10 floating-icon pulse-glow'>
                      <Heart className='w-8 h-8 text-pink-400' />
                   </div>
-                  <div className='absolute top-40 right-20 opacity-10 animate-bounce' style={{ animationDelay: '1s', animationDuration: '4s' }}>
+                  <div className='absolute top-40 right-20 floating-icon-delayed pulse-glow'>
                      <svg className='w-10 h-10 text-pink-400' fill='currentColor' viewBox='0 0 24 24'>
                         <path d='M12 2c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zm-7 8c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm11 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm-8 6c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm8 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3z'/>
                      </svg>
                   </div>
-                  <div className='absolute bottom-40 left-20 opacity-10 animate-bounce' style={{ animationDelay: '2s', animationDuration: '5s' }}>
+                  <div className='absolute bottom-40 left-20 floating-icon pulse-glow'>
                      <svg className='w-6 h-6 text-pink-400' fill='currentColor' viewBox='0 0 24 24'>
                         <path d='M4.5 12a7.5 7.5 0 0015 0 7.5 7.5 0 00-15 0zM12 2.5a.5.5 0 01.5.5v1a.5.5 0 01-1 0V3a.5.5 0 01.5-.5zM21 12.5a.5.5 0 010-1h1a.5.5 0 010 1h-1zM12 21.5a.5.5 0 01-.5-.5v-1a.5.5 0 011 0v1a.5.5 0 01-.5.5zM3 12.5a.5.5 0 010-1H2a.5.5 0 010 1h1z'/>
                      </svg>
                   </div>
-                  <div className='absolute top-60 right-40 opacity-10 animate-bounce' style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>
+                  <div className='absolute top-60 right-40 floating-icon-delayed pulse-glow'>
                      <Gift className='w-7 h-7 text-pink-400' />
                   </div>
                </div>
@@ -83,10 +83,10 @@ export default function Home() {
                         transition={{ duration: 0.8 }}
                         className='order-2 lg:order-1'
                      >
-                        <h1 className='text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-gray-900 mb-6 leading-tight'>
-                           Your Pet Deserves Only the <span className='text-pink-500'>BEST</span>
+                        <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>
+                           Your Pet Deserves Only the <span className='hero-accent'>BEST</span>
                         </h1>
-                        <p className='text-lg lg:text-xl font-dm-sans text-gray-600 mb-8 leading-relaxed max-w-lg'>
+                        <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>
                            Discover premium pet accessories that combine style, comfort, and quality. From adorable
                            collars to cozy beds, we have everything your furry friend needs.
                         </p>
@@ -121,9 +121,9 @@ export default function Home() {
                               className='w-full h-80 object-cover rounded-xl'
                            />
                         </div>
-                        <div className='absolute -bottom-4 -right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg'>
-                           <p className='font-dm-sans font-semibold'>🐕 Happy Pets</p>
-                           <p className='text-sm font-dm-sans opacity-90'>1000+ Satisfied Customers</p>
+                        <div className='absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg'>
+                           <p className='font-body font-semibold'>🐕 Happy Pets</p>
+                           <p className='text-sm font-body opacity-90'>1000+ Satisfied Customers</p>
                         </div>
                      </motion.div>
                   </div>
@@ -139,10 +139,10 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-12'
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-bold text-gray-900 mb-4 leading-tight'>
+                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
                         Why Choose Hezal Accessories?
                      </h2>
-                     <p className='text-lg font-dm-sans text-gray-600 max-w-2xl mx-auto'>
+                     <p className='text-lg font-body text-gray-600 max-w-2xl mx-auto'>
                         We&apos;re committed to providing the best for your pets with our carefully curated collection
                      </p>
                   </motion.div>
@@ -157,8 +157,8 @@ export default function Home() {
                            className='bg-white p-6 rounded-xl shadow-sm card-hover text-center border border-gray-100'
                         >
                            <div className='text-pink-500 mb-4 flex justify-center'>{feature.icon}</div>
-                           <h3 className='text-xl font-nunito font-semibold text-gray-900 mb-2'>{feature.title}</h3>
-                           <p className='font-dm-sans text-gray-600'>{feature.description}</p>
+                           <h3 className='text-xl subheading text-gray-900 mb-2'>{feature.title}</h3>
+                           <p className='font-body text-gray-600'>{feature.description}</p>
                         </motion.div>
                      ))}
                   </div>
@@ -186,10 +186,10 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-12'
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-bold text-gray-900 mb-4 leading-tight'>
+                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
                         Pet Accessories
                      </h2>
-                     <p className='text-lg font-dm-sans text-gray-600'>Discover our most popular pet accessories</p>
+                     <p className='text-lg font-body text-gray-600'>Discover our most popular pet accessories</p>
                   </motion.div>
 
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
@@ -225,18 +225,21 @@ export default function Home() {
                            initial={{ opacity: 0, y: 50 }}
                            whileInView={{ opacity: 1, y: 0 }}
                            transition={{ duration: 0.8, delay: index * 0.1 }}
-                           className='bg-gray-50 rounded-xl overflow-hidden shadow-sm card-hover border border-gray-100'
+                           className='product-card'
                         >
+                           <div className='product-tag'>
+                              {['💖 Popular', '✨ New', '🏆 Best Seller', '🎯 Featured', '⭐ Top Rated'][index % 5]}
+                           </div>
                            <Image
                               width={300}
                               height={200}
                               src={product.image}
                               alt={product.title}
-                              className='w-full h-48 object-cover'
+                              className='w-full h-48 object-cover product-image'
                            />
                            <div className='p-6'>
-                              <h3 className='text-lg font-nunito font-semibold text-gray-900 mb-2'>{product.title}</h3>
-                              <p className='font-dm-sans text-gray-600 text-sm leading-relaxed'>{product.description}</p>
+                              <h3 className='text-lg subheading text-gray-900 mb-2'>{product.title}</h3>
+                              <p className='font-body text-gray-600 text-sm leading-relaxed'>{product.description}</p>
                            </div>
                         </motion.div>
                      ))}
@@ -244,7 +247,7 @@ export default function Home() {
 
                   <div className='text-center mt-12'>
                      <Link href='/products'>
-                        <button className='btn-primary font-dm-sans font-medium'>View All Products</button>
+                        <button className='btn-primary font-body font-medium'>View All Products</button>
                      </Link>
                   </div>
                </div>
@@ -259,10 +262,10 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-12'
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-bold text-gray-900 mb-4 leading-tight'>
+                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
                         What Pet Parents Say
                      </h2>
-                     <p className='text-lg font-dm-sans text-gray-600'>Don&apos;t just take our word for it</p>
+                     <p className='text-lg font-body text-gray-600'>Don&apos;t just take our word for it</p>
                   </motion.div>
 
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
@@ -272,10 +275,10 @@ export default function Home() {
                            initial={{ opacity: 0, y: 50 }}
                            whileInView={{ opacity: 1, y: 0 }}
                            transition={{ duration: 0.8, delay: index * 0.1 }}
-                           className='bg-white p-6 rounded-xl shadow-sm border border-gray-100'
+                           className='testimonial-card'
                         >
                            <div className='flex items-center mb-4'>
-                              {[...Array(testimonial.rating)].map((_, i) => (
+                              {Array.from({ length: testimonial.rating }).map((_, i) => (
                                  <Star
                                     key={i}
                                     className='w-5 h-5 text-pink-500'
@@ -283,8 +286,8 @@ export default function Home() {
                                  />
                               ))}
                            </div>
-                           <p className='font-dm-sans text-gray-600 mb-4 italic'>&quot;{testimonial.comment}&quot;</p>
-                           <p className='font-dm-sans font-semibold text-gray-900'>- {testimonial.name}</p>
+                           <p className='font-body text-gray-600 mb-4 italic'>&quot;{testimonial.comment}&quot;</p>
+                           <p className='font-body font-semibold text-gray-900'>- {testimonial.name}</p>
                         </motion.div>
                      ))}
                   </div>
@@ -295,7 +298,7 @@ export default function Home() {
             <section className='py-16 lg:py-20 bg-gradient-to-r from-pink-500 to-pink-600 relative overflow-hidden'>
                {/* Playful background elements */}
                <div className='absolute inset-0 pointer-events-none'>
-                  <div className='absolute top-10 left-10 opacity-20 animate-pulse'>
+                  <div className='absolute top-5 left-5 md:top-10 md:left-10 opacity-20 animate-pulse'>
                      <svg className='w-12 h-12 text-white' fill='currentColor' viewBox='0 0 24 24'>
                         <path d='M12 2c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zm-7 8c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm11 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm-8 6c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm8 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3z'/>
                      </svg>
@@ -303,7 +306,7 @@ export default function Home() {
                   <div className='absolute bottom-10 right-10 opacity-20 animate-pulse' style={{ animationDelay: '1s' }}>
                      <Heart className='w-10 h-10 text-white' />
                   </div>
-                  <div className='absolute top-1/2 left-1/4 opacity-10 animate-pulse' style={{ animationDelay: '2s' }}>
+                  <div className='absolute top-2/3 left-10 md:top-1/2 md:left-1/4 opacity-10 animate-pulse' style={{ animationDelay: '2s' }}>
                      <Gift className='w-8 h-8 text-white' />
                   </div>
                </div>
@@ -313,14 +316,14 @@ export default function Home() {
                      whileInView={{ opacity: 1, y: 0 }}
                      transition={{ duration: 0.8 }}
                   >
-                     <h2 className='text-3xl md:text-4xl font-nunito font-bold text-white mb-4 leading-tight'>
+                     <h2 className='text-3xl md:text-4xl section-title text-white mb-4 leading-tight'>
                         Ready to Spoil Your Pet?
                      </h2>
-                     <p className='text-lg font-dm-sans text-white/90 mb-8 max-w-2xl mx-auto'>
+                     <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
                         Join thousands of happy pet parents who trust Hezal Accessories for their furry friends
                      </p>
                      <Link href='/products'>
-                        <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-dm-sans font-semibold text-lg hover:bg-gray-50 transition-colors'>
+                        <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-50 transition-colors'>
                            Start Shopping Now
                         </button>
                      </Link>
@@ -332,3 +335,6 @@ export default function Home() {
       </>
    )
 }
+
+
+

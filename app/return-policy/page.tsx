@@ -10,7 +10,7 @@ export default function ReturnPolicy() {
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
           <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-8'>
-            <h1 className='text-3xl font-bold text-gray-800 mb-8 text-center'>
+            <h1 className='text-3xl font-heading font-bold text-gray-800 mb-8 text-center'>
               Return & Cancellation Policy
             </h1>
             
@@ -26,29 +26,29 @@ export default function ReturnPolicy() {
 
               <div className='space-y-6'>
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Final Sale Policy</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Final Sale Policy</h3>
+                  <p className='font-body text-gray-600'>
                     All purchases are final. Once your order is placed and payment is received, it is processed immediately for shipping.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>No Cancellations</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>No Cancellations</h3>
+                  <p className='font-body text-gray-600'>
                     No cancellations will be entertained after payment.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>No Refunds</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>No Refunds</h3>
+                  <p className='font-body text-gray-600'>
                     No refunds are provided under any circumstances.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className='text-lg font-semibold text-gray-800 mb-2'>Damaged or Incorrect Orders</h3>
-                  <p className='text-gray-600'>
+                  <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Damaged or Incorrect Orders</h3>
+                  <p className='font-body text-gray-600'>
                     If your order arrives damaged or incorrect, please email hezalpawccessories@gmail.com or call +91 70602 66900 within 24 hours of delivery. We will review on a case-by-case basis.
                   </p>
                 </div>
