@@ -388,11 +388,11 @@ export default function Products() {
                                  <span className='text-xl font-accent font-bold text-primary-pink'>
                                     ₹{getCurrentPricing(product, product.id).price}
                                  </span>
-                                 {product.sizePricing && product.sizePricing.length > 0 && (
+                                 {/* {product.sizePricing && product.sizePricing.length > 0 && (
                                     <span className='text-xs bg-primary-blue text-white px-2 py-1 rounded-full'>
                                        Size pricing
                                     </span>
-                                 )}
+                                 )} */}
                                  
 
                                  {getCurrentPricing(product, product.id).originalPrice === 0 ? '' :
