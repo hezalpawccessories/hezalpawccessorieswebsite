@@ -52,10 +52,30 @@ export default function Home() {
    return (
       <>
          <Navbar />
-         <main className='minimal-bg'>
+         <main className='pet-pattern-bg'>
             {/* Hero Section */}
-            <section className='relative overflow-hidden bg-white'>
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24'>
+            <section className='relative overflow-hidden hero-bg'>
+               {/* Floating Pet Icons */}
+               <div className='absolute inset-0 pointer-events-none'>
+                  <div className='absolute top-20 left-10 opacity-10 animate-bounce' style={{ animationDelay: '0s', animationDuration: '3s' }}>
+                     <Heart className='w-8 h-8 text-pink-400' />
+                  </div>
+                  <div className='absolute top-40 right-20 opacity-10 animate-bounce' style={{ animationDelay: '1s', animationDuration: '4s' }}>
+                     <svg className='w-10 h-10 text-pink-400' fill='currentColor' viewBox='0 0 24 24'>
+                        <path d='M12 2c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zm-7 8c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm11 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm-8 6c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm8 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3z'/>
+                     </svg>
+                  </div>
+                  <div className='absolute bottom-40 left-20 opacity-10 animate-bounce' style={{ animationDelay: '2s', animationDuration: '5s' }}>
+                     <svg className='w-6 h-6 text-pink-400' fill='currentColor' viewBox='0 0 24 24'>
+                        <path d='M4.5 12a7.5 7.5 0 0015 0 7.5 7.5 0 00-15 0zM12 2.5a.5.5 0 01.5.5v1a.5.5 0 01-1 0V3a.5.5 0 01.5-.5zM21 12.5a.5.5 0 010-1h1a.5.5 0 010 1h-1zM12 21.5a.5.5 0 01-.5-.5v-1a.5.5 0 011 0v1a.5.5 0 01-.5.5zM3 12.5a.5.5 0 010-1H2a.5.5 0 010 1h1z'/>
+                     </svg>
+                  </div>
+                  <div className='absolute top-60 right-40 opacity-10 animate-bounce' style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>
+                     <Gift className='w-7 h-7 text-pink-400' />
+                  </div>
+               </div>
+
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10'>
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
                      <motion.div
                         initial={{ opacity: 0, x: -50 }}
@@ -89,7 +109,10 @@ export default function Home() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className='relative order-1 lg:order-2'
                      >
-                        <div className='bg-pink-50 rounded-2xl p-8 shadow-sm'>
+                        <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-2xl p-8 shadow-sm relative'>
+                           {/* Decorative elements */}
+                           <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
+                           <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
                            <Image
                               width={600}
                               height={400}
@@ -108,8 +131,8 @@ export default function Home() {
             </section>
 
             {/* Features Section */}
-            <section className='py-16 lg:py-20 bg-gray-50'>
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <section className='py-16 lg:py-20 features-bg'>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}
                      whileInView={{ opacity: 1, y: 0 }}
@@ -143,8 +166,20 @@ export default function Home() {
             </section>
 
             {/* Featured Products Preview */}
-            <section className='py-16 lg:py-20 bg-white'>
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <section className='py-16 lg:py-20 bg-white relative'>
+               {/* Subtle background pattern */}
+               <div className='absolute inset-0 opacity-5'>
+                  <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
+                     <defs>
+                        <pattern id='pet-pattern' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'>
+                           <circle cx='50' cy='50' r='2' fill='#ff69b4'/>
+                           <path d='M30 30 Q35 25 40 30 Q35 35 30 30 M60 70 Q65 65 70 70 Q65 75 60 70' fill='#ff69b4'/>
+                        </pattern>
+                     </defs>
+                     <rect width='100%' height='100%' fill='url(#pet-pattern)'/>
+                  </svg>
+               </div>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}
                      whileInView={{ opacity: 1, y: 0 }}
@@ -216,8 +251,8 @@ export default function Home() {
             </section>
 
             {/* Testimonials */}
-            <section className='py-16 lg:py-20 bg-gray-50'>
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+            <section className='py-16 lg:py-20 features-bg'>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}
                      whileInView={{ opacity: 1, y: 0 }}
@@ -257,8 +292,22 @@ export default function Home() {
             </section>
 
             {/* CTA Section */}
-            <section className='py-16 lg:py-20 bg-pink-500'>
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+            <section className='py-16 lg:py-20 bg-gradient-to-r from-pink-500 to-pink-600 relative overflow-hidden'>
+               {/* Playful background elements */}
+               <div className='absolute inset-0 pointer-events-none'>
+                  <div className='absolute top-10 left-10 opacity-20 animate-pulse'>
+                     <svg className='w-12 h-12 text-white' fill='currentColor' viewBox='0 0 24 24'>
+                        <path d='M12 2c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3zm-7 8c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm11 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm-8 6c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm8 0c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3z'/>
+                     </svg>
+                  </div>
+                  <div className='absolute bottom-10 right-10 opacity-20 animate-pulse' style={{ animationDelay: '1s' }}>
+                     <Heart className='w-10 h-10 text-white' />
+                  </div>
+                  <div className='absolute top-1/2 left-1/4 opacity-10 animate-pulse' style={{ animationDelay: '2s' }}>
+                     <Gift className='w-8 h-8 text-white' />
+                  </div>
+               </div>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}
                      whileInView={{ opacity: 1, y: 0 }}
