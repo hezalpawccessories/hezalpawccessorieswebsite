@@ -85,15 +85,19 @@ export default function TermsAndConditions() {
               </div>
 
               <div className='mt-8 p-4 bg-pink-50 rounded-lg border border-pink-100'>
-                <p className='text-gray-700 font-medium'>
-                  For any questions, contact: 
-                  <a href='mailto:hezalpawccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-2'>
-                    hezalpawccessories@gmail.com
-                  </a>
-                  <span className='mx-2'>/</span>
-                  <a href='tel:+917060266900' className='text-pink-600 hover:text-pink-700'>
-                    +91 70602 66900
-                  </a>
+                <p className='text-gray-700 font-medium text-sm sm:text-base break-words'>
+                  <span className='block sm:inline'>For any questions, contact:</span>
+                  <span className='block sm:inline mt-2 sm:mt-0'>
+                    <a href='mailto:hezalpawccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
+                      hezalpawccessories@gmail.com
+                    </a>
+                  </span>
+                  <span className='block sm:inline mt-2 sm:mt-0'>
+                    <span className='mx-0 sm:mx-2 hidden sm:inline'>/</span>
+                    <a href='tel:+917060266900' className='text-pink-600 hover:text-pink-700'>
+                      +91 70602 66900
+                    </a>
+                  </span>
                 </p>
               </div>
             </div>
