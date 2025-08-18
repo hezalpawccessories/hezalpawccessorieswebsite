@@ -208,7 +208,7 @@ export default function Contact() {
                         transition={{ duration: 0.8, delay: 0.4 }}
                         className='space-y-8'
                      >
-                        <div className='bg-gradient-to-br from-primary-blue to-light-purple p-2 rounded-2xl'>
+                        {/* <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 p-2 rounded-2xl'>
                            <Image
                               src='https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=600'
                               alt='Customer service'
@@ -217,7 +217,7 @@ export default function Contact() {
                               className='w-full h-64 object-cover rounded-xl'
                               priority
                            />
-                        </div>
+                        </div> */}
 
                         <div className='bg-white p-6 rounded-2xl shadow-lg'>
                            <h3 className='text-xl font-bold text-text-dark mb-4'>Why Contact Us?</h3>

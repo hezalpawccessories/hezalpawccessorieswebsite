@@ -59,10 +59,10 @@ export default function Footer() {
                      </li>
                      <li>
                         <Link
-                           href='/products'
+                           href='/owner'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Products
+                           Owner
                         </Link>
                      </li>
                      <li>
