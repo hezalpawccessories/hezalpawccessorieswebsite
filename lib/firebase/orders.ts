@@ -21,6 +21,7 @@ export interface OrderItem {
   size: string
   image: string
   category: string
+  customName?: string
 }
 
 export interface CustomerDetails {

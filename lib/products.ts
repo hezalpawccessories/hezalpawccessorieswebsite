@@ -29,7 +29,7 @@ export const categories = [
   'Treat Jars'
 ];
 
-export const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+export const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '400ml', '900ml', '1000ml'];
 
 export const products: Product[] = [
   {

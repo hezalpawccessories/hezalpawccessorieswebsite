@@ -15,6 +15,7 @@ import Script from 'next/script'
 interface CartItem extends Product {
    quantity: number
    size: string
+   customName?: string
 }
 
 interface CheckoutForm {
@@ -78,13 +79,17 @@ export default function Cart() {
       }
    }, [])
 
-   const updateQuantity = (id: string, newQuantity: number) => {
+   const updateQuantity = (id: string, size: string, customName: string | undefined, newQuantity: number) => {
       if (newQuantity <= 0) {
-         removeItem(id)
+         removeItem(id, size, customName)
          return
       }
 
-      const updatedCart = cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item))
+      const updatedCart = cartItems.map((item) => 
+         (item.id === id && item.size === size && item.customName === customName) 
+            ? { ...item, quantity: newQuantity } 
+            : item
+      )
       setCartItems(updatedCart)
       if (typeof window !== 'undefined') {
          localStorage.setItem('cart', JSON.stringify(updatedCart))
@@ -92,8 +97,10 @@ export default function Cart() {
       }
    }
 
-   const removeItem = (id: string) => {
-      const updatedCart = cartItems.filter((item) => item.id !== id)
+   const removeItem = (id: string, size: string, customName: string | undefined) => {
+      const updatedCart = cartItems.filter((item) => 
+         !(item.id === id && item.size === size && item.customName === customName)
+      )
       setCartItems(updatedCart)
       if (typeof window !== 'undefined') {
          localStorage.setItem('cart', JSON.stringify(updatedCart))
@@ -102,7 +109,7 @@ export default function Cart() {
    }
 
    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-   const shipping = subtotal > 1000 ? 0 : 99
+   const shipping = subtotal > 799 ? 0 : 75
    const total = subtotal + shipping
 
    const handleCheckout = async (e: React.FormEvent) => {
@@ -264,6 +271,11 @@ export default function Cart() {
                                  <p className='font-body text-text-light text-sm mb-2'>
                                     {item.category} • Size: {item.size}
                                  </p>
+                                 {item.customName && (
+                                    <p className='font-body text-primary-pink text-sm mb-2 italic'>
+                                       Custom Name: "{item.customName}"
+                                    </p>
+                                 )}
                                  <div className='flex items-center justify-center md:justify-start space-x-2'>
                                     <span className='text-xl font-accent font-bold text-primary-pink'>₹{item.price}</span>
                                     {item.originalPrice === 0 ? '' : (
@@ -282,14 +294,14 @@ export default function Cart() {
                               <div className='flex items-center space-x-4'>
                                  <div className='flex items-center space-x-2'>
                                     <button
-                                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.quantity - 1)}
                                        className='quantity-btn'
                                     >
                                        <Minus className='w-4 h-4' />
                                     </button>
                                     <span className='w-8 text-center font-heading font-semibold'>{item.quantity}</span>
                                     <button
-                                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.quantity + 1)}
                                        className='quantity-btn'
                                     >
                                        <Plus className='w-4 h-4' />
@@ -297,7 +309,7 @@ export default function Cart() {
                                  </div>
 
                                  <button
-                                    onClick={() => removeItem(item.id)}
+                                    onClick={() => removeItem(item.id, item.size, item.customName)}
                                     className='text-red-500 hover:text-red-700 p-2'
                                  >
                                     <Trash2 className='w-5 h-5' />

@@ -80,6 +80,37 @@ export default function AdminDashboard() {
    const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
    const [openProductModal, setOpenProductModal] = useState(false)
 
+   // Helper function to get price for specific size (same as Products page)
+   const getPriceForSize = (product: Product, size?: string) => {
+      if (!size || !product.sizePricing || product.sizePricing.length === 0) {
+         return { price: product.price, originalPrice: product.originalPrice }
+      }
+      
+      const sizePrice = product.sizePricing.find(sp => sp.size === size)
+      if (sizePrice) {
+         return { price: sizePrice.price, originalPrice: sizePrice.originalPrice }
+      }
+      
+      return { price: product.price, originalPrice: product.originalPrice }
+   }
+
+   // Helper function to get price range for display
+   const getPriceRange = (product: Product) => {
+      if (!product.sizePricing || product.sizePricing.length === 0) {
+         return { minPrice: product.price, maxPrice: product.price, minOriginalPrice: product.originalPrice, maxOriginalPrice: product.originalPrice }
+      }
+      
+      const prices = product.sizePricing.filter(sp => sp.price > 0).map(sp => sp.price)
+      const originalPrices = product.sizePricing.filter(sp => sp.originalPrice && sp.originalPrice > 0).map(sp => sp.originalPrice!)
+      
+      return {
+         minPrice: Math.min(...prices),
+         maxPrice: Math.max(...prices),
+         minOriginalPrice: originalPrices.length > 0 ? Math.min(...originalPrices) : 0,
+         maxOriginalPrice: originalPrices.length > 0 ? Math.max(...originalPrices) : 0
+      }
+   }
+
    useEffect(() => {
       // Only run on client side
       if (typeof window !== 'undefined') {
@@ -281,12 +312,25 @@ export default function AdminDashboard() {
 
    const handleAddProduct = (e: React.FormEvent) => {
       e.preventDefault()
+      
+      // Validate that at least one size with pricing is added
+      const validSizePricing = newProduct.sizePricing?.filter((sp) => sp.price > 0) || []
+      if (validSizePricing.length === 0) {
+         toast.error('Size-based pricing required', {
+            description: 'Please add at least one size with pricing before saving the product.',
+            duration: 4000,
+         })
+         return
+      }
+      
       const product: Product = {
          ...newProduct,
          id: uuidv4(),
          details: newProduct.details.filter((detail) => detail.trim() !== ''),
          images: newProduct.images.filter((imageUrl) => imageUrl.trim() !== ''),
-         sizePricing: newProduct.sizePricing?.filter((sp) => sp.price > 0) || undefined, // Only include sizes with prices
+         sizePricing: validSizePricing, // Only include sizes with prices
+         price: 0, // Set to 0 since we're using size-based pricing only
+         originalPrice: 0, // Set to 0 since we're using size-based pricing only
       }
       setProducts([...products, product])
 
@@ -328,9 +372,22 @@ export default function AdminDashboard() {
    const handleEditProduct = (e: React.FormEvent) => {
       e.preventDefault()
       if (selectedProduct) {
+         // Validate that at least one size with pricing is added
+         const validSizePricing = selectedProduct.sizePricing?.filter((sp) => sp.price > 0) || []
+         if (validSizePricing.length === 0) {
+            toast.error('Size-based pricing required', {
+               description: 'Please add at least one size with pricing before saving the product.',
+               duration: 4000,
+            })
+            return
+         }
+         
          const updatedProduct = {
             ...selectedProduct,
             images: selectedProduct.images?.filter((imageUrl) => imageUrl.trim() !== '') || [],
+            sizePricing: validSizePricing, // Only include sizes with prices
+            price: 0, // Set to 0 since we're using size-based pricing only
+            originalPrice: 0, // Set to 0 since we're using size-based pricing only
          }
          const updatedProducts = products.map((p) => (p.id === selectedProduct.id ? updatedProduct : p))
          updateProduct(selectedProduct.id, updatedProduct)
@@ -505,7 +562,7 @@ export default function AdminDashboard() {
                   </button>
                ))}
                <Link
-                  href='/'
+                  href='/products'
                   className='flex items-center space-x-2 px-6 py-3 rounded-lg font-medium   bg-primary-pink text-white text-center  shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 sm:text-base text-sm'
                >
                   Website
@@ -590,7 +647,40 @@ export default function AdminDashboard() {
                                  <h3 className='font-bold text-text-dark mb-2 hover:underline'>{product.title}</h3>
                                  <p className='text-text-light text-sm mb-2'>{product.category}</p>
                                  <div className='flex items-center justify-between mb-4'>
-                                    <span className='text-lg font-bold text-primary-pink'>₹{product.price}</span>
+                                    <div className='flex flex-col'>
+                                       {product.sizePricing && product.sizePricing.length > 0 ? (
+                                          (() => {
+                                             const { minPrice, maxPrice, minOriginalPrice, maxOriginalPrice } = getPriceRange(product)
+                                             return (
+                                                <div className='flex flex-col'>
+                                                   <div className='flex items-center space-x-2'>
+                                                      <span className='text-lg font-bold text-primary-pink'>
+                                                         {minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`}
+                                                      </span>
+                                                      {(minOriginalPrice === 0 && maxOriginalPrice === 0) ? "" : (
+                                                         <>
+                                                         {((minOriginalPrice && minOriginalPrice > 0) || (maxOriginalPrice && maxOriginalPrice > 0)) && (
+                                                            <span className='text-sm text-text-light line-through'>
+                                                               {minOriginalPrice === maxOriginalPrice && minOriginalPrice && minOriginalPrice > 0
+                                                                  ? `₹${minOriginalPrice}`
+                                                                  : minOriginalPrice && maxOriginalPrice && minOriginalPrice > 0 && maxOriginalPrice > 0
+                                                                  ? `₹${minOriginalPrice} - ₹${maxOriginalPrice}`
+                                                                  : ''}
+                                                            </span>
+                                                         )}
+                                                         </>
+                                                      )}
+                                                   </div>
+                                                   <span className='text-xs text-text-light'>
+                                                      {product.sizePricing.length} size{product.sizePricing.length > 1 ? 's' : ''} available
+                                                   </span>
+                                                </div>
+                                             )
+                                          })()
+                                       ) : (
+                                          <span className='text-lg font-bold text-primary-pink'>₹{product.price}</span>
+                                       )}
+                                    </div>
                                     <span
                                        className={`px-2 py-1 rounded-full text-xs ${
                                           product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -672,36 +762,10 @@ export default function AdminDashboard() {
                               </div>
                            </div>
 
-                           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                              <div>
-                                 <label className='block text-sm font-medium text-text-dark mb-2'>Price *</label>
-                                 <input
-                                    type='number'
-                                    required
-                                    value={newProduct.price}
-                                    onChange={(e) => setNewProduct({ ...newProduct, price: Number(e.target.value) })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                                 />
-                              </div>
-                              <div>
-                                 <label className='block text-sm font-medium text-text-dark mb-2'>
-                                    Original Price (Optional)
-                                 </label>
-                                 <input
-                                    type='number'
-                                    value={newProduct.originalPrice}
-                                    onChange={(e) =>
-                                       setNewProduct({ ...newProduct, originalPrice: Number(e.target.value) })
-                                    }
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                                 />
-                              </div>
-                           </div>
-
-                           {/* Size-Based Pricing Section */}
+                           {/* Size-Based Pricing Section - Now Mandatory */}
                            <div className='space-y-4'>
                               <div className='flex items-center justify-between'>
-                                 <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing</label>
+                                 <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing *</label>
                                  <button
                                     type='button'
                                     onClick={() => {
@@ -787,8 +851,8 @@ export default function AdminDashboard() {
                                  </div>
                               )}
                               
-                              <p className='text-xs text-text-light'>
-                                 Note: If size-based pricing is set, it will override the general price above. Leave empty to use general pricing.
+                              <p className='text-xs text-red-600 font-medium'>
+                                 * At least one size with pricing is required. Please add size-specific pricing for your product.
                               </p>
                            </div>
 
@@ -1304,38 +1368,11 @@ export default function AdminDashboard() {
                               </select>
                            </div>
                         </div>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                           <div>
-                              <label className='block text-sm font-medium text-text-dark mb-2'>Price *</label>
-                              <input
-                                 type='number'
-                                 required
-                                 value={selectedProduct.price}
-                                 onChange={(e) =>
-                                    setSelectedProduct({ ...selectedProduct, price: Number(e.target.value) })
-                                 }
-                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
-                              />
-                           </div>
-                           <div>
-                              <label className='block text-sm font-medium text-text-dark mb-2'>
-                                 Original Price (Optional)
-                              </label>
-                              <input
-                                 type='number'
-                                 value={selectedProduct.originalPrice}
-                                 onChange={(e) =>
-                                    setSelectedProduct({ ...selectedProduct, originalPrice: Number(e.target.value) })
-                                 }
-                                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
-                              />
-                           </div>
-                        </div>
 
-                        {/* Size-Based Pricing Section in Edit Modal */}
+                        {/* Size-Based Pricing Section in Edit Modal - Now Mandatory */}
                         <div className='space-y-4'>
                            <div className='flex items-center justify-between'>
-                              <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing</label>
+                              <label className='block text-sm font-medium text-text-dark'>Size-Based Pricing *</label>
                               <button
                                  type='button'
                                  onClick={() => {
@@ -1421,8 +1458,8 @@ export default function AdminDashboard() {
                               </div>
                            )}
                            
-                           <p className='text-xs text-text-light'>
-                              Note: If size-based pricing is set, it will override the general price above.
+                           <p className='text-xs text-red-600 font-medium'>
+                              * At least one size with pricing is required. Please add size-specific pricing for your product.
                            </p>
                         </div>
 

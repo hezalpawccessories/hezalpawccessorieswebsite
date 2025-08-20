@@ -32,6 +32,7 @@ export default function Products() {
    const [mainImage, setMainImage] = useState<string>('')
    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
    const [shakeProduct, setShakeProduct] = useState<string>('') // Track which product to shake
+   const [customNames, setCustomNames] = useState<{ [key: string]: string }>({}) // Track custom names per product
 
    // Helper function to get price for specific size
    const getPriceForSize = (product: Product, size?: string) => {
@@ -51,6 +52,23 @@ export default function Products() {
    const getCurrentPricing = (product: Product, productId: string) => {
       const selectedSize = selectedSizes[productId]
       return getPriceForSize(product, selectedSize)
+   }
+
+   // Helper function to get price range for display
+   const getPriceRange = (product: Product) => {
+      if (!product.sizePricing || product.sizePricing.length === 0) {
+         return { minPrice: product.price, maxPrice: product.price, minOriginalPrice: product.originalPrice || 0, maxOriginalPrice: product.originalPrice || 0 }
+      }
+      
+      const prices = product.sizePricing.filter(sp => sp.price > 0).map(sp => sp.price)
+      const originalPrices = product.sizePricing.filter(sp => sp.originalPrice && sp.originalPrice > 0).map(sp => sp.originalPrice!)
+      
+      return {
+         minPrice: Math.min(...prices),
+         maxPrice: Math.max(...prices),
+         minOriginalPrice: originalPrices.length > 0 ? Math.min(...originalPrices) : 0,
+         maxOriginalPrice: originalPrices.length > 0 ? Math.max(...originalPrices) : 0
+      }
    }
 
    // Load cart items on component mount
@@ -155,31 +173,50 @@ export default function Products() {
          return
       }
 
+      // Check if Treat Jar requires custom name
+      if (product.category === 'Treat Jars' && !customNames[product.id]?.trim()) {
+         toast.error('Please enter a custom name for the treat jar', {
+            description: 'Custom name is required for treat jars',
+            duration: 3000,
+         })
+         return
+      }
+
       // Get the correct pricing for the selected size
       const { price: sizePrice, originalPrice: sizeOriginalPrice } = getPriceForSize(product, sizeToUse)
 
       if (typeof window !== 'undefined') {
          const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-         const existingItem = cart.find((item: any) => item.id === product.id && item.size === sizeToUse)
+         const existingItem = cart.find((item: any) => 
+            item.id === product.id && 
+            item.size === sizeToUse && 
+            item.customName === (customNames[product.id] || '')
+         )
 
          if (existingItem) {
             existingItem.quantity += quantity
          } else {
-            cart.push({ 
+            const cartItem = { 
                ...product, 
                size: sizeToUse, 
                quantity, 
                price: sizePrice, // Use size-specific price
-               originalPrice: sizeOriginalPrice // Use size-specific original price
-            })
+               originalPrice: sizeOriginalPrice, // Use size-specific original price
+               customName: product.category === 'Treat Jars' ? customNames[product.id] || '' : undefined
+            }
+            cart.push(cartItem)
          }
 
          localStorage.setItem('cart', JSON.stringify(cart))
          window.dispatchEvent(new Event('cartUpdated'))
          setCartItems(cart)
 
+         const customNameText = product.category === 'Treat Jars' && customNames[product.id] 
+            ? ` with custom name "${customNames[product.id]}"` 
+            : ''
+
          toast.success('Added to cart!', {
-            description: `${product.title} (Size: ${sizeToUse}) added to your cart`,
+            description: `${product.title} (Size: ${sizeToUse})${customNameText} added to your cart`,
             duration: 3000,
          })
       }
@@ -344,16 +381,20 @@ export default function Products() {
                            </div>
                            
                            {(() => {
-                              const currentPricing = getCurrentPricing(product, product.id)
-                              return currentPricing.originalPrice === 0 ? '' :
-                              <>
-                              {currentPricing.originalPrice && currentPricing.originalPrice > currentPricing.price && (
-                                 <div className='absolute top-2 right-2 bg-primary-pink text-white px-2 py-1 rounded-full text-xs font-bold'>
-                                    {Math.round(((currentPricing.originalPrice - currentPricing.price) / currentPricing.originalPrice) * 100)}%
-                                    OFF
-                                 </div>
-                              )}
-                              </>
+                              // Only show discount badge when a size is selected
+                              if (selectedSizes[product.id]) {
+                                 const currentPricing = getCurrentPricing(product, product.id)
+                                 return currentPricing.originalPrice === 0 ? '' :
+                                 <>
+                                 {currentPricing.originalPrice && currentPricing.originalPrice > currentPricing.price && (
+                                    <div className='absolute top-2 right-2 bg-primary-pink text-white px-2 py-1 rounded-full text-xs font-bold'>
+                                       {Math.round(((currentPricing.originalPrice - currentPricing.price) / currentPricing.originalPrice) * 100)}%
+                                       OFF
+                                    </div>
+                                 )}
+                                 </>
+                              }
+                              return null
                            })()}
                            
                         </div>
@@ -383,59 +424,115 @@ export default function Products() {
                               <span className='text-sm font-body text-text-light ml-2'>({product.reviews})</span>
                            </div> */}
 
-                           <div className='flex items-center justify-between mb-4'>
+                           <div className='flex items-center justify-between mb-4 gap-2'>
                               <div className='flex items-center space-x-2'>
-                                 <span className='text-xl font-accent font-bold text-primary-pink'>
-                                    ₹{getCurrentPricing(product, product.id).price}
-                                 </span>
-                                 {/* {product.sizePricing && product.sizePricing.length > 0 && (
-                                    <span className='text-xs bg-primary-blue text-white px-2 py-1 rounded-full'>
-                                       Size pricing
-                                    </span>
-                                 )} */}
-                                 
-
-                                 {getCurrentPricing(product, product.id).originalPrice === 0 ? '' :
-                           <>
-                           {getCurrentPricing(product, product.id).originalPrice && (
-                                    <span className='text-text-light line-through text-sm'>
-                                       ₹{getCurrentPricing(product, product.id).originalPrice}
-                                    </span>
+                                 {selectedSizes[product.id] ? (
+                                    // Show specific price when size is selected
+                                    <>
+                                       <span className='text-xl font-accent font-bold text-primary-pink'>
+                                          ₹{getCurrentPricing(product, product.id).price}
+                                       </span>
+                                       {getCurrentPricing(product, product.id).originalPrice === 0 ? '' :
+                                          <>
+                                          {getCurrentPricing(product, product.id).originalPrice && (
+                                             <span className='text-text-light line-through text-sm'>
+                                                ₹{getCurrentPricing(product, product.id).originalPrice}
+                                             </span>
+                                          )}
+                                          </>
+                                       }
+                                    </>
+                                 ) : (
+                                    // Show price range when no size is selected (no original prices shown)
+                                    (() => {
+                                       const { minPrice, maxPrice } = getPriceRange(product)
+                                       return (
+                                          <div className='flex flex-col'>
+                                             <div className='flex items-center space-x-2'>
+                                                <span className='text-xl font-accent font-bold text-primary-pink'>
+                                                   {minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`}
+                                                </span>
+                                             </div>
+                                             {product.sizePricing && product.sizePricing.length > 1 && (
+                                                <span className='text-xs text-text-light'>
+                                                   {product.sizePricing.length} sizes available
+                                                </span>
+                                             )}
+                                          </div>
+                                       )
+                                    })()
                                  )}
-                           </>
-                           }
-                              </div>
+                              </div> 
+                              {/* <span>Name</span> */}
+                              {product.category === 'Treat Jars' && (
+                                 <div className='mt-4'>
+                                    <label className='block text-sm font-medium text-text-dark mb-2'>
+                                       Custom Name for Jar *
+                                    </label>
+                                    <input 
+                                       name='customName'
+                                       type='text'
+                                       value={customNames[product.id] || ''}
+                                       onChange={(e) => setCustomNames(prev => ({
+                                          ...prev,
+                                          [product.id]: e.target.value
+                                       }))}
+                                       className='border border-gray-300 rounded-md p-2 w-full text-sm focus:ring-2 focus:ring-primary-pink focus:border-transparent'
+                                       placeholder='Enter custom name'
+                                       maxLength={20}
+                                    />
+                                    <p className='text-xs text-text-light mt-1'>
+                                       Max 20 characters. This will be printed on your jar.
+                                    </p>
+                                 </div>
+                              )}
                            </div>
 
                            {/* Size Selection */}
                            <div className='mb-6'>
                               <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
                               <div className='flex flex-wrap gap-1'>
-                                 {sizes.map((size) => {
-                                    const sizePrice = getPriceForSize(product, size)
-                                    const showPrice = product.sizePricing && product.sizePricing.some(sp => sp.size === size && sp.price > 0)
-                                    return (
-                                       <button
-                                          key={size}
-                                          onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: size }))}
-                                          className={`px-2 py-1 text-sm border rounded-md font-medium transition-all duration-200 ${
-                                             selectedSizes[product.id] === size
-                                                ? 'bg-primary-pink text-white border-primary-pink'
-                                                : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
-                                          } ${shakeProduct === product.id ? 'animate-shake border-red-500 border-2' : ''} ${
-                                             !showPrice && product.sizePricing && product.sizePricing.length > 0 ? 'opacity-50 cursor-not-allowed' : ''
-                                          }`}
-                                          disabled={!showPrice && product.sizePricing && product.sizePricing.length > 0}
-                                       >
-                                          <div className='flex flex-col items-center'>
-                                             <span>{size}</span>
-                                             {showPrice && (
+                                 {product.sizePricing && product.sizePricing.length > 0 
+                                    ? product.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {
+                                       const size = sizePricing.size
+                                       const sizePrice = getPriceForSize(product, size)
+                                       return (
+                                          <button
+                                             key={size}
+                                             onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: size }))}
+                                             className={`px-2 py-1 text-sm border rounded-md font-medium transition-all duration-200 ${
+                                                selectedSizes[product.id] === size
+                                                   ? 'bg-primary-pink text-white border-primary-pink'
+                                                   : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
+                                             } ${shakeProduct === product.id ? 'animate-shake border-red-500 border-2' : ''}`}
+                                          >
+                                             <div className='flex flex-col items-center'>
+                                                <span>{size}</span>
                                                 <span className='text-xs opacity-80'>₹{sizePrice.price}</span>
-                                             )}
-                                          </div>
-                                       </button>
-                                    )
-                                 })}
+                                             </div>
+                                          </button>
+                                       )
+                                    })
+                                    : sizes.map((size) => {
+                                       const sizePrice = getPriceForSize(product, size)
+                                       return (
+                                          <button
+                                             key={size}
+                                             onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: size }))}
+                                             className={`px-2 py-1 text-sm border rounded-md font-medium transition-all duration-200 ${
+                                                selectedSizes[product.id] === size
+                                                   ? 'bg-primary-pink text-white border-primary-pink'
+                                                   : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
+                                             } ${shakeProduct === product.id ? 'animate-shake border-red-500 border-2' : ''}`}
+                                          >
+                                             <div className='flex flex-col items-center'>
+                                                <span>{size}</span>
+                                                <span className='text-xs opacity-80'>₹{sizePrice.price}</span>
+                                             </div>
+                                          </button>
+                                       )
+                                    })
+                                 }
                               </div>
                            </div>
 
@@ -602,10 +699,10 @@ export default function Products() {
                                     return currentPricing.originalPrice === 0 ? "" : (
                                        <>
                                        {currentPricing.originalPrice && (
-                                       <span className='text-text-light line-through'>
-                                          ₹{currentPricing.originalPrice}
-                                       </span>
-                                    )}
+                                          <span className='text-text-light line-through'>
+                                             ₹{currentPricing.originalPrice}
+                                          </span>
+                                       )}
                                        </>
                                     )
                                  })()}
@@ -619,36 +716,79 @@ export default function Products() {
                            <div className='mb-6'>
                               <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
                               <div className='flex flex-wrap gap-2'>
-                                 {sizes.map((size) => {
-                                    const sizePrice = getPriceForSize(selectedProduct, size)
-                                    const showPrice = selectedProduct.sizePricing && selectedProduct.sizePricing.some(sp => sp.size === size && sp.price > 0)
-                                    return (
-                                       <button
-                                          key={size}
-                                          onClick={() => {
-                                             setSelectedSize(size)
-                                             setSelectedSizes((prev) => ({ ...prev, [selectedProduct.id]: size }))
-                                          }}
-                                          className={`px-3 py-2 text-sm border rounded-lg font-medium transition-colors ${
-                                             selectedSize === size
-                                                ? 'bg-primary-pink text-white border-primary-pink'
-                                                : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
-                                          } ${
-                                             !showPrice && selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0 ? 'opacity-50 cursor-not-allowed' : ''
-                                          }`}
-                                          disabled={!showPrice && selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0}
-                                       >
-                                          <div className='flex flex-col items-center'>
-                                             <span>{size}</span>
-                                             {showPrice && (
+                                 {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0 
+                                    ? selectedProduct.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {
+                                       const size = sizePricing.size
+                                       const sizePrice = getPriceForSize(selectedProduct, size)
+                                       return (
+                                          <button
+                                             key={size}
+                                             onClick={() => {
+                                                setSelectedSize(size)
+                                                setSelectedSizes((prev) => ({ ...prev, [selectedProduct.id]: size }))
+                                             }}
+                                             className={`px-3 py-2 text-sm border rounded-lg font-medium transition-colors ${
+                                                selectedSize === size
+                                                   ? 'bg-primary-pink text-white border-primary-pink'
+                                                   : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
+                                             }`}
+                                          >
+                                             <div className='flex flex-col items-center'>
+                                                <span>{size}</span>
                                                 <span className='text-xs opacity-80'>₹{sizePrice.price}</span>
-                                             )}
-                                          </div>
-                                       </button>
-                                    )
-                                 })}
+                                             </div>
+                                          </button>
+                                       )
+                                    })
+                                    : sizes.map((size) => {
+                                       const sizePrice = getPriceForSize(selectedProduct, size)
+                                       return (
+                                          <button
+                                             key={size}
+                                             onClick={() => {
+                                                setSelectedSize(size)
+                                                setSelectedSizes((prev) => ({ ...prev, [selectedProduct.id]: size }))
+                                             }}
+                                             className={`px-3 py-2 text-sm border rounded-lg font-medium transition-colors ${
+                                                selectedSize === size
+                                                   ? 'bg-primary-pink text-white border-primary-pink'
+                                                   : 'bg-white text-text-dark border-gray-300 hover:border-primary-pink'
+                                             }`}
+                                          >
+                                             <div className='flex flex-col items-center'>
+                                                <span>{size}</span>
+                                                <span className='text-xs opacity-80'>₹{sizePrice.price}</span>
+                                             </div>
+                                          </button>
+                                       )
+                                    })
+                                 }
                               </div>
                            </div>
+
+                           {/* Custom Name for Treat Jars in Modal */}
+                           {selectedProduct.category === 'Treat Jars' && (
+                              <div className='mb-6'>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Custom Name for Jar *
+                                 </label>
+                                 <input 
+                                    name='customName'
+                                    type='text'
+                                    value={customNames[selectedProduct.id] || ''}
+                                    onChange={(e) => setCustomNames(prev => ({
+                                       ...prev,
+                                       [selectedProduct.id]: e.target.value
+                                    }))}
+                                    className='border border-gray-300 rounded-md p-3 w-full text-sm focus:ring-2 focus:ring-primary-pink focus:border-transparent'
+                                    placeholder='Enter custom name for the jar'
+                                    maxLength={20}
+                                 />
+                                 <p className='text-xs text-text-light mt-1'>
+                                    Max 20 characters. This will be printed on your jar.
+                                 </p>
+                              </div>
+                           )}
 
                            <button
                               onClick={() => addToCart(selectedProduct, selectedSize)}

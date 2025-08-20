@@ -16,6 +16,8 @@ export default function Navbar() {
    // Check if we should show the cart button (not on landing page or master page)
    const showCartButton = pathname !== '/' && pathname !== '/master'
 
+   const showShopButton = pathname !== '/products'
+
    // Load cart items count
    useEffect(() => {
       const updateCartCount = () => {
@@ -87,11 +89,12 @@ export default function Navbar() {
                   )}
 
                   {/* Shop Now Button */}
-                  <Link href='/products'>
+                  {showShopButton && <Link href='/products'>
                      <button className='bg-pink-500 text-white hover:bg-pink-600 font-body font-medium transition-colors duration-200 px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base'>
                         Shop Now
                      </button>
                   </Link>
+                  }
                   
                   {/* Admin Button */}
                   {isAuthenticated && (
