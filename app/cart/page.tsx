@@ -273,7 +273,7 @@ export default function Cart() {
                                  </p>
                                  {item.customName && (
                                     <p className='font-body text-primary-pink text-sm mb-2 italic'>
-                                       Custom Name: "{item.customName}"
+                                       Custom Name: &quot;{item.customName}&quot;
                                     </p>
                                  )}
                                  <div className='flex items-center justify-center md:justify-start space-x-2'>

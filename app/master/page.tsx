@@ -1671,9 +1671,11 @@ export default function AdminDashboard() {
                                        className='flex justify-between items-center p-3 bg-gray-50 rounded-lg'
                                     >
                                        <div className='flex items-center space-x-3'>
-                                          <img 
+                                          <Image 
                                              src={item.image} 
                                              alt={item.title}
+                                             width={40}
+                                             height={40}
                                              className='w-10 h-10 object-cover rounded'
                                           />
                                           <div>

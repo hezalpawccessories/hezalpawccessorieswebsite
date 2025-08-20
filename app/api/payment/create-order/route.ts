@@ -28,14 +28,24 @@ interface CustomerDetails {
   alternatePhone: string
 }
 
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-})
+// Initialize Razorpay instance (conditionally to avoid build errors)
+const razorpay = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET 
+  ? new Razorpay({
+      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+    })
+  : null
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Razorpay is properly configured
+    if (!razorpay) {
+      return NextResponse.json(
+        { error: 'Payment service not configured' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { amount, customerDetails, cartItems }: {
       amount: number
