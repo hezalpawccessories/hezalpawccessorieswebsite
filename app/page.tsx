@@ -215,7 +215,7 @@ export default function Home() {
                            description: 'Complete matching sets for convenient and stylish walks.',
                         },
                         {
-                           image: 'https://images.pexels.com/photos/5731838/pexels-photo-5731838.jpeg?auto=compress&cs=tinysrgb&w=600',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755700962/cdes14y3aody7smerz7p.jpg',
                            title: 'Treat Jars',
                            description: 'Beautiful jars to keep your pet treats fresh and organized.',
                         },
