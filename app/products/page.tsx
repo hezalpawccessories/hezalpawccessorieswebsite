@@ -959,13 +959,17 @@ export default function Products() {
 
                            {/* Size Selection */}
                            <div className='mb-6'>
+                              {product.category !== 'Treat Jars' && 
+                              <>
                               <div className='flex items-center gap-2 mb-3'>
                                  <h3 className='font-heading font-bold text-text-dark'>Select Size:</h3>
-                                 <SizeChart className='hidden md:block' />
+                                 <SizeChart/>
                               </div>
-                              <div className='block md:hidden mb-2'>
+                              {/* <div className='block md:hidden mb-2'>
                                  <SizeChart />
-                              </div>
+                              </div> */}
+                              </>
+                              }
                               <div className='flex flex-wrap gap-1'>
                                  {product.sizePricing && product.sizePricing.length > 0 
                                     ? product.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {

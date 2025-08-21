@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { X, Ruler } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -12,17 +11,25 @@ interface SizeChartProps {
 
 export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
    const [isOpen, setIsOpen] = useState(false)
-   const [imageLoaded, setImageLoaded] = useState(false)
 
    const defaultTrigger = (
       <button 
-         className={`inline-flex items-center gap-1 text-sm text-sky-600 hover:text-sky-800 transition-colors bg-sky-300 rounded-2xl px-2 py-1 text-xs ${className}`}
+         className={`inline-flex items-center gap-1 text-xs text-pink-600 hover:text-pink-700 transition-colors bg-pink-100 hover:bg-pink-200 rounded-full px-3 py-1 font-medium ${className}`}
          onClick={() => setIsOpen(true)}
       >
-         {/* <Ruler className="w-4 h-4" /> */}
          Size Chart
       </button>
    )
+
+   // Size data for the chart
+   const sizeData = [
+      { size: 'XS', neckSize: 'up to 10 inches' },
+      { size: 'S', neckSize: 'up to 13 inches' },
+      { size: 'M', neckSize: 'up to 17 inches' },
+      { size: 'L', neckSize: 'up to 20 inches' },
+      { size: 'XL', neckSize: 'up to 25 inches' },
+      { size: 'XXL', neckSize: 'up to 30 inches' },
+   ]
 
    return (
       <>
@@ -52,53 +59,47 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
                      animate={{ opacity: 1, scale: 1, y: 0 }}
                      exit={{ opacity: 0, scale: 0.8, y: 20 }}
                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                     className="fixed top-1/2 left-1/2 transform z-[9999] md:w-[10vw] max-w-md max-h-[50vh] bg-white rounded-2xl shadow-2xl overflow-hidden"
+                     className="fixed inset-4 z-[9999] w-auto h-fit max-w-[320px] sm:max-w-sm bg-white rounded-lg sm:rounded-xl shadow-xl overflow-hidden m-auto"
                   >
                      {/* Header */}
-                     <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-blue-50 to-purple-50">
-                        <div className="flex items-center gap-2">
-                           <Ruler className="w-4 h-4 text-blue-600" />
-                           <h3 className="text-xs font-bold text-gray-800">Size Chart</h3>
+                     <div className="flex items-center justify-between p-2 sm:p-3 border-b bg-gradient-to-r from-pink-50 to-blue-50">
+                        <div className="flex items-center gap-1 sm:gap-2">
+                           <Ruler className="w-3 h-3 sm:w-4 sm:h-4 text-pink-500" />
+                           <h3 className="text-xs sm:text-sm font-bold text-gray-800">Size Chart</h3>
                         </div>
                         <button
                            onClick={() => setIsOpen(false)}
                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                         >
-                           <X className="w-4 h-4 text-gray-500" />
+                           <X className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                         </button>
                      </div>
 
                      {/* Content */}
-                     <div className="p-3 overflow-auto max-h-[calc(70vh-60px)]">
-                        <div className="relative">
-                           {!imageLoaded && (
-                              <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg">
-                                 <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+                     <div className="p-3 sm:p-4">
+                        {/* Compact Size Grid */}
+                        <div className="space-y-1.5 sm:space-y-2">
+                           {sizeData.map((item, index) => (
+                              <div 
+                                 key={item.size}
+                                 className="flex justify-between items-center py-1.5 sm:py-2 px-2 sm:px-3 rounded-md sm:rounded-lg bg-gray-50 hover:bg-pink-50 transition-colors border border-gray-100"
+                              >
+                                 <span className="text-xs sm:text-sm font-bold text-pink-500">
+                                    {item.size}
+                                 </span>
+                                 <span className="text-[10px] sm:text-xs text-gray-600">
+                                    {item.neckSize}
+                                 </span>
                               </div>
-                           )}
-                           <Image
-                              src="/sizechart.jpg"
-                              alt="Size Chart"
-                              width={800}
-                              height={600}
-                              className={`w-full h-auto max-h-72 object-contain rounded-lg transition-opacity duration-300 ${
-                                 imageLoaded ? 'opacity-100' : 'opacity-0'
-                              }`}
-                              onLoad={() => setImageLoaded(true)}
-                              priority
-                              quality={50}
-                              
-                           />
+                           ))}
                         </div>
-                        
-                        {/* <div className="mt-3 p-2 bg-blue-50 rounded-lg">
-                           <h4 className="font-semibold text-blue-800 mb-1 text-xs">Quick Tips:</h4>
-                           <ul className="text-xs text-blue-700 space-y-1">
-                              <li>• Measure when pet is standing naturally</li>
-                              <li>• Add 1-2 inches for comfort</li>
-                              <li>• If between sizes, choose larger</li>
-                           </ul>
-                        </div> */}
+
+                        {/* Compact Tips */}
+                        <div className="mt-2 sm:mt-3 p-2 bg-blue-50 rounded-md sm:rounded-lg border border-blue-100">
+                           <p className="text-[10px] sm:text-xs text-blue-700 text-center">
+                              💡 Measure naturally, add 1-2&quot; comfort
+                           </p>
+                        </div>
                      </div>
                   </motion.div>
                </>
