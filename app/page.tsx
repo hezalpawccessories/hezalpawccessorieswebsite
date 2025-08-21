@@ -114,11 +114,13 @@ export default function Home() {
                            <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                            <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
                            <Image
-                              width={600}
-                              height={400}
-                              src='https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=600'
+                              width={500}
+                              height={320}
+                              src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'
                               alt='Happy puppy with accessories'
-                              className='w-full h-80 object-cover rounded-xl'
+                              className='w-full h-96 object-cover rounded-xl'
+                              quality={75}
+                              sizes="(max-width: 768px) 100vw, 50vw"
                            />
                         </div>
                         <div className='absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg'>
@@ -232,10 +234,12 @@ export default function Home() {
                            </div>
                            <Image
                               width={300}
-                              height={200}
+                              height={192}
                               src={product.image}
                               alt={product.title}
                               className='w-full h-48 object-cover product-image'
+                              quality={70}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                            />
                            <div className='p-6'>
                               <h3 className='text-lg subheading text-gray-900 mb-2'>{product.title}</h3>

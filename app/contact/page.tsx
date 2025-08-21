@@ -275,7 +275,7 @@ export default function Contact() {
                         {
                            question: 'What is your return policy?',
                            answer:
-                              'We offer a 30-day return policy for unused items in original packaging. Pet safety is our priority, so we cannot accept returns on used items for hygiene reasons.',
+                              "We don't allow returns, cancellations, or refunds on any products sold. All purchases are final.",
                         },
                         {
                            question: 'How long does shipping take?',
@@ -288,9 +288,9 @@ export default function Contact() {
                               'Yes! All our products are made from pet-safe materials and undergo rigorous testing. However, always supervise your pet with new toys and accessories.',
                         },
                         {
-                           question: 'Do you offer custom sizing?',
+                           question: 'What sizing options do you offer?',
                            answer:
-                              "Yes, we offer custom sizing for collars and harnesses. Please contact us with your pet's measurements and we'll help you find the perfect fit.",
+                              "We have a range of sizes available for all our products. Please refer to the sizing chart on product page for detailed measurements.",
                         },
                         {
                            question: 'What payment methods do you accept?',
@@ -302,6 +302,7 @@ export default function Contact() {
                            answer:
                               "Absolutely! Once your order ships, you'll receive a tracking number via email. You can also contact us anytime for order updates.",
                         },
+                        
                      ].map((faq, index) => (
                         <motion.div
                            key={index}

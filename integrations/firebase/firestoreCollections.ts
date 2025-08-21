@@ -15,6 +15,7 @@ export interface Product {
    sizePricing?: SizePricing[] // Array of size-based pricing
    image: string
    category: string
+   collection?: string // New field for collections
    description: string
    details: string[]
    inStock: boolean
@@ -35,6 +36,13 @@ export interface Banner {
    updatedAt: Date
 }
 
+export interface Collection {
+   id: string
+   name: string
+   createdAt: Date
+   updatedAt: Date
+}
+
 interface Order {
    id: string
    customerName: string
@@ -51,6 +59,7 @@ const productsCollection = collection(db, 'products')
 const paymentsCollection = collection(db, 'payments')
 const ordersCollection = collection(db, 'orders')
 const bannersCollection = collection(db, 'banners')
+const collectionsCollection = collection(db, 'collections')
 
 // export const addProduct = async (product: Product) => {
 //    const docRef = await addDoc(productsCollection, product)
@@ -108,5 +117,35 @@ export const updateBanner = async (id: string, updatedData: Partial<Banner>) => 
 
 export const deleteBanner = async (id: string) => {
    const docRef = doc(db, 'banners', id)
+   await deleteDoc(docRef)
+}
+
+// Collection management functions
+export const addCollection = async (collection: Collection) => {
+   const docRef = doc(db, 'collections', collection.id)
+   await setDoc(docRef, collection)
+   return collection.id
+}
+
+export const getCollections = async () => {
+   const snapshot = await getDocs(collectionsCollection)
+   return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return { 
+         id: docSnap.id, 
+         ...data,
+         createdAt: data.createdAt?.toDate?.() || new Date(),
+         updatedAt: data.updatedAt?.toDate?.() || new Date()
+      } as Collection
+   })
+}
+
+export const updateCollection = async (id: string, updatedData: Partial<Collection>) => {
+   const docRef = doc(db, 'collections', id)
+   await updateDoc(docRef, { ...updatedData, updatedAt: new Date() })
+}
+
+export const deleteCollection = async (id: string) => {
+   const docRef = doc(db, 'collections', id)
    await deleteDoc(docRef)
 }

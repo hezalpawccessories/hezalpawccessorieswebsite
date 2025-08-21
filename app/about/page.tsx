@@ -42,7 +42,7 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
                 <Image
-                  src="https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  src="https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786707/dhagh0dnky92h2atq2no.jpg"
                   alt="Pet accessories collection"
                   width={600}
                   height={384}

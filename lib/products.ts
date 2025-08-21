@@ -13,6 +13,7 @@ export interface Product {
   image: string;
   images?: string[]; // Optional array for additional images
   category: string;
+  collection?: string; // New field for collections
   description: string;
   details: string[];
   inStock: boolean;

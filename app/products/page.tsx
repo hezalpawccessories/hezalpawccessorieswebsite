@@ -5,12 +5,13 @@ import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDe
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SizeChart from '@/components/SizeChart'
 import Image from 'next/image'
 import { categories, sizes, Product } from '@/lib/products'
 import Select from 'react-select'
 import { select } from 'framer-motion/client'
 import { toast } from 'sonner'
-import { getProducts, getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
+import { getProducts, getBanners, Banner, getCollections, Collection } from '@/integrations/firebase/firestoreCollections'
 
 const sortOptions = [
    { value: 'name', label: 'Sort by Name' },
@@ -21,6 +22,7 @@ const sortOptions = [
 
 export default function Products() {
    const [selectedCategory, setSelectedCategory] = useState('All')
+   const [selectedCollection, setSelectedCollection] = useState('All')
    const [searchQuery, setSearchQuery] = useState('')
    const [sortBy, setSortBy] = useState('name')
    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
@@ -28,6 +30,7 @@ export default function Products() {
    const [showCount, setShowCount] = useState(8)
    const [cartItems, setCartItems] = useState<any[]>([])
    const [productsList, setProductsList] = useState<Product[]>([])
+   const [collections, setCollections] = useState<Collection[]>([])
    const [loading, setLoading] = useState(true)
    const [mainImage, setMainImage] = useState<string>('')
    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
@@ -113,6 +116,15 @@ export default function Products() {
                duration: 4000,
             })
          })
+
+      // Load collections from Firestore
+      getCollections()
+         .then((fetchedCollections) => {
+            setCollections(fetchedCollections)
+         })
+         .catch((error) => {
+            console.error('Error fetching collections:', error)
+         })
    }, [])
 
    // Load banners from Firebase
@@ -181,6 +193,11 @@ export default function Products() {
          filtered = filtered.filter((product) => product.category === selectedCategory)
       }
 
+      // Filter by collection
+      if (selectedCollection !== 'All') {
+         filtered = filtered.filter((product) => product.collection === selectedCollection)
+      }
+
       // Filter by search query
       if (searchQuery) {
          filtered = filtered.filter(
@@ -221,7 +238,7 @@ export default function Products() {
       })
 
       return filtered
-   }, [productsList, selectedCategory, searchQuery, sortBy])
+   }, [productsList, selectedCategory, selectedCollection, searchQuery, sortBy])
 
    const displayedProducts = filteredProducts.slice(0, showCount)
    const hasMoreProducts = filteredProducts.length > showCount
@@ -687,6 +704,41 @@ export default function Products() {
                      ))}
                   </div>
 
+                  {/* Collection Pills - Smaller and differentiated */}
+                  {collections.length > 0 && (
+                     <div className='bg-gradient-to-r from-pink-50 to-pink-50 rounded-lg p-3 border border-pink-100'>
+                        <div className='flex flex-wrap gap-2 justify-center items-center'>
+                           <span className='text-base font-semibold text-pink-600 flex items-center gap-1'>
+                              <Gift className='w-3 h-3' />
+                              Collections:
+                           </span>
+                           <button
+                              onClick={() => setSelectedCollection('All')}
+                              className={`px-2 py-1 text-base font-medium rounded-lg transition-all duration-200 ${
+                                 selectedCollection === 'All' 
+                                    ? 'bg-pink-500 text-white shadow-md' 
+                                    : 'bg-white text-pink-600 border border-pink-200 hover:bg-pink-100'
+                              }`}
+                           >
+                              All
+                           </button>
+                           {collections.map((collection) => (
+                              <button
+                                 key={collection.id}
+                                 onClick={() => setSelectedCollection(collection.name)}
+                                 className={`px-2 py-1 text-base font-medium rounded-lg transition-all duration-200 ${
+                                    selectedCollection === collection.name 
+                                       ? 'bg-pink-500 text-white shadow-md' 
+                                       : 'bg-white text-pink-600 border border-pink-200 hover:bg-pink-100'
+                                 }`}
+                              >
+                                 {collection.name}
+                              </button>
+                           ))}
+                        </div>
+                     </div>
+                  )}
+
                   {/* Search and Sort */}
                   <div className='flex flex-row gap-4 items-center justify-between'>
                      <div className='relative flex-1 max-w-md'>
@@ -907,7 +959,13 @@ export default function Products() {
 
                            {/* Size Selection */}
                            <div className='mb-6'>
-                              <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
+                              <div className='flex items-center gap-2 mb-3'>
+                                 <h3 className='font-heading font-bold text-text-dark'>Select Size:</h3>
+                                 <SizeChart className='hidden md:block' />
+                              </div>
+                              <div className='block md:hidden mb-2'>
+                                 <SizeChart />
+                              </div>
                               <div className='flex flex-wrap gap-1'>
                                  {product.sizePricing && product.sizePricing.length > 0 
                                     ? product.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {
@@ -1131,7 +1189,13 @@ export default function Products() {
 
                            {/* Size Selection in Modal */}
                            <div className='mb-6'>
-                              <h3 className='font-heading font-bold text-text-dark mb-3'>Select Size:</h3>
+                              <div className='flex items-center gap-2 mb-3'>
+                                 <h3 className='font-heading font-bold text-text-dark'>Select Size:</h3>
+                                 <SizeChart className='hidden md:block' />
+                              </div>
+                              <div className='block md:hidden mb-2'>
+                                 <SizeChart />
+                              </div>
                               <div className='flex flex-wrap gap-2'>
                                  {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0 
                                     ? selectedProduct.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {

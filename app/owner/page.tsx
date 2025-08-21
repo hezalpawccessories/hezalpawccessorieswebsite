@@ -37,12 +37,14 @@ export default function Owner() {
                      >
                         <div className='bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl'>
                            <Image
-                              src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749075/rivykj109ic1clmsmrnh.jpg'
+                              src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749160/zzjqry7w9fxtmuugxuyr.jpg'
                               alt='Owner with pets'
                               width={600}
                               height={384}
-                              className='w-full h-96 object-contain rounded-2xl'
+                              className='w-full h-80 object-cover rounded-2xl'
                               priority
+                              quality={75}
+                              sizes="(max-width: 768px) 100vw, 50vw"
                            />
                         </div>
                         <div className='absolute -bottom-4 -right-4 bg-soft-yellow p-4 rounded-2xl shadow-lg space-y-1'>
@@ -75,13 +77,7 @@ export default function Owner() {
                            walks (and occasional squirrel chases!), and approved with a happy woof.
                         </p>
 
-                        <p className='text-text-light leading-relaxed'>
-                           {' '}
-                           When I’m not busy sniffing out new designs, you’ll find me rolling in the grass, sampling
-                           tasty treats, or giving my humans that “one more belly rub, please” look. Thank you for
-                           stopping by my little corner of the internet. I hope my collection adds a little extra wag to
-                           your day. After all, life’s better with style, treats, and a wagging tail!
-                        </p>
+                        
 
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                            <div className='flex items-center space-x-3'>
@@ -153,9 +149,11 @@ export default function Owner() {
                            <Image
                               src={pet.image}
                               alt={pet.name}
-                              width={600}
+                              width={400}
                               height={192}
                               className='w-full h-48 object-cover'
+                              quality={70}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                            />
                            <div className='p-6'>
                               <h3 className='text-xl font-bold text-text-dark mb-1'>{pet.name}</h3>
@@ -179,7 +177,7 @@ export default function Owner() {
                         transition={{ duration: 0.8 }}
                         className='space-y-6'
                      >
-                        <h2 className='text-3xl font-bold text-text-dark'>My Vision</h2>
+                        {/* <h2 className='text-3xl font-bold text-text-dark'>My Vision</h2>
                         <p className='text-text-light leading-relaxed'>
                            I envision a world where every pet owner has access to high-quality, affordable accessories
                            that enhance their pet&apos;s life. Through Hezal Accessories, I want to create a community
@@ -189,6 +187,13 @@ export default function Owner() {
                            My goal is not just to sell products, but to build lasting relationships with pet families
                            and contribute to the overall well-being of pets everywhere. Every purchase supports our
                            mission to make pet care more accessible and enjoyable.
+                        </p> */}
+                        <p className='text-text-light leading-relaxed'>
+                           {' '}
+                           When I’m not busy sniffing out new designs, you’ll find me rolling in the grass, sampling
+                           tasty treats, or giving my humans that “one more belly rub, please” look. Thank you for
+                           stopping by my little corner of the internet. I hope my collection adds a little extra wag to
+                           your day. After all, life’s better with style, treats, and a wagging tail!
                         </p>
                         <div className='bg-primary-blue/10 p-6 rounded-2xl'>
                            <p className='text-primary-blue font-semibold italic'>
@@ -202,14 +207,16 @@ export default function Owner() {
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
+                        className='bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl'
                      >
                         <Image
-                           src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749160/zzjqry7w9fxtmuugxuyr.jpg'
+                           src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786881/b0ooa9t3n39xyxt0ypt1.jpg'
                            alt='Pet care vision'
-                           width={600}
+                           width={500}
                            height={384}
-                           className='w-full h-96 object-cover rounded-2xl shadow-2xl'
-                           priority
+                           className='w-full h-96 object-cover sm:object-contain rounded-2xl shadow-2xl'
+                           quality={75}
+                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
                      </motion.div>
                   </div>

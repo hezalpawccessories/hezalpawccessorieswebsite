@@ -36,7 +36,12 @@ import {
    addBanner,
    getBanners,
    updateBanner,
-   deleteBanner
+   deleteBanner,
+   Collection,
+   addCollection,
+   getCollections,
+   updateCollection,
+   deleteCollection
 } from '@/integrations/firebase/firestoreCollections'
 import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
 import { getPayments, PaymentLog } from '@/lib/firebase/payments'
@@ -80,6 +85,7 @@ export default function AdminDashboard() {
       image: '',
       images: [''], // Array for multiple images
       category: 'Collars',
+      collection: '', // Add collection field
       description: '',
       details: [''],
       inStock: true,
@@ -91,6 +97,11 @@ export default function AdminDashboard() {
 
    const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
    const [openProductModal, setOpenProductModal] = useState(false)
+
+   // Collection management state
+   const [collections, setCollections] = useState<Collection[]>([])
+   const [newCollectionName, setNewCollectionName] = useState('')
+   const [showAddCollection, setShowAddCollection] = useState(false)
 
    // Banner management state
    const [banners, setBanners] = useState<Banner[]>([])
@@ -429,6 +440,63 @@ export default function AdminDashboard() {
       }
    }
 
+   // Collection management functions
+   const handleAddCollection = async () => {
+      if (!newCollectionName.trim()) {
+         toast.error('Please enter a collection name')
+         return
+      }
+
+      try {
+         const newCollection: Collection = {
+            id: uuidv4(),
+            name: newCollectionName.trim(),
+            createdAt: new Date(),
+            updatedAt: new Date()
+         }
+
+         await addCollection(newCollection)
+         
+         // Reload collections
+         const fetchedCollections = await getCollections()
+         setCollections(fetchedCollections)
+         
+         setNewCollectionName('')
+         setShowAddCollection(false)
+         
+         toast.success('Collection added successfully', {
+            description: `"${newCollection.name}" has been added to your collections`,
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error adding collection:', error)
+         toast.error('Failed to add collection', {
+            description: 'Please try again',
+            duration: 4000,
+         })
+      }
+   }
+
+   const handleDeleteCollection = async (collectionId: string) => {
+      try {
+         await deleteCollection(collectionId)
+         
+         // Reload collections
+         const fetchedCollections = await getCollections()
+         setCollections(fetchedCollections)
+         
+         toast.success('Collection deleted successfully', {
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error deleting collection:', error)
+         toast.error('Failed to delete collection', {
+            description: 'Please try again',
+            duration: 4000,
+         })
+      }
+   }
+
    useEffect(() => {
       // Load orders from Firebase
       if (typeof window !== 'undefined') {
@@ -490,6 +558,15 @@ export default function AdminDashboard() {
 
       // Load banners from Firestore
       loadBanners()
+
+      // Load collections from Firestore
+      getCollections()
+         .then((fetchedCollections) => {
+            setCollections(fetchedCollections)
+         })
+         .catch((error) => {
+            console.error('Error fetching collections:', error)
+         })
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -584,6 +661,7 @@ export default function AdminDashboard() {
          image: '',
          images: [''],
          category: 'Collars',
+         collection: '',
          description: '',
          details: [''],
          inStock: true,
@@ -986,6 +1064,72 @@ export default function AdminDashboard() {
                                     <option value='Treat Jars'>Treat Jars</option>
                                  </select>
                               </div>
+                           </div>
+
+                           {/* Collection Selection */}
+                           <div className='space-y-4'>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>Collection</label>
+                              <div className='flex gap-2'>
+                                 <select
+                                    value={newProduct.collection || ''}
+                                    onChange={(e) => setNewProduct({ ...newProduct, collection: e.target.value })}
+                                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                 >
+                                    <option value=''>None</option>
+                                    {collections.map((collection) => (
+                                       <option key={collection.id} value={collection.name}>
+                                          {collection.name}
+                                       </option>
+                                    ))}
+                                 </select>
+                                 <button
+                                    type='button'
+                                    onClick={() => setShowAddCollection(true)}
+                                    className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2'
+                                 >
+                                    <Plus className='w-4 h-4' />
+                                    Add Collection
+                                 </button>
+                              </div>
+                              
+                              {/* Add Collection Modal */}
+                              {showAddCollection && (
+                                 <div className='p-4 border border-gray-200 rounded-lg bg-gray-50'>
+                                    <h4 className='text-sm font-medium text-text-dark mb-2'>Add New Collection</h4>
+                                    <div className='flex gap-2'>
+                                       <input
+                                          type='text'
+                                          placeholder='Collection name (e.g., Christmas, Independence Day)'
+                                          value={newCollectionName}
+                                          onChange={(e) => setNewCollectionName(e.target.value)}
+                                          className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                          onKeyDown={(e) => {
+                                             if (e.key === 'Enter') {
+                                                e.preventDefault()
+                                                handleAddCollection()
+                                             }
+                                          }}
+                                       />
+                                       <button
+                                          type='button'
+                                          onClick={handleAddCollection}
+                                          className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                                       >
+                                          Add
+                                       </button>
+                                       <button
+                                          type='button'
+                                          onClick={() => {
+                                             setShowAddCollection(false)
+                                             setNewCollectionName('')
+                                          }}
+                                          className='px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors'
+                                       >
+                                          Cancel
+                                       </button>
+                                    </div>
+                                 </div>
+                              )}
                            </div>
 
                            {/* Size-Based Pricing Section - Now Mandatory */}
@@ -1850,6 +1994,23 @@ export default function AdminDashboard() {
                                  <option value='Treat Jars'>Treat Jars</option>
                               </select>
                            </div>
+                        </div>
+
+                        {/* Collection Selection in Edit Modal */}
+                        <div className='space-y-4'>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>Collection</label>
+                           <select
+                              value={selectedProduct.collection || ''}
+                              onChange={(e) => setSelectedProduct({ ...selectedProduct, collection: e.target.value })}
+                              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                           >
+                              <option value=''>None</option>
+                              {collections.map((collection) => (
+                                 <option key={collection.id} value={collection.name}>
+                                    {collection.name}
+                                 </option>
+                              ))}
+                           </select>
                         </div>
 
                         {/* Size-Based Pricing Section in Edit Modal - Now Mandatory */}
