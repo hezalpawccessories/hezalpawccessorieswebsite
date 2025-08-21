@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import ProgressLink from './ProgressLink'
 import { Heart, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 
@@ -42,36 +42,36 @@ export default function Footer() {
                   <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Quick Links</h4>
                   <ul className='space-y-2'>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Home
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/about'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            About
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/owner'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Owner
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Contact
-                        </Link>
+                        </ProgressLink>
                      </li>
                   </ul>
                </div>
@@ -81,36 +81,36 @@ export default function Footer() {
                   <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Policies</h4>
                   <ul className='space-y-2'>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/privacy-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Privacy Policy
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/terms'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Terms & Conditions
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/return-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Return & Cancellation
-                        </Link>
+                        </ProgressLink>
                      </li>
                      <li>
-                        <Link
+                        <ProgressLink
                            href='/shipping-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Shipping Policy
-                        </Link>
+                        </ProgressLink>
                      </li>
                   </ul>
                </div>

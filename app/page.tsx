@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import ProgressLink from '@/components/ProgressLink'
 import { ArrowRight, Star, Shield, Truck, Heart, Gift } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Navbar from '@/components/Navbar'
@@ -91,15 +91,15 @@ export default function Home() {
                            collars to cozy beds, we have everything your furry friend needs.
                         </p>
                         <div className='flex flex-col sm:flex-row gap-4'>
-                           <Link href='/products'>
+                           <ProgressLink href='/products'>
                               <button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'>
                                  <span>Shop Now</span>
                                  <ArrowRight className='w-5 h-5' />
                               </button>
-                           </Link>
-                           <Link href='/about'>
+                           </ProgressLink>
+                           <ProgressLink href='/about'>
                               <button className='btn-secondary w-full sm:w-auto'>About Us</button>
-                           </Link>
+                           </ProgressLink>
                         </div>
                      </motion.div>
 
@@ -246,9 +246,9 @@ export default function Home() {
                   </div>
 
                   <div className='text-center mt-12'>
-                     <Link href='/products'>
+                     <ProgressLink href='/products'>
                         <button className='btn-primary font-body font-medium'>View All Products</button>
-                     </Link>
+                     </ProgressLink>
                   </div>
                </div>
             </section>
@@ -322,11 +322,11 @@ export default function Home() {
                      <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
                         Join thousands of happy pet parents who trust Hezal Accessories for their furry friends
                      </p>
-                     <Link href='/products'>
+                     <ProgressLink href='/products'>
                         <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-50 transition-colors'>
                            Start Shopping Now
                         </button>
-                     </Link>
+                     </ProgressLink>
                   </motion.div>
                </div>
             </section>
