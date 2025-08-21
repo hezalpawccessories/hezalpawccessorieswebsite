@@ -37,11 +37,11 @@ export default function Owner() {
                      >
                         <div className='bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl'>
                            <Image
-                              src='https://images.pexels.com/photos/3992656/pexels-photo-3992656.jpeg?auto=compress&cs=tinysrgb&w=600'
+                              src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749075/rivykj109ic1clmsmrnh.jpg'
                               alt='Owner with pets'
                               width={600}
                               height={384}
-                              className='w-full h-96 object-cover rounded-2xl'
+                              className='w-full h-96 object-contain rounded-2xl'
                               priority
                            />
                         </div>
@@ -204,7 +204,7 @@ export default function Owner() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                      >
                         <Image
-                           src='https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=600'
+                           src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749160/zzjqry7w9fxtmuugxuyr.jpg'
                            alt='Pet care vision'
                            width={600}
                            height={384}

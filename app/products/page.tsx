@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye, InfoIcon } from 'lucide-react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye, InfoIcon, ChevronLeft, ChevronRight, Tag, Gift, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -10,7 +10,7 @@ import { categories, sizes, Product } from '@/lib/products'
 import Select from 'react-select'
 import { select } from 'framer-motion/client'
 import { toast } from 'sonner'
-import { getProducts } from '@/integrations/firebase/firestoreCollections'
+import { getProducts, getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 
 const sortOptions = [
    { value: 'name', label: 'Sort by Name' },
@@ -33,6 +33,20 @@ export default function Products() {
    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
    const [shakeProduct, setShakeProduct] = useState<string>('') // Track which product to shake
    const [customNames, setCustomNames] = useState<{ [key: string]: string }>({}) // Track custom names per product
+   
+   // Banner state
+   const [currentBannerIndex, setCurrentBannerIndex] = useState(0)
+   const [isAutoplaying, setIsAutoplaying] = useState(true)
+   const [touchStart, setTouchStart] = useState<number | null>(null)
+   const [touchEnd, setTouchEnd] = useState<number | null>(null)
+   const [autoplayProgress, setAutoplayProgress] = useState(0)
+   const [banners, setBanners] = useState<Banner[]>([])
+   const [loadingBanners, setLoadingBanners] = useState(true)
+   const bannerIntervalRef = useRef<NodeJS.Timeout | null>(null)
+   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+   // Minimum swipe distance (in px)
+   const minSwipeDistance = 50
 
    // Helper function to get price for specific size
    const getPriceForSize = (product: Product, size?: string) => {
@@ -100,6 +114,64 @@ export default function Products() {
             })
          })
    }, [])
+
+   // Load banners from Firebase
+   const loadBanners = async () => {
+      try {
+         setLoadingBanners(true)
+         const fetchedBanners = await getBanners()
+         const activeBanners = fetchedBanners.filter(banner => banner.isActive)
+         setBanners(activeBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+      } catch (error) {
+         console.error('Error loading banners:', error)
+         // Fall back to dummy data if fetch fails
+         setBanners([])
+      } finally {
+         setLoadingBanners(false)
+      }
+   }
+
+   // Load banners on component mount
+   useEffect(() => {
+      loadBanners()
+   }, [])
+
+   // Reset banner index if current index is out of bounds
+   useEffect(() => {
+      if (banners.length > 0 && currentBannerIndex >= banners.length) {
+         setCurrentBannerIndex(0)
+      }
+   }, [banners.length, currentBannerIndex])
+
+   // Helper function to get banner styling and icon based on type
+   const getBannerStyle = (type: Banner['type']) => {
+      switch (type) {
+         case 'festival':
+            return {
+               background: 'bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500',
+               icon: Gift,
+               cta: 'Shop Festival Collection'
+            }
+         case 'new-launch':
+            return {
+               background: 'bg-gradient-to-r from-blue-500 via-teal-500 to-green-500',
+               icon: Sparkles,
+               cta: 'Explore New Arrivals'
+            }
+         case 'sale':
+            return {
+               background: 'bg-gradient-to-r from-red-500 via-pink-500 to-rose-500',
+               icon: Tag,
+               cta: 'Shop Sale Items'
+            }
+         default:
+            return {
+               background: 'bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700',
+               icon: Sparkles,
+               cta: 'Explore Collection'
+            }
+      }
+   }
 
    const filteredProducts = useMemo(() => {
       let filtered = productsList
@@ -243,6 +315,162 @@ export default function Products() {
       }
    }, [selectedProduct, selectedSizes])
 
+   // Banner auto-scroll logic
+   useEffect(() => {
+      if (isAutoplaying) {
+         setAutoplayProgress(0)
+         
+         // Progress bar animation
+         progressIntervalRef.current = setInterval(() => {
+            setAutoplayProgress(prev => {
+               if (prev >= 100) {
+                  return 0
+               }
+               return prev + 2 // Increase by 2% every 100ms (5 seconds total)
+            })
+         }, 100)
+
+         // Banner change interval
+         bannerIntervalRef.current = setInterval(() => {
+            setCurrentBannerIndex((prev) => (prev + 1) % banners.length)
+            setAutoplayProgress(0)
+         }, 5000) // Change banner every 5 seconds
+      } else {
+         setAutoplayProgress(0)
+      }
+
+      return () => {
+         if (bannerIntervalRef.current) {
+            clearInterval(bannerIntervalRef.current)
+         }
+         if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current)
+         }
+      }
+   }, [isAutoplaying, banners.length])
+
+   // Keyboard navigation for banner
+   useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+         switch (event.key) {
+            case 'ArrowLeft':
+               event.preventDefault()
+               goToPrevBanner()
+               break
+            case 'ArrowRight':
+               event.preventDefault()
+               goToNextBanner()
+               break
+            case ' ': // Spacebar
+               event.preventDefault()
+               setIsAutoplaying(!isAutoplaying)
+               break
+            case 'Enter':
+               event.preventDefault()
+               handleBannerClick(banners[currentBannerIndex])
+               break
+            default:
+               break
+         }
+      }
+
+      // Only add event listener when banner is visible
+      window.addEventListener('keydown', handleKeyDown)
+      
+      return () => {
+         window.removeEventListener('keydown', handleKeyDown)
+      }
+   }, [currentBannerIndex, isAutoplaying, banners]) // eslint-disable-line react-hooks/exhaustive-deps
+
+   // Banner navigation functions
+   const goToPrevBanner = () => {
+      setIsAutoplaying(false)
+      setAutoplayProgress(0)
+      setCurrentBannerIndex((prev) => (prev - 1 + banners.length) % banners.length)
+      // Resume autoplay after 10 seconds of inactivity
+      setTimeout(() => setIsAutoplaying(true), 10000)
+   }
+
+   const goToNextBanner = () => {
+      setIsAutoplaying(false)
+      setAutoplayProgress(0)
+      setCurrentBannerIndex((prev) => (prev + 1) % banners.length)
+      // Resume autoplay after 10 seconds of inactivity
+      setTimeout(() => setIsAutoplaying(true), 10000)
+   }
+
+   const goToBanner = (index: number) => {
+      setIsAutoplaying(false)
+      setAutoplayProgress(0)
+      setCurrentBannerIndex(index)
+      // Resume autoplay after 10 seconds of inactivity
+      setTimeout(() => setIsAutoplaying(true), 10000)
+   }
+
+   // Touch/Swipe handlers for mobile
+   const onTouchStart = (e: React.TouchEvent) => {
+      setTouchEnd(null) // Reset touchEnd
+      setTouchStart(e.targetTouches[0].clientX)
+   }
+
+   const onTouchMove = (e: React.TouchEvent) => {
+      setTouchEnd(e.targetTouches[0].clientX)
+   }
+
+   const onTouchEnd = () => {
+      if (!touchStart || !touchEnd) return
+      
+      const distance = touchStart - touchEnd
+      const isLeftSwipe = distance > minSwipeDistance
+      const isRightSwipe = distance < -minSwipeDistance
+
+      if (isLeftSwipe) {
+         goToNextBanner()
+      } else if (isRightSwipe) {
+         goToPrevBanner()
+      }
+   }
+
+   // Handle banner click actions
+   const handleBannerClick = (banner: Banner) => {
+      if (banner.linkUrl) {
+         // If banner has a custom link, navigate to it
+         window.open(banner.linkUrl, '_blank')
+      } else {
+         // Default behavior based on banner type
+         switch (banner.type) {
+            case 'festival':
+               setSelectedCategory('All')
+               toast.success('Welcome to Festival Collection!', {
+                  description: 'Explore our special festival offers below.',
+                  duration: 3000,
+               })
+               break
+            case 'new-launch':
+               setSelectedCategory('All')
+               toast.success('Check out our New Arrivals!', {
+                  description: 'Fresh styles just added to our collection.',
+                  duration: 3000,
+               })
+               break
+            case 'sale':
+               setSelectedCategory('All')
+               toast.success('Flash Sale Active!', {
+                  description: 'Don\'t miss out on these amazing discounts.',
+                  duration: 3000,
+               })
+               break
+            default:
+               setSelectedCategory('All')
+               toast.success('Explore our Collection!', {
+                  description: 'Discover amazing products for your pets.',
+                  duration: 3000,
+               })
+               break
+         }
+      }
+   }
+
    return (
       <>
          <Navbar />
@@ -262,6 +490,185 @@ export default function Products() {
                      Discover our carefully curated collection of premium pet accessories
                   </p>
                </motion.div>
+
+               {/* Banner Carousel */}
+               {!loadingBanners && banners.length > 0 && (
+                  <motion.div
+                     initial={{ opacity: 0, y: 30 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.8, delay: 0.2 }}
+                     className='relative mb-12 rounded-2xl overflow-hidden shadow-2xl'
+                  >
+                     {/* Main Banner Display */}
+                     <div 
+                        className='relative h-64 md:h-80 lg:h-96 cursor-pointer'
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                        onClick={() => banners[currentBannerIndex] && handleBannerClick(banners[currentBannerIndex])}
+                     >
+                        <AnimatePresence mode='wait'>
+                           {banners[currentBannerIndex] && (
+                              <motion.div
+                                 key={currentBannerIndex}
+                                 initial={{ opacity: 0, x: 100 }}
+                                 animate={{ opacity: 1, x: 0 }}
+                                 exit={{ opacity: 0, x: -100 }}
+                                 transition={{ duration: 0.5 }}
+                                 className={`absolute inset-0 ${getBannerStyle(banners[currentBannerIndex].type).background}`}
+                              >
+                                 {/* Banner Content */}
+                                 <div className='relative h-full flex items-center justify-between px-6 md:px-12 lg:px-16'>
+                                    {/* Text Content */}
+                                    <div className='flex-1 text-white z-10'>
+                                       <div className='flex items-center gap-3 mb-4'>
+                                          {(() => {
+                                             const IconComponent = getBannerStyle(banners[currentBannerIndex].type).icon
+                                             return <IconComponent className='w-8 h-8 text-white' />
+                                          })()}
+                                          <span className='text-sm md:text-base font-semibold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full'>
+                                             {banners[currentBannerIndex].type.replace('-', ' ')}
+                                          </span>
+                                       </div>
+                                       <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4'>
+                                          {banners[currentBannerIndex].title}
+                                       </h2>
+                                       <h3 className='text-xl md:text-2xl lg:text-3xl font-semibold mb-3 md:mb-4 text-white/90'>
+                                          {banners[currentBannerIndex].subtitle}
+                                       </h3>
+                                       <p className='text-base md:text-lg mb-6 text-white/80 max-w-md'>
+                                          {banners[currentBannerIndex].description}
+                                       </p>
+                                       <button 
+                                          onClick={(e) => {
+                                             e.stopPropagation() // Prevent banner click event
+                                             banners[currentBannerIndex] && handleBannerClick(banners[currentBannerIndex])
+                                          }}
+                                          className='bg-white text-gray-800 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg'
+                                       >
+                                          {getBannerStyle(banners[currentBannerIndex].type).cta}
+                                       </button>
+                                    </div>
+
+                                    {/* Banner Image/Logo */}
+                                    <div className='hidden md:flex items-center justify-center w-48 lg:w-64 h-48 lg:h-64 relative'>
+                                       <div className='w-32 lg:w-40 h-32 lg:h-40 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm banner-floating-element'>
+                                          <Image
+                                             src={banners[currentBannerIndex].imageUrl}
+                                             alt={banners[currentBannerIndex].title}
+                                             width={100}
+                                             height={100}
+                                             className='w-20 lg:w-24 h-20 lg:h-24 object-contain'
+                                          />
+                                       </div>
+                                       {/* Floating decorative elements */}
+                                       <div className='absolute -top-4 -right-4 w-8 h-8 bg-white/30 rounded-full animate-pulse banner-floating-element'></div>
+                                       <div className='absolute -bottom-4 -left-4 w-6 h-6 bg-white/20 rounded-full animate-bounce'></div>
+                                       <div className='absolute top-1/2 -left-8 w-4 h-4 bg-white/25 rounded-full animate-ping'></div>
+                                    </div>
+                                 </div>
+
+                                 {/* Gradient Overlay */}
+                                 <div className='absolute inset-0 bg-black/10'></div>
+                                 
+                                 {/* Click indicator for mobile */}
+                                 {/* <div className='absolute top-4 left-4 md:hidden'>
+                                    <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm'>
+                                       Tap to explore
+                                    </div>
+                                 </div> */}
+                              </motion.div>
+                           )}
+                        </AnimatePresence>
+                     </div>
+
+                  {/* Navigation Controls */}
+                  <div className='absolute inset-y-0 left-4 flex items-center'>
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation()
+                           goToPrevBanner()
+                        }}
+                        className='bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 banner-nav-btn'
+                        aria-label='Previous banner'
+                     >
+                        <ChevronLeft className='w-6 h-6' />
+                     </button>
+                  </div>
+                  <div className='absolute inset-y-0 right-4 flex items-center'>
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation()
+                           goToNextBanner()
+                        }}
+                        className='bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 banner-nav-btn'
+                        aria-label='Next banner'
+                     >
+                        <ChevronRight className='w-6 h-6' />
+                     </button>
+                  </div>
+
+                  {/* Dots Indicator */}
+                  <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3'>
+                     {banners.map((banner, index) => (
+                        <button
+                           key={index}
+                           onClick={(e) => {
+                              e.stopPropagation()
+                              goToBanner(index)
+                           }}
+                           className={`w-3 h-3 rounded-full transition-all duration-300 banner-dot ${
+                              index === currentBannerIndex
+                                 ? 'bg-white scale-125'
+                                 : 'bg-white/50 hover:bg-white/70'
+                           }`}
+                           aria-label={`Go to ${banner.title} banner`}
+                        />
+                     ))}
+                  </div>
+
+                  {/* Auto-play indicator with pause/play functionality */}
+                  <div className='absolute top-4 right-4'>
+                     <button
+                        onClick={(e) => {
+                           e.stopPropagation()
+                           setIsAutoplaying(!isAutoplaying)
+                        }}
+                        className='w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all duration-300'
+                        aria-label={isAutoplaying ? 'Pause autoplay' : 'Resume autoplay'}
+                     >
+                        <div className={`w-2 h-2 rounded-full ${isAutoplaying ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'}`}>
+                        </div>
+                     </button>
+                  </div>
+
+                  {/* Swipe indicator for mobile */}
+                  <div className='absolute bottom-16 right-4 md:hidden'>
+                     <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm flex items-center gap-1'>
+                        <ChevronLeft className='w-3 h-3' />
+                        Swipe
+                        <ChevronRight className='w-3 h-3' />
+                     </div>
+                  </div>
+
+                  {/* Keyboard navigation hint for desktop */}
+                  {/* <div className='absolute bottom-16 left-4 hidden md:block'>
+                     <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm'>
+                        Use ← → keys or spacebar to control
+                     </div>
+                  </div> */}
+
+                  {/* Progress Bar */}
+                  {isAutoplaying && (
+                     <div className='absolute bottom-0 left-0 w-full h-1 bg-white/20'>
+                        <div 
+                           className='h-full bg-white transition-all duration-100 ease-linear'
+                           style={{ width: `${autoplayProgress}%` }}
+                        />
+                     </div>
+                  )}
+                  </motion.div>
+               )}
 
                {/* Filters */}
                <div className='mb-8 space-y-4'>
@@ -409,7 +816,7 @@ export default function Products() {
                            >
                               <h3 className='text-lg sm:text-xl font-heading font-bold text-text-dark line-clamp-2 group-hover:underline transition-all duration-400 flex items-start gap-2 mb-1'>
                                  <span className='flex-1'>{product.title}</span>
-                                 <Eye className='w-4 h-4 text-pink-400 group-hover:text-pink-600 group-hover:scale-110 transition-all duration-200 flex-shrink-0 mt-1 eye-pulse' />
+                                 {/* <Eye className='w-4 h-4 text-pink-400 group-hover:text-pink-600 group-hover:scale-110 transition-all duration-200 flex-shrink-0 mt-1 eye-pulse' /> */}
                               </h3>
                               <span className='text-xs sm:text-sm text-pink-500 group-hover:text-pink-700 transition-colors duration-200 font-medium flex items-center gap-1'>
                                  <span>Click to view details</span>

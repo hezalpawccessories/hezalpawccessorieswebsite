@@ -22,10 +22,22 @@ import {
    CheckCircle,
    XCircle,
    Clock,
+   Image as ImageIcon,
+   Copy,
 } from 'lucide-react'
 import { products as initialProducts, Product, sizes, SizePricing } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
-import { addProduct, deleteProduct, updateProduct, getProducts } from '@/integrations/firebase/firestoreCollections'
+import { 
+   addProduct, 
+   deleteProduct, 
+   updateProduct, 
+   getProducts,
+   Banner,
+   addBanner,
+   getBanners,
+   updateBanner,
+   deleteBanner
+} from '@/integrations/firebase/firestoreCollections'
 import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
 import { getPayments, PaymentLog } from '@/lib/firebase/payments'
 import { v4 as uuidv4 } from 'uuid'
@@ -79,6 +91,21 @@ export default function AdminDashboard() {
 
    const [uploadedImages, setUploadedImages] = useState<string[]>([]) // Store uploaded image URLs
    const [openProductModal, setOpenProductModal] = useState(false)
+
+   // Banner management state
+   const [banners, setBanners] = useState<Banner[]>([])
+   const [bannerForms, setBannerForms] = useState([{
+      id: '',
+      title: '',
+      subtitle: '',
+      description: '',
+      imageUrl: '',
+      linkUrl: '',
+      type: 'general' as Banner['type'],
+      isActive: true
+   }])
+   const [bannerImages, setBannerImages] = useState<string[]>([''])
+   const [loadingBanners, setLoadingBanners] = useState(false)
 
    // Helper function to get price for specific size (same as Products page)
    const getPriceForSize = (product: Product, size?: string) => {
@@ -207,6 +234,201 @@ export default function AdminDashboard() {
       })
    }
 
+   // Banner upload widget
+   const showBannerUploadWidget = (bannerIndex: number) => {
+      if (typeof window !== 'undefined' && window.cloudinary) {
+         window.cloudinary.openUploadWidget(
+            {
+               cloudName: 'dt2qyj4lj',
+               uploadPreset: 'product_images',
+               sources: ['local', 'url', 'camera'],
+               multiple: false,
+               maxFiles: 1,
+               resourceType: 'image',
+               clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+               maxFileSize: 10000000, // 10MB
+               styles: {
+                  palette: {
+                     window: '#FFFFFF',
+                     windowBorder: '#90A0B3',
+                     tabIcon: '#0078FF',
+                     menuIcons: '#5A616A',
+                     textDark: '#000000',
+                     textLight: '#FFFFFF',
+                     link: '#0078FF',
+                     action: '#FF620C',
+                     inactiveTabIcon: '#0E2F5A',
+                     error: '#F44235',
+                     inProgress: '#0078FF',
+                     complete: '#20B832',
+                     sourceBg: '#E4EBF1',
+                  },
+               },
+            },
+            (error: any, result: any) => {
+               if (!error && result && result.event === 'success') {
+                  const imageUrl = result.info.secure_url
+                  setBannerImages(prev => {
+                     const newImages = [...prev]
+                     newImages[bannerIndex] = imageUrl
+                     return newImages
+                  })
+                  setBannerForms(prev => {
+                     const newForms = [...prev]
+                     newForms[bannerIndex].imageUrl = imageUrl
+                     return newForms
+                  })
+                  toast.success(`Banner image uploaded successfully!`, {
+                     description: `${result.info.original_filename || 'Banner image'} is ready to use`,
+                     duration: 3000,
+                  })
+               } else if (error) {
+                  toast.error('Upload failed', {
+                     description: 'Please try uploading the banner image again',
+                     duration: 4000,
+                  })
+               }
+            }
+         )
+      } else {
+         toast.error('Upload widget not ready', {
+            description: 'Please wait a moment and try again',
+            duration: 3000,
+         })
+      }
+   }
+
+   // Banner management functions
+   const addBannerForm = () => {
+      setBannerForms(prev => [...prev, {
+         id: '',
+         title: '',
+         subtitle: '',
+         description: '',
+         imageUrl: '',
+         linkUrl: '',
+         type: 'general',
+         isActive: true
+      }])
+      setBannerImages(prev => [...prev, ''])
+   }
+
+   const removeBannerForm = (index: number) => {
+      if (bannerForms.length > 1) {
+         setBannerForms(prev => prev.filter((_, i) => i !== index))
+         setBannerImages(prev => prev.filter((_, i) => i !== index))
+      }
+   }
+
+   const updateBannerForm = (index: number, field: string, value: string | boolean) => {
+      setBannerForms(prev => {
+         const newForms = [...prev]
+         newForms[index] = { ...newForms[index], [field]: value }
+         return newForms
+      })
+   }
+
+   const saveBanners = async () => {
+      setLoadingBanners(true)
+      try {
+         const promises = bannerForms.map(async (banner) => {
+            if (!banner.title || !banner.imageUrl) {
+               throw new Error('Title and image are required for all banners')
+            }
+
+            const bannerId = banner.id || `banner_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+            const bannerData: Banner = {
+               id: bannerId,
+               title: banner.title,
+               subtitle: banner.subtitle,
+               description: banner.description,
+               imageUrl: banner.imageUrl,
+               linkUrl: banner.linkUrl,
+               type: banner.type,
+               isActive: banner.isActive,
+               createdAt: new Date(),
+               updatedAt: new Date()
+            }
+
+            return addBanner(bannerData)
+         })
+
+         await Promise.all(promises)
+         await loadBanners()
+         
+         // Reset forms
+         setBannerForms([{
+            id: '',
+            title: '',
+            subtitle: '',
+            description: '',
+            imageUrl: '',
+            linkUrl: '',
+            type: 'general',
+            isActive: true
+         }])
+         setBannerImages([''])
+
+         toast.success('Banners saved successfully!', {
+            description: `${bannerForms.length} banner(s) added to your collection`,
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error saving banners:', error)
+         toast.error('Failed to save banners', {
+            description: error instanceof Error ? error.message : 'Please try again',
+            duration: 4000,
+         })
+      } finally {
+         setLoadingBanners(false)
+      }
+   }
+
+   const loadBanners = async () => {
+      try {
+         const fetchedBanners = await getBanners()
+         setBanners(fetchedBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+      } catch (error) {
+         console.error('Error loading banners:', error)
+         toast.error('Failed to load banners', {
+            description: 'There was an issue loading banners from the database',
+            duration: 4000,
+         })
+      }
+   }
+
+   const deleteBannerById = async (bannerId: string) => {
+      try {
+         await deleteBanner(bannerId)
+         await loadBanners()
+         toast.success('Banner deleted successfully', {
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error deleting banner:', error)
+         toast.error('Failed to delete banner', {
+            description: 'Please try again',
+            duration: 4000,
+         })
+      }
+   }
+
+   const toggleBannerStatus = async (bannerId: string, isActive: boolean) => {
+      try {
+         await updateBanner(bannerId, { isActive })
+         await loadBanners()
+         toast.success(`Banner ${isActive ? 'activated' : 'deactivated'} successfully`, {
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error updating banner status:', error)
+         toast.error('Failed to update banner status', {
+            description: 'Please try again',
+            duration: 4000,
+         })
+      }
+   }
+
    useEffect(() => {
       // Load orders from Firebase
       if (typeof window !== 'undefined') {
@@ -265,6 +487,9 @@ export default function AdminDashboard() {
                duration: 4000,
             })
          })
+
+      // Load banners from Firestore
+      loadBanners()
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -546,6 +771,7 @@ export default function AdminDashboard() {
                {[
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
+                  { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5' /> },
                   { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
                   { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
                   { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
@@ -1066,6 +1292,263 @@ export default function AdminDashboard() {
                            </button>
                         </form>
                      </div>
+                  </motion.div>
+               )}
+
+               {activeTab === 'add-banner' && (
+                  <motion.div
+                     key='add-banner'
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.5 }}
+                     className='bg-white rounded-xl shadow-lg p-6'
+                  >
+                     <div className='flex justify-between items-center mb-6'>
+                        <h2 className='text-2xl font-heading font-bold text-text-dark'>Add Banner</h2>
+                        <div className='flex gap-3'>
+                           <button
+                              onClick={addBannerForm}
+                              className='btn-secondary px-4 py-2 flex items-center gap-2'
+                           >
+                              <Plus className='w-4 h-4' />
+                              Add Another Banner
+                           </button>
+                           <button
+                              onClick={saveBanners}
+                              disabled={loadingBanners}
+                              className='btn-primary px-6 py-2 flex items-center gap-2'
+                           >
+                              <Save className='w-4 h-4' />
+                              {loadingBanners ? 'Saving...' : 'Save All Banners'}
+                           </button>
+                        </div>
+                     </div>
+
+                     <div className='space-y-8'>
+                        {bannerForms.map((banner, index) => (
+                           <div key={index} className='border border-gray-200 rounded-lg p-6 relative'>
+                              {bannerForms.length > 1 && (
+                                 <button
+                                    onClick={() => removeBannerForm(index)}
+                                    className='absolute top-4 right-4 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-full p-2 transition-colors'
+                                 >
+                                    <X className='w-4 h-4' />
+                                 </button>
+                              )}
+
+                              <h3 className='text-lg font-semibold text-text-dark mb-4'>
+                                 Banner {index + 1}
+                              </h3>
+
+                              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                 {/* Left Column - Basic Info */}
+                                 <div className='space-y-4'>
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Banner Title *
+                                       </label>
+                                       <input
+                                          type='text'
+                                          value={banner.title}
+                                          onChange={(e) => updateBannerForm(index, 'title', e.target.value)}
+                                          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                          placeholder='e.g., Festival Special'
+                                          required
+                                       />
+                                    </div>
+
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Subtitle
+                                       </label>
+                                       <input
+                                          type='text'
+                                          value={banner.subtitle}
+                                          onChange={(e) => updateBannerForm(index, 'subtitle', e.target.value)}
+                                          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                          placeholder='e.g., Get up to 40% OFF'
+                                       />
+                                    </div>
+
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Description
+                                       </label>
+                                       <textarea
+                                          value={banner.description}
+                                          onChange={(e) => updateBannerForm(index, 'description', e.target.value)}
+                                          rows={3}
+                                          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                          placeholder='Brief description of the banner content'
+                                       />
+                                    </div>
+
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Banner Type
+                                       </label>
+                                       <select
+                                          value={banner.type}
+                                          onChange={(e) => updateBannerForm(index, 'type', e.target.value)}
+                                          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                       >
+                                          <option value='general'>General</option>
+                                          <option value='festival'>Festival</option>
+                                          <option value='new-launch'>New Launch</option>
+                                          <option value='sale'>Sale</option>
+                                       </select>
+                                    </div>
+
+                                    <div className='flex items-center gap-3'>
+                                       <input
+                                          type='checkbox'
+                                          id={`active-${index}`}
+                                          checked={banner.isActive}
+                                          onChange={(e) => updateBannerForm(index, 'isActive', e.target.checked)}
+                                          className='w-4 h-4 text-primary-blue border-gray-300 rounded focus:ring-primary-blue'
+                                       />
+                                       <label htmlFor={`active-${index}`} className='text-sm font-medium text-text-dark'>
+                                          Active Banner
+                                       </label>
+                                    </div>
+                                 </div>
+
+                                 {/* Right Column - Image & Link */}
+                                 <div className='space-y-4'>
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Banner Image *
+                                       </label>
+                                       <div className='border-2 border-dashed border-gray-300 rounded-lg p-6 text-center'>
+                                          {bannerImages[index] ? (
+                                             <div className='space-y-4'>
+                                                <div className='relative'>
+                                                   <Image
+                                                      src={bannerImages[index]}
+                                                      alt={`Banner ${index + 1}`}
+                                                      width={400}
+                                                      height={200}
+                                                      className='w-full h-32 object-cover rounded-lg'
+                                                   />
+                                                </div>
+                                                <div className='flex items-center gap-2 bg-gray-50 p-2 rounded'>
+                                                   <input
+                                                      type='text'
+                                                      value={bannerImages[index]}
+                                                      readOnly
+                                                      className='flex-1 text-xs bg-transparent border-none focus:outline-none text-gray-600'
+                                                   />
+                                                   <button
+                                                      onClick={() => copyToClipboard(bannerImages[index])}
+                                                      className='text-primary-blue hover:text-primary-blue/80 p-1'
+                                                      title='Copy URL'
+                                                   >
+                                                      <Copy className='w-4 h-4' />
+                                                   </button>
+                                                </div>
+                                                <button
+                                                   onClick={() => showBannerUploadWidget(index)}
+                                                   className='btn-secondary w-full'
+                                                >
+                                                   Change Image
+                                                </button>
+                                             </div>
+                                          ) : (
+                                             <div className='space-y-4'>
+                                                <ImageIcon className='w-12 h-12 text-gray-400 mx-auto' />
+                                                <div>
+                                                   <p className='text-gray-600 mb-4'>Upload a banner image</p>
+                                                   <button
+                                                      onClick={() => showBannerUploadWidget(index)}
+                                                      className='btn-primary'
+                                                   >
+                                                      Upload Image
+                                                   </button>
+                                                </div>
+                                             </div>
+                                          )}
+                                       </div>
+                                    </div>
+
+                                    <div>
+                                       <label className='block text-sm font-medium text-text-dark mb-2'>
+                                          Link URL (Optional)
+                                       </label>
+                                       <input
+                                          type='url'
+                                          value={banner.linkUrl}
+                                          onChange={(e) => updateBannerForm(index, 'linkUrl', e.target.value)}
+                                          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                          placeholder='https://example.com/sale'
+                                       />
+                                       <p className='text-xs text-gray-500 mt-1'>
+                                          URL to navigate when banner is clicked
+                                       </p>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+
+                     {/* Existing Banners */}
+                     {banners.length > 0 && (
+                        <div className='mt-12'>
+                           <h3 className='text-xl font-semibold text-text-dark mb-6'>Existing Banners</h3>
+                           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                              {banners.map((banner) => (
+                                 <div key={banner.id} className='border border-gray-200 rounded-lg overflow-hidden'>
+                                    <div className='relative'>
+                                       <Image
+                                          src={banner.imageUrl}
+                                          alt={banner.title}
+                                          width={400}
+                                          height={200}
+                                          className='w-full h-32 object-cover'
+                                       />
+                                       <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${
+                                          banner.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                       }`}>
+                                          {banner.isActive ? 'Active' : 'Inactive'}
+                                       </div>
+                                    </div>
+                                    <div className='p-4'>
+                                       <h4 className='font-semibold text-text-dark mb-1'>{banner.title}</h4>
+                                       <p className='text-sm text-gray-600 mb-2'>{banner.subtitle}</p>
+                                       <div className='flex items-center justify-between'>
+                                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                             banner.type === 'festival' ? 'bg-purple-100 text-purple-800' :
+                                             banner.type === 'new-launch' ? 'bg-blue-100 text-blue-800' :
+                                             banner.type === 'sale' ? 'bg-red-100 text-red-800' :
+                                             'bg-gray-100 text-gray-800'
+                                          }`}>
+                                             {banner.type.replace('-', ' ')}
+                                          </span>
+                                          <div className='flex gap-2'>
+                                             <button
+                                                onClick={() => toggleBannerStatus(banner.id, !banner.isActive)}
+                                                className={`p-1 rounded ${
+                                                   banner.isActive ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'
+                                                }`}
+                                                title={banner.isActive ? 'Deactivate' : 'Activate'}
+                                             >
+                                                {banner.isActive ? <XCircle className='w-4 h-4' /> : <CheckCircle className='w-4 h-4' />}
+                                             </button>
+                                             <button
+                                                onClick={() => deleteBannerById(banner.id)}
+                                                className='p-1 text-red-600 hover:bg-red-50 rounded'
+                                                title='Delete'
+                                             >
+                                                <Trash2 className='w-4 h-4' />
+                                             </button>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+                     )}
                   </motion.div>
                )}
 

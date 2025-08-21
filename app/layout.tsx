@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Suspense } from 'react'
 import NProgressProvider from '@/components/NProgressProvider'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          <body className={inter.className}>
             <SpeedInsights />
             <Analytics />
-            <NProgressProvider />
+            <Suspense fallback={null}>
+               <NProgressProvider />
+            </Suspense>
             <Toaster
                position="top-right"
                expand={true}

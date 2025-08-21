@@ -609,3 +609,93 @@ body #nprogress .spinner-icon {
     display: none !important;
   }
 }
+
+/* Banner Carousel Styles */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes float-decoration {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.banner-floating-element {
+  animation: float-decoration 3s ease-in-out infinite;
+}
+
+.banner-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Banner responsive adjustments */
+@media (max-width: 768px) {
+  .banner-content {
+    padding: 1rem;
+  }
+  
+  .banner-title {
+    font-size: 1.5rem;
+  }
+  
+  .banner-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Banner hover effects */
+.banner-nav-btn:hover {
+  transform: scale(1.1);
+  backdrop-filter: blur(10px);
+}
+
+.banner-dot:hover {
+  transform: scale(1.2);
+}
+
+/* Banner accessibility */
+.banner-nav-btn:focus,
+.banner-dot:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* Banner transition effects */
+.banner-transition-enter {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+.banner-transition-exit {
+  animation: slide-out-left 0.5s ease-out;
+}

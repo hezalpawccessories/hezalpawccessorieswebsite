@@ -195,22 +195,22 @@ export default function Home() {
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
                      {[
                         {
-                           image: 'https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=600',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748839/tifvu5yxe0bazzkjzwkc.jpg',
                            title: 'Bandana/Neck Scarf',
                            description: 'Stylish bandanas and neck scarfs to make your pet look adorable.',
                         },
                         {
-                           image: 'https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=600',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748847/kqf32mly7jml2teksnuq.jpg',
                            title: 'Bow Ties',
                            description: 'Elegant bow ties perfect for special occasions and formal events.',
                         },
                         {
-                           image: 'https://images.pexels.com/photos/7210754/pexels-photo-7210754.jpeg?auto=compress&cs=tinysrgb&w=600',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748848/lqvbjpqp2at20lbvyc3e.jpg',
                            title: 'Collars',
                            description: 'Premium quality collars for comfort, style, and safety.',
                         },
                         {
-                           image: 'https://images.pexels.com/photos/7210758/pexels-photo-7210758.jpeg?auto=compress&cs=tinysrgb&w=600',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748848/qctbldtccje0xz7snf9j.jpg',
                            title: 'Collar-Leash Set',
                            description: 'Complete matching sets for convenient and stylish walks.',
                         },

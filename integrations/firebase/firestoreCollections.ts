@@ -22,6 +22,19 @@ export interface Product {
    reviews: number
 }
 
+export interface Banner {
+   id: string
+   title: string
+   subtitle: string
+   description: string
+   imageUrl: string
+   linkUrl: string
+   type: 'festival' | 'new-launch' | 'sale' | 'general'
+   isActive: boolean
+   createdAt: Date
+   updatedAt: Date
+}
+
 interface Order {
    id: string
    customerName: string
@@ -37,6 +50,7 @@ interface Order {
 const productsCollection = collection(db, 'products')
 const paymentsCollection = collection(db, 'payments')
 const ordersCollection = collection(db, 'orders')
+const bannersCollection = collection(db, 'banners')
 
 // export const addProduct = async (product: Product) => {
 //    const docRef = await addDoc(productsCollection, product)
@@ -64,5 +78,35 @@ export const updateProduct = async (id: string, updatedData: Partial<Product>) =
 
 export const deleteProduct = async (id: string) => {
    const docRef = doc(db, 'products', id)
+   await deleteDoc(docRef)
+}
+
+// Banner management functions
+export const addBanner = async (banner: Banner) => {
+   const docRef = doc(db, 'banners', banner.id)
+   await setDoc(docRef, banner)
+   return banner.id
+}
+
+export const getBanners = async () => {
+   const snapshot = await getDocs(bannersCollection)
+   return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return { 
+         id: docSnap.id, 
+         ...data,
+         createdAt: data.createdAt?.toDate?.() || new Date(),
+         updatedAt: data.updatedAt?.toDate?.() || new Date()
+      } as Banner
+   })
+}
+
+export const updateBanner = async (id: string, updatedData: Partial<Banner>) => {
+   const docRef = doc(db, 'banners', id)
+   await updateDoc(docRef, { ...updatedData, updatedAt: new Date() })
+}
+
+export const deleteBanner = async (id: string) => {
+   const docRef = doc(db, 'banners', id)
    await deleteDoc(docRef)
 }
