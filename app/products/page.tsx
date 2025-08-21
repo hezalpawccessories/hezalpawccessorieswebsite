@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye } from 'lucide-react'
+import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye, InfoIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -281,7 +281,7 @@ export default function Products() {
                   </div>
 
                   {/* Search and Sort */}
-                  <div className='flex flex-col md:flex-row gap-4 items-center justify-between'>
+                  <div className='flex flex-row gap-4 items-center justify-between'>
                      <div className='relative flex-1 max-w-md'>
                         <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5' />
                         <input
@@ -289,7 +289,7 @@ export default function Products() {
                            placeholder='Search products...'
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           className='w-full pl-12 pr-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                           className='w-full pl-10 sm:pl-12 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
                         />
                      </div>
 
@@ -312,7 +312,7 @@ export default function Products() {
                            }}
                            options={sortOptions}
                            isSearchable={false}
-                           className='w-56'
+                           className='w-44 sm:w-56'
                            styles={{
                               control: (base, state) => ({
                                  ...base,
@@ -353,31 +353,34 @@ export default function Products() {
                </div>
 
                {/* Products Grid */}
-               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
+               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
                   {displayedProducts.map((product, index) => (
                      <motion.div
                         key={product.id}
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: index * 0.1 }}
-                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover'
+                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex sm:flex-col'
                      >
-                        <div className='relative group'>
+                        <div className='relative group my-auto sm:my-0 w-2/5 sm:w-full'>
                            <Image
                               src={product.image}
                               alt={product.title}
                               width={600}
                               height={192}
-                              className='w-full h-48 object-cover'
+                              className='w-full h-full sm:h-48 object-contain'
                            />
                            {/* Hover overlay with eye icon */}
                            <div
-                              className='absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'
+                              className='absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center'
                               onClick={() => setSelectedProduct(product)}
                            >
-                              <div className='bg-white rounded-full p-3 shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300 cursor-pointer'>
-                                 <Eye className='w-6 h-6 text-primary-blue' />
+                              <div className='bg-white rounded-full p-3 shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300 cursor-pointer mb-2'>
+                                 <Eye className='w-6 h-6 text-pink-500' />
                               </div>
+                              <span className='text-white text-sm font-medium bg-black bg-opacity-30 px-3 py-1 rounded-full'>
+                                 View Details
+                              </span>
                            </div>
                            
                            {(() => {
@@ -399,13 +402,20 @@ export default function Products() {
                            
                         </div>
 
-                        <div className='p-4'>
-                           <h3
-                              className='text-lg font-heading font-bold text-text-dark mb-2 line-clamp-2 hover:underline transition-all duration-400 cursor-pointer'
+                        <div className='p-4 w-3/5 sm:w-full'>
+                           <div
+                              className='group cursor-pointer mb-3 p-2 -m-2 rounded-lg hover:bg-pink-50 transition-colors duration-200'
                               onClick={() => setSelectedProduct(product)}
                            >
-                              {product.title}
-                           </h3>
+                              <h3 className='text-lg sm:text-xl font-heading font-bold text-text-dark line-clamp-2 group-hover:underline transition-all duration-400 flex items-start gap-2 mb-1'>
+                                 <span className='flex-1'>{product.title}</span>
+                                 <Eye className='w-4 h-4 text-pink-400 group-hover:text-pink-600 group-hover:scale-110 transition-all duration-200 flex-shrink-0 mt-1 eye-pulse' />
+                              </h3>
+                              <span className='text-xs sm:text-sm text-pink-500 group-hover:text-pink-700 transition-colors duration-200 font-medium flex items-center gap-1'>
+                                 <span>Click to view details</span>
+                                 <span className='group-hover:translate-x-1 transition-transform duration-200'>→</span>
+                              </span>
+                           </div>
 
                            {/* Reviews and Ratings Section - removing for now */}
                            {/* <div className='flex items-center mb-2'>
@@ -424,12 +434,12 @@ export default function Products() {
                               <span className='text-sm font-body text-text-light ml-2'>({product.reviews})</span>
                            </div> */}
 
-                           <div className='flex items-center justify-between mb-4 gap-2'>
+                           <div className='flex items-center justify-between mb-4 gap-2 md:gap-4'>
                               <div className='flex items-center space-x-2'>
                                  {selectedSizes[product.id] ? (
                                     // Show specific price when size is selected
                                     <>
-                                       <span className='text-xl font-accent font-bold text-primary-pink'>
+                                       <span className='text-lg font-accent font-bold text-primary-pink'>
                                           ₹{getCurrentPricing(product, product.id).price}
                                        </span>
                                        {getCurrentPricing(product, product.id).originalPrice === 0 ? '' :
@@ -466,7 +476,7 @@ export default function Products() {
                               {/* <span>Name</span> */}
                               {product.category === 'Treat Jars' && (
                                  <div className='mt-4'>
-                                    <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    <label className='block text-xs font-medium text-text-dark mb-2'>
                                        Custom Name for Jar *
                                     </label>
                                     <input 
@@ -477,8 +487,8 @@ export default function Products() {
                                           ...prev,
                                           [product.id]: e.target.value
                                        }))}
-                                       className='border border-gray-300 rounded-md p-2 w-full text-sm focus:ring-2 focus:ring-primary-pink focus:border-transparent'
-                                       placeholder='Enter custom name'
+                                       className='border border-gray-300 rounded-md p-2 w-36 text-sm focus:ring-2 focus:ring-primary-pink focus:border-transparent'
+                                       placeholder='Snuggle&apos;s Treats'
                                        maxLength={20}
                                     />
                                     <p className='text-xs text-text-light mt-1'>
@@ -507,7 +517,7 @@ export default function Products() {
                                              } ${shakeProduct === product.id ? 'animate-shake border-red-500 border-2' : ''}`}
                                           >
                                              <div className='flex flex-col items-center'>
-                                                <span>{size}</span>
+                                                <span className='text-xs'>{size}</span>
                                                 <span className='text-xs opacity-80'>₹{sizePrice.price}</span>
                                              </div>
                                           </button>

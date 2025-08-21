@@ -118,6 +118,11 @@ body {
   50% { opacity: 0.2; transform: scale(1.1); }
 }
 
+@keyframes eye-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 .floating-icon {
   animation: float 3s ease-in-out infinite;
 }
@@ -128,6 +133,10 @@ body {
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.eye-pulse {
+  animation: eye-pulse 2s ease-in-out infinite;
 }
 
 /* Enhanced Text Styles */
@@ -355,15 +364,75 @@ body #nprogress .bar {
   }
 }
 
+/* Alternative peg animations - uncomment the one you prefer */
+
+/* Option 1: Bouncing Circle (currently active) */
+ body #nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 15px;
+  height: 15px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="25" fill="%23FF69B4"><animate attributeName="r" values="20;30;20" dur="1s" repeatCount="indefinite"/></circle><circle cx="50" cy="50" r="15" fill="%23FF1493"><animate attributeName="opacity" values="1;0.5;1" dur="0.8s" repeatCount="indefinite"/></circle></svg>') center/contain no-repeat !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493 !important;
+  opacity: 1.0;
+  transform: translateY(-50%) !important;
+  top: 50% !important;
+  animation: nprogress-peg-bounce 1.2s ease-in-out infinite !important;
+} 
+
+/* Option 5: Custom GIF (uncomment and replace 'your-gif-file.gif' with your actual GIF file)
 body #nprogress .peg {
   display: block;
   position: absolute;
   right: 0px;
-  width: 100px;
-  height: 100%;
-  box-shadow: 0 0 10px #FF69B4, 0 0 5px #FF1493 !important;
+  width: 30px;
+  height: 30px;
+  background: url('/public/your-gif-file.gif') center/contain no-repeat !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 8px #FF69B4 !important;
   opacity: 1.0;
-  transform: rotate(3deg) translate(0px, -4px);
+  transform: translateY(-50%) !important;
+  top: 50% !important;
+}
+*/
+
+@keyframes nprogress-peg-bounce {
+  0%, 100% { 
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493;
+  }
+  50% { 
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 12px #FF69B4, 0 0 6px #FF1493;
+  }
+}
+
+@keyframes nprogress-peg-wiggle {
+  0%, 100% { 
+    transform: translateY(-50%) rotate(0deg) scale(1);
+    box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493;
+  }
+  25% { 
+    transform: translateY(-50%) rotate(-3deg) scale(1.05);
+    box-shadow: 0 0 10px #FF69B4, 0 0 6px #FF1493;
+  }
+  75% { 
+    transform: translateY(-50%) rotate(3deg) scale(1.05);
+    box-shadow: 0 0 10px #FF69B4, 0 0 6px #FF1493;
+  }
+}
+
+@keyframes nprogress-peg-pulse {
+  0%, 100% { 
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: translateY(-50%) scale(1.2);
+    opacity: 0.8;
+  }
 }
 
 body #nprogress .spinner {
@@ -408,24 +477,24 @@ body #nprogress .spinner-icon {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--soft-gray);
+  background: var(--light-gray);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary-pink), var(--warm-orange));
+  background: linear-gradient(135deg, var(--primary-pink), #E91E63);
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #ff5a8a, #ff7a47);
+  background: linear-gradient(135deg, #FF1493, #FF69B4);
 }
 
 /* Firefox Scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-pink) var(--soft-gray);
+  scrollbar-color: var(--primary-pink) var(--light-gray);
 }
 
 /* Shake Animation */
