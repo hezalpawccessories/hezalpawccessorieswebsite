@@ -1169,22 +1169,45 @@ export default function Products() {
 
                            <div className='flex items-center justify-between mb-6'>
                               <div className='flex items-center space-x-2'>
-                                 <span className='text-2xl font-bold text-primary-pink'>
-                                    ₹{getPriceForSize(selectedProduct, selectedSize).price}
-                                 </span>
-                                 
-                                 {(() => {
-                                    const currentPricing = getPriceForSize(selectedProduct, selectedSize)
-                                    return currentPricing.originalPrice === 0 ? "" : (
-                                       <>
-                                       {currentPricing.originalPrice && (
-                                          <span className='text-text-light line-through'>
-                                             ₹{currentPricing.originalPrice}
-                                          </span>
-                                       )}
-                                       </>
-                                    )
-                                 })()}
+                                 {selectedSize ? (
+                                    // Show specific price when size is selected (same as product card)
+                                    <>
+                                       <span className='text-2xl font-bold text-primary-pink'>
+                                          ₹{getPriceForSize(selectedProduct, selectedSize).price}
+                                       </span>
+                                       {(() => {
+                                          const currentPricing = getPriceForSize(selectedProduct, selectedSize)
+                                          return currentPricing.originalPrice === 0 ? "" : (
+                                             <>
+                                             {currentPricing.originalPrice && (
+                                                <span className='text-text-light line-through'>
+                                                   ₹{currentPricing.originalPrice}
+                                                </span>
+                                             )}
+                                             </>
+                                          )
+                                       })()}
+                                    </>
+                                 ) : (
+                                    // Show price range when no size is selected (same as product card)
+                                    (() => {
+                                       const { minPrice, maxPrice } = getPriceRange(selectedProduct)
+                                       return (
+                                          <div className='flex flex-col'>
+                                             <div className='flex items-center space-x-2'>
+                                                <span className='text-2xl font-bold text-primary-pink'>
+                                                   {minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`}
+                                                </span>
+                                             </div>
+                                             {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 1 && (
+                                                <span className='text-sm text-text-light'>
+                                                   {selectedProduct.sizePricing.length} sizes available
+                                                </span>
+                                             )}
+                                          </div>
+                                       )
+                                    })()
+                                 )}
                               </div>
                               <span className='text-sm text-primary-blue font-semibold'>
                                  {selectedProduct.inStock ? 'In Stock' : 'Out of Stock'}
