@@ -19,6 +19,8 @@ export interface Product {
    description: string
    details: string[]
    inStock: boolean
+   onSale?: boolean // New field for sale status
+   saleQuantity?: number // New field for sale quantity
    rating: number
    reviews: number
 }

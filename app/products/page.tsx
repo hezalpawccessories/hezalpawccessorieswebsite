@@ -23,6 +23,7 @@ const sortOptions = [
 export default function Products() {
    const [selectedCategory, setSelectedCategory] = useState('All')
    const [selectedCollection, setSelectedCollection] = useState('All')
+   const [showSaleOnly, setShowSaleOnly] = useState(false) // New state for sale filter
    const [searchQuery, setSearchQuery] = useState('')
    const [sortBy, setSortBy] = useState('name')
    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
@@ -50,6 +51,11 @@ export default function Products() {
 
    // Minimum swipe distance (in px)
    const minSwipeDistance = 50
+
+   // Helper function to check if any products are on sale
+   const hasProductsOnSale = useMemo(() => {
+      return productsList.some(product => product.onSale === true && (product.saleQuantity || 0) > 0)
+   }, [productsList])
 
    // Helper function to get price for specific size
    const getPriceForSize = (product: Product, size?: string) => {
@@ -198,6 +204,11 @@ export default function Products() {
          filtered = filtered.filter((product) => product.collection === selectedCollection)
       }
 
+      // Filter by sale status
+      if (showSaleOnly) {
+         filtered = filtered.filter((product) => product.onSale === true && (product.saleQuantity || 0) > 0)
+      }
+
       // Filter by search query
       if (searchQuery) {
          filtered = filtered.filter(
@@ -238,7 +249,7 @@ export default function Products() {
       })
 
       return filtered
-   }, [productsList, selectedCategory, selectedCollection, searchQuery, sortBy])
+   }, [productsList, selectedCategory, selectedCollection, showSaleOnly, searchQuery, sortBy])
 
    const displayedProducts = filteredProducts.slice(0, showCount)
    const hasMoreProducts = filteredProducts.length > showCount
@@ -739,6 +750,38 @@ export default function Products() {
                      </div>
                   )}
 
+                  {/* Sale Filter - Only show if products are on sale */}
+                  {hasProductsOnSale && (
+                     <div className='bg-gradient-to-r from-red-50 to-orange-50 rounded-lg p-3 border border-red-100'>
+                        <div className='flex flex-wrap gap-2 justify-center items-center'>
+                           <span className='text-base font-semibold text-red-600 flex items-center gap-1'>
+                              <Tag className='w-3 h-3' />
+                              Sale Items:
+                           </span>
+                           <button
+                              onClick={() => setShowSaleOnly(false)}
+                              className={`px-2 py-1 text-base font-medium rounded-lg transition-all duration-200 ${
+                                 !showSaleOnly 
+                                    ? 'bg-red-500 text-white shadow-md' 
+                                    : 'bg-white text-red-600 border border-red-200 hover:bg-red-100'
+                              }`}
+                           >
+                              All Products
+                           </button>
+                           <button
+                              onClick={() => setShowSaleOnly(true)}
+                              className={`px-2 py-1 text-base font-medium rounded-lg transition-all duration-200 ${
+                                 showSaleOnly 
+                                    ? 'bg-red-500 text-white shadow-md' 
+                                    : 'bg-white text-red-600 border border-red-200 hover:bg-red-100'
+                              }`}
+                           >
+                              🔥 On Sale Only
+                           </button>
+                        </div>
+                     </div>
+                  )}
+
                   {/* Search and Sort */}
                   <div className='flex flex-row gap-4 items-center justify-between'>
                      <div className='relative flex-1 max-w-md'>
@@ -841,6 +884,20 @@ export default function Products() {
                                  View Details
                               </span>
                            </div>
+                           
+                           {/* Sale Badge - Top Left */}
+                           {product.onSale && (product.saleQuantity || 0) > 0 && (
+                              <div className='absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse'>
+                                 🔥 SALE
+                              </div>
+                           )}
+                           
+                           {/* Quantity Badge - Top Left (below sale badge) */}
+                           {product.onSale && (product.saleQuantity || 0) > 0 && (
+                              <div className='absolute top-10 left-2 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold'>
+                                 {product.saleQuantity} left
+                              </div>
+                           )}
                            
                            {(() => {
                               // Only show discount badge when a size is selected
@@ -1130,9 +1187,22 @@ export default function Products() {
                         })()}
 
                         <div className='p-6'>
-                           <h2 className='text-2xl font-heading font-bold text-text-dark mb-2'>
-                              {selectedProduct.title}
-                           </h2>
+                           <div className='flex items-start justify-between mb-2'>
+                              <h2 className='text-2xl font-heading font-bold text-text-dark flex-1'>
+                                 {selectedProduct.title}
+                              </h2>
+                              {/* Sale indicators for modal */}
+                              {selectedProduct.onSale && (selectedProduct.saleQuantity || 0) > 0 && (
+                                 <div className='flex flex-col gap-1 ml-4'>
+                                    <div className='bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse text-center'>
+                                       🔥 ON SALE
+                                    </div>
+                                    <div className='bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold text-center'>
+                                       {selectedProduct.saleQuantity} left
+                                    </div>
+                                 </div>
+                              )}
+                           </div>
 
                            {/* Reviews and Ratings Section */}
                            {/* <div className='flex items-center mb-4'>

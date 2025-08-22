@@ -89,6 +89,8 @@ export default function AdminDashboard() {
       description: '',
       details: [''],
       inStock: true,
+      onSale: false, // New field for sale status
+      saleQuantity: 0, // New field for sale quantity
       rating: 4.5,
       reviews: 0,
    })
@@ -666,6 +668,8 @@ export default function AdminDashboard() {
          description: '',
          details: [''],
          inStock: true,
+         onSale: false, // Add missing sale field
+         saleQuantity: 0,
          rating: 4.5,
          reviews: 0,
       })
@@ -853,7 +857,7 @@ export default function AdminDashboard() {
                   { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5' /> },
                   { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
                   { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
-                  { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
+                  // { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
                ].map((tab) => (
                   <button
                      key={tab.id}
@@ -1470,7 +1474,64 @@ export default function AdminDashboard() {
                                  />
                                  In Stock
                               </label>
+                              
+                              <label className='flex items-center'>
+                                 <input
+                                    type='checkbox'
+                                    checked={newProduct.onSale}
+                                    onChange={(e) => setNewProduct({ ...newProduct, onSale: e.target.checked })}
+                                    className='mr-2'
+                                 />
+                                 On Sale
+                              </label>
                            </div>
+
+                           {/* Sale Quantity Section */}
+                           {newProduct.onSale && (
+                              <div>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Sale Quantity (Limited Stock) *
+                                 </label>
+                                 <div className='flex items-center space-x-3'>
+                                    <button
+                                       type='button'
+                                       onClick={() => setNewProduct({ 
+                                          ...newProduct, 
+                                          saleQuantity: Math.max(0, (newProduct.saleQuantity || 0) - 1) 
+                                       })}
+                                       className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+                                    >
+                                       -
+                                    </button>
+                                    <input
+                                       type='number'
+                                       min='0'
+                                       value={newProduct.saleQuantity || 0}
+                                       onChange={(e) => setNewProduct({ 
+                                          ...newProduct, 
+                                          saleQuantity: parseInt(e.target.value) || 0 
+                                       })}
+                                       className='w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-center'
+                                    />
+                                    <button
+                                       type='button'
+                                       onClick={() => setNewProduct({ 
+                                          ...newProduct, 
+                                          saleQuantity: (newProduct.saleQuantity || 0) + 1 
+                                       })}
+                                       className='px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors'
+                                    >
+                                       +
+                                    </button>
+                                    <span className='text-sm text-text-light'>
+                                       items available at sale price
+                                    </span>
+                                 </div>
+                                 <p className='text-xs text-red-600 mt-1'>
+                                    * Required when "On Sale" is checked. Set the limited quantity available at discounted price.
+                                 </p>
+                              </div>
+                           )}
 
                            <button
                               type='submit'
@@ -1959,7 +2020,7 @@ export default function AdminDashboard() {
                   </motion.div>
                )}
 
-               {activeTab === 'analytics' && (
+               {/* {activeTab === 'analytics' && (
                   <div className='py-12'>
                      <h1 className='text-3xl font-bold text-primary-blue mb-6'>Analytics</h1>
                      <p className='text-text-light mb-6'>
@@ -1979,7 +2040,7 @@ export default function AdminDashboard() {
                         </a>
                      </div>
                   </div>
-               )}
+               )} */}
             </AnimatePresence>
          </div>
 
@@ -2233,62 +2294,6 @@ export default function AdminDashboard() {
                                  </div>
                               )}
 
-                              {/* Main Image URL */}
-                              <div>
-                                 <label className='block text-sm font-medium text-text-dark mb-2'>
-                                    Main Image URL *
-                                 </label>
-                                 <input
-                                    type='url'
-                                    required
-                                    value={newProduct.image}
-                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                                    placeholder='Paste main image URL here'
-                                 />
-                              </div>
-
-                              {/* Additional Images */}
-                              <div>
-                                 <label className='block text-sm font-medium text-text-dark mb-2'>
-                                    Additional Images
-                                 </label>
-                                 {newProduct.images.map((imageUrl, index) => (
-                                    <div
-                                       key={index}
-                                       className='flex space-x-2 mb-2'
-                                    >
-                                       <input
-                                          type='url'
-                                          value={imageUrl}
-                                          onChange={(e) => {
-                                             const newImages = [...newProduct.images]
-                                             newImages[index] = e.target.value
-                                             setNewProduct({ ...newProduct, images: newImages })
-                                          }}
-                                          className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                                          placeholder='Additional image URL'
-                                       />
-                                       <button
-                                          type='button'
-                                          onClick={() => {
-                                             const newImages = newProduct.images.filter((_, i) => i !== index)
-                                             setNewProduct({ ...newProduct, images: newImages })
-                                          }}
-                                          className='px-3 py-2 bg-red-500 text-white rounded-lg'
-                                       >
-                                          <X className='w-4 h-4' />
-                                       </button>
-                                    </div>
-                                 ))}
-                                 <button
-                                    type='button'
-                                    onClick={() => setNewProduct({ ...newProduct, images: [...newProduct.images, ''] })}
-                                    className='btn-secondary'
-                                 >
-                                    Add Image URL
-                                 </button>
-                              </div>
                            </div>
 
                         {/* Images Section in Edit Modal */}
@@ -2409,7 +2414,64 @@ export default function AdminDashboard() {
                               />
                               In Stock
                            </label>
+                           
+                           <label className='flex items-center'>
+                              <input
+                                 type='checkbox'
+                                 checked={selectedProduct.onSale || false}
+                                 onChange={(e) => setSelectedProduct({ ...selectedProduct, onSale: e.target.checked })}
+                                 className='mr-2'
+                              />
+                              On Sale
+                           </label>
                         </div>
+
+                        {/* Sale Quantity Section for Edit Modal */}
+                        {selectedProduct.onSale && (
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Sale Quantity (Limited Stock) *
+                              </label>
+                              <div className='flex items-center space-x-3'>
+                                 <button
+                                    type='button'
+                                    onClick={() => setSelectedProduct({ 
+                                       ...selectedProduct, 
+                                       saleQuantity: Math.max(0, (selectedProduct.saleQuantity || 0) - 1) 
+                                    })}
+                                    className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+                                 >
+                                    -
+                                 </button>
+                                 <input
+                                    type='number'
+                                    min='0'
+                                    value={selectedProduct.saleQuantity || 0}
+                                    onChange={(e) => setSelectedProduct({ 
+                                       ...selectedProduct, 
+                                       saleQuantity: parseInt(e.target.value) || 0 
+                                    })}
+                                    className='w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-center'
+                                 />
+                                 <button
+                                    type='button'
+                                    onClick={() => setSelectedProduct({ 
+                                       ...selectedProduct, 
+                                       saleQuantity: (selectedProduct.saleQuantity || 0) + 1 
+                                    })}
+                                    className='px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors'
+                                 >
+                                    +
+                                 </button>
+                                 <span className='text-sm text-text-light'>
+                                    items available at sale price
+                                 </span>
+                              </div>
+                              <p className='text-xs text-red-600 mt-1'>
+                                 * Required when "On Sale" is checked. Set the limited quantity available at discounted price.
+                              </p>
+                           </div>
+                        )}
                         <button
                            type='submit'
                            className='btn-primary w-full mt-4 flex items-center justify-center space-x-2'
