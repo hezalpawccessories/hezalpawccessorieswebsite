@@ -668,7 +668,7 @@ export default function AdminDashboard() {
          description: '',
          details: [''],
          inStock: true,
-         onSale: false, // Add missing sale field
+         onSale: false, 
          saleQuantity: 0,
          rating: 4.5,
          reviews: 0,
@@ -1528,7 +1528,7 @@ export default function AdminDashboard() {
                                     </span>
                                  </div>
                                  <p className='text-xs text-red-600 mt-1'>
-                                    * Required when "On Sale" is checked. Set the limited quantity available at discounted price.
+                                    * Required when &quot;On Sale&quot; is checked. Set the limited quantity available at discounted price.
                                  </p>
                               </div>
                            )}
@@ -2468,7 +2468,7 @@ export default function AdminDashboard() {
                                  </span>
                               </div>
                               <p className='text-xs text-red-600 mt-1'>
-                                 * Required when "On Sale" is checked. Set the limited quantity available at discounted price.
+                                 * Required when &quot;On Sale&quot; is checked. Set the limited quantity available at discounted price.
                               </p>
                            </div>
                         )}

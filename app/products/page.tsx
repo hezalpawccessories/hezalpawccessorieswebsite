@@ -776,7 +776,7 @@ export default function Products() {
                                     : 'bg-white text-red-600 border border-red-200 hover:bg-red-100'
                               }`}
                            >
-                              🔥 On Sale Only
+                              🔥 Clearance Sale
                            </button>
                         </div>
                      </div>
