@@ -102,6 +102,7 @@ export default function AdminDashboard() {
    const [collections, setCollections] = useState<Collection[]>([])
    const [newCollectionName, setNewCollectionName] = useState('')
    const [showAddCollection, setShowAddCollection] = useState(false)
+   const [showManageCollections, setShowManageCollections] = useState(false)
 
    // Banner management state
    const [banners, setBanners] = useState<Banner[]>([])
@@ -824,7 +825,7 @@ export default function AdminDashboard() {
          <div className='bg-white shadow-lg'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                <div className='flex justify-between items-center h-16'>
-                  <h1 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                  <h1 className='text-3xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
                      Admin Dashboard
                   </h1>
                   <ProgressLink
@@ -1090,6 +1091,16 @@ export default function AdminDashboard() {
                                     <Plus className='w-4 h-4' />
                                     Add Collection
                                  </button>
+                                 {collections.length > 0 && (
+                                    <button
+                                       type='button'
+                                       onClick={() => setShowManageCollections(!showManageCollections)}
+                                       className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2'
+                                    >
+                                       <Edit className='w-4 h-4' />
+                                       Manage
+                                    </button>
+                                 )}
                               </div>
                               
                               {/* Add Collection Modal */}
@@ -1128,6 +1139,39 @@ export default function AdminDashboard() {
                                           Cancel
                                        </button>
                                     </div>
+                                 </div>
+                              )}
+                              
+                              {/* Manage Collections Section */}
+                              {showManageCollections && collections.length > 0 && (
+                                 <div className='p-4 border border-gray-200 rounded-lg bg-gray-50'>
+                                    <h4 className='text-sm font-medium text-text-dark mb-3'>Manage Collections</h4>
+                                    <div className='space-y-2 max-h-32 overflow-y-auto'>
+                                       {collections.map((collection) => (
+                                          <div key={collection.id} className='flex items-center justify-between bg-white p-3 rounded-lg shadow-sm'>
+                                             <span className='text-sm font-medium text-text-dark'>{collection.name}</span>
+                                             <button
+                                                type='button'
+                                                onClick={() => {
+                                                   if (window.confirm(`Are you sure you want to delete the collection "${collection.name}"?`)) {
+                                                      handleDeleteCollection(collection.id)
+                                                   }
+                                                }}
+                                                className='px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center gap-1 text-xs'
+                                             >
+                                                <Trash2 className='w-3 h-3' />
+                                                Delete
+                                             </button>
+                                          </div>
+                                       ))}
+                                    </div>
+                                    <button
+                                       type='button'
+                                       onClick={() => setShowManageCollections(false)}
+                                       className='mt-3 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm'
+                                    >
+                                       Close
+                                    </button>
                                  </div>
                               )}
                            </div>
@@ -2106,6 +2150,146 @@ export default function AdminDashboard() {
                               * At least one size with pricing is required. Please add size-specific pricing for your product.
                            </p>
                         </div>
+
+                        {/* Image Upload Section */}
+                           <div className='space-y-4'>
+                              <div className='flex items-center justify-between'>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>Product Images</label>
+                                 <div className='flex space-x-2'>
+                                    <button
+                                       type='button'
+                                       onClick={showUploadWidget}
+                                       className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors'
+                                    >
+                                       Upload Images
+                                    </button>
+                                    {uploadedImages.length > 0 && (
+                                       <button
+                                          type='button'
+                                          onClick={clearUploadedImages}
+                                          className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+                                       >
+                                          Clear
+                                       </button>
+                                    )}
+                                 </div>
+                              </div>
+
+                              {/* Display uploaded images */}
+                              {uploadedImages.length > 0 && (
+                                 <div className='bg-gray-50 p-4 rounded-lg'>
+                                    <h4 className='text-sm font-medium text-text-dark mb-3'>
+                                       Uploaded Images ({uploadedImages.length})
+                                    </h4>
+                                    <div className='space-y-3 max-h-60 overflow-y-auto'>
+                                       {uploadedImages.map((url, index) => (
+                                          <div
+                                             key={index}
+                                             className='flex items-center gap-3 bg-white p-3 rounded border shadow-sm'
+                                          >
+                                             {/* Image Preview */}
+                                             <div className='flex-shrink-0'>
+                                                <Image
+                                                   src={url.replace(
+                                                      '/upload/',
+                                                      '/upload/w_64,h_64,c_fill,q_auto,f_auto/'
+                                                   )}
+                                                   alt={`Upload ${index + 1}`}
+                                                   width={64}
+                                                   height={64}
+                                                   className='w-16 h-16 object-cover rounded-lg border-2 border-gray-200'
+                                                   onError={(e) => {
+                                                      const target = e.target as HTMLImageElement
+                                                      target.style.display = 'none'
+                                                   }}
+                                                />
+                                             </div>
+
+                                             {/* URL and Controls */}
+                                             <div className='flex-1 min-w-0'>
+                                                <div className='flex items-center justify-between'>
+                                                   <span className='text-sm font-medium text-gray-800 mb-1'>
+                                                      Image {index + 1}
+                                                   </span>
+                                                   <button
+                                                      type='button'
+                                                      onClick={() => copyToClipboard(url)}
+                                                      className='px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors'
+                                                      title='Copy URL'
+                                                   >
+                                                      Copy URL
+                                                   </button>
+                                                </div>
+                                                <p
+                                                   className='text-xs text-gray-500 truncate'
+                                                   title={url}
+                                                >
+                                                   {url}
+                                                </p>
+                                             </div>
+                                          </div>
+                                       ))}
+                                    </div>
+                                 </div>
+                              )}
+
+                              {/* Main Image URL */}
+                              <div>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Main Image URL *
+                                 </label>
+                                 <input
+                                    type='url'
+                                    required
+                                    value={newProduct.image}
+                                    onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                    placeholder='Paste main image URL here'
+                                 />
+                              </div>
+
+                              {/* Additional Images */}
+                              <div>
+                                 <label className='block text-sm font-medium text-text-dark mb-2'>
+                                    Additional Images
+                                 </label>
+                                 {newProduct.images.map((imageUrl, index) => (
+                                    <div
+                                       key={index}
+                                       className='flex space-x-2 mb-2'
+                                    >
+                                       <input
+                                          type='url'
+                                          value={imageUrl}
+                                          onChange={(e) => {
+                                             const newImages = [...newProduct.images]
+                                             newImages[index] = e.target.value
+                                             setNewProduct({ ...newProduct, images: newImages })
+                                          }}
+                                          className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                          placeholder='Additional image URL'
+                                       />
+                                       <button
+                                          type='button'
+                                          onClick={() => {
+                                             const newImages = newProduct.images.filter((_, i) => i !== index)
+                                             setNewProduct({ ...newProduct, images: newImages })
+                                          }}
+                                          className='px-3 py-2 bg-red-500 text-white rounded-lg'
+                                       >
+                                          <X className='w-4 h-4' />
+                                       </button>
+                                    </div>
+                                 ))}
+                                 <button
+                                    type='button'
+                                    onClick={() => setNewProduct({ ...newProduct, images: [...newProduct.images, ''] })}
+                                    className='btn-secondary'
+                                 >
+                                    Add Image URL
+                                 </button>
+                              </div>
+                           </div>
 
                         {/* Images Section in Edit Modal */}
                         <div>
