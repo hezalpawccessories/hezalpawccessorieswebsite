@@ -29,7 +29,7 @@ export default function Footer() {
                      </div>
                   </div>
                   <p className='font-dm-sans text-gray-300 mb-4'>
-                     We provide premium quality pet accessories to keep your furry friends happy, healthy, and stylish.
+                     We provide premium quality pet accessories to keep your furry baby fashionista, dressy, and stylish.
                   </p>
                   <div className='flex items-center space-x-2 text-sm text-gray-300'>
                      <Mail className='w-4 h-4' />

@@ -23,7 +23,7 @@ export default function TermsAndConditions() {
                 <div>
                   <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Business Details</h3>
                   <p className='font-body text-gray-600'>
-                    Proprietorship registered as Hezal Accessories, B65 Surya Nagar, behind LIC building, Saket, Meerut, UP, 250001.
+                    Proprietorship registered as Hezal Accessories, Surya Nagar, behind LIC building, Saket, Meerut, UP, 250001.
                   </p>
                 </div>
 

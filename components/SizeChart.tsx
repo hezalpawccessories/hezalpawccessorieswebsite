@@ -26,7 +26,8 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
       { size: 'XS', neckSize: 'up to 10 inches' },
       { size: 'S', neckSize: 'up to 13 inches' },
       { size: 'M', neckSize: 'up to 17 inches' },
-      { size: 'L', neckSize: 'up to 20 inches' },
+      { size: 'L', neckSize: 'up to 21 inches' },
+      { size: 'L Extra', neckSize: 'up to 21 inches with wider collar' },
       { size: 'XL', neckSize: 'up to 25 inches' },
       { size: 'XXL', neckSize: 'up to 30 inches' },
    ]

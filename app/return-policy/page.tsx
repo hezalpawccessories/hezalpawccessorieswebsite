@@ -20,7 +20,7 @@ export default function ReturnPolicy() {
                   Important Notice
                 </h2>
                 <p className='text-red-700 font-medium'>
-                  We do not allow returns, cancellations, or refunds on any products sold.
+                  We do not allow returns, cancellations, or refunds on any products sold as we offer made to order products.
                 </p>
               </div>
 
@@ -28,7 +28,7 @@ export default function ReturnPolicy() {
                 <div>
                   <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Final Sale Policy</h3>
                   <p className='font-body text-gray-600'>
-                    All purchases are final. Once your order is placed and payment is received, it is processed immediately for shipping.
+                    All purchases are final. Once your order is placed and payment is received, we begin production immediately.
                   </p>
                 </div>
 

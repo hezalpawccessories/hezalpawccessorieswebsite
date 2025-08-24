@@ -23,7 +23,7 @@ export default function ShippingPolicy() {
                 <div>
                   <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Order Processing</h3>
                   <p className='font-body text-gray-600'>
-                    Orders are dispatched within 2–4 business days after payment.
+                    Orders are dispatched within 3–4 business days after payment.
                   </p>
                 </div>
 
@@ -59,7 +59,7 @@ export default function ShippingPolicy() {
               <div className='mt-8 grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div className='p-4 bg-pink-50 rounded-lg border border-pink-100'>
                   <h4 className='font-semibold text-gray-800 mb-2'>Processing Time</h4>
-                  <p className='text-pink-700 font-medium'>2–4 Business Days</p>
+                  <p className='text-pink-700 font-medium'>3–4 Business Days</p>
                 </div>
                 <div className='p-4 bg-green-50 rounded-lg border border-green-100'>
                   <h4 className='font-semibold text-gray-800 mb-2'>Delivery Time</h4>

@@ -280,12 +280,12 @@ export default function Contact() {
                         {
                            question: 'How long does shipping take?',
                            answer:
-                              'We typically ship within 1-2 business days. Delivery usually takes 3-7 business days depending on your location. Free shipping on orders over ₹1000!',
+                              'We typically dispatch within 3-4 business days as our products are made to order. Delivery usually takes 3-7 business days depending on your location. Free shipping on orders over ₹799!',
                         },
                         {
                            question: 'Are your products safe for all pets?',
                            answer:
-                              'Yes! All our products are made from pet-safe materials and undergo rigorous testing. However, always supervise your pet with new toys and accessories.',
+                              'Yes! All our products are made from pet-safe materials and undergo rigorous testing. However, always supervise your pet with new accessories.',
                         },
                         {
                            question: 'What sizing options do you offer?',
@@ -295,7 +295,7 @@ export default function Contact() {
                         {
                            question: 'What payment methods do you accept?',
                            answer:
-                              'We accept all major credit cards, debit cards, UPI, net banking, and cash on delivery for orders within our delivery areas.',
+                              'We accept all major credit cards, debit cards, UPI, and Net Banking.',
                         },
                         {
                            question: 'Can I track my order?',

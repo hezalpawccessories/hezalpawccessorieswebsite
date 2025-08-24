@@ -33,19 +33,24 @@ export default function Home() {
 
    const testimonials = [
       {
-         name: 'Sarah Johnson',
+         name: '@sparkle.shiro',
          rating: 5,
-         comment: 'Amazing quality! My dog loves the new collar and leash set.',
+         comment: 'I was looking for bandanas for my furbaby for festive occasions and while scrolling through Instagram, I came across Hezal accessories profile and instantly liked their products. Hezal accessories has a wide collection for all occasions with exquisite designs. Also, the quality is top-notch. Service is good and products are delivered on time without requiring any follow up, glad to be their customer.',
       },
       {
-         name: 'Mike Chen',
+         name: '@lexie_quinn_maben',
          rating: 5,
-         comment: 'Fast delivery and excellent customer service. Highly recommended!',
+         comment: 'Hezal accessories is my favourite small business. The person handling the business is a kind and a generous person. The accessories from here is a top tier. Every single accessory is made with the best quality and materials. Every print here is unique and adorable. I have purchased a lot of accessories and I was always satisfied with the products. My fur babies look very stunning with your accessories.',
       },
       {
-         name: 'Emily Davis',
+         name: '@boozo_boi',
          rating: 5,
-         comment: 'Beautiful accessories at great prices. Will definitely order again!',
+         comment: 'I had tried from different brand they had just provided a strap to attach which wasn\'t looking that great. And the collar is also of a nice length. All the products are not only adorable but durable as well.',
+      },
+      {
+         name: '@bing_nova',
+         rating: 5,
+         comment: 'We ordered our first ever bandana from Hezal, the quality was absolutely amazing, everything from the fabric to the pattern was just spectacular. Now we\'re the proud owners of easily 20 HA pieces 😍',
       },
    ]
 
@@ -88,7 +93,7 @@ export default function Home() {
                         </h1>
                         <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>
                            Discover premium pet accessories that combine style, comfort, and quality. From adorable
-                           collars to cozy beds, we have everything your furry friend needs.
+                           collars to treat jars, we have everything your furry baby needs.
                         </p>
                         <div className='flex flex-col sm:flex-row gap-4'>
                            <ProgressLink href='/products'>
@@ -324,7 +329,7 @@ export default function Home() {
                         Ready to Spoil Your Pet?
                      </h2>
                      <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
-                        Join thousands of happy pet parents who trust Hezal Accessories for their furry friends
+                        Join thousands of happy pet parents who trust Hezal Accessories for their four legged babies.
                      </p>
                      <ProgressLink href='/products'>
                         <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-50 transition-colors'>

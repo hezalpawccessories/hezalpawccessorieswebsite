@@ -37,6 +37,26 @@ export default function Products() {
    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
    const [shakeProduct, setShakeProduct] = useState<string>('') // Track which product to shake
    const [customNames, setCustomNames] = useState<{ [key: string]: string }>({}) // Track custom names per product
+   const [selectedBowStyles, setSelectedBowStyles] = useState<{ [key: string]: number }>({}) // Track bow style per product
+   const [showBowStylePopover, setShowBowStylePopover] = useState<string>('') // Track which product's popover is open
+   
+   // Bow tie styles
+   const bowTieStyles = [
+      {
+         id: 1,
+         name: 'Elastic Slip-On',
+         description: 'Elastic bands at back that slips to collar',
+         icon: '🎀',
+         details: 'Easy to attach, slips over existing collar'
+      },
+      {
+         id: 2,
+         name: 'Adjustable Strap',
+         description: 'Attached adjustable black strap with buckles',
+         icon: '🦴',
+         details: 'Standalone design with adjustable buckle'
+      }
+   ]
    
    // Banner state
    const [currentBannerIndex, setCurrentBannerIndex] = useState(0)
@@ -161,6 +181,20 @@ export default function Products() {
       }
    }, [banners.length, currentBannerIndex])
 
+   // Close bow style popover when clicking outside
+   useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+         if (showBowStylePopover && !(event.target as Element)?.closest('.bow-style-popover')) {
+            setShowBowStylePopover('')
+         }
+      }
+
+      if (showBowStylePopover) {
+         document.addEventListener('mousedown', handleClickOutside)
+         return () => document.removeEventListener('mousedown', handleClickOutside)
+      }
+   }, [showBowStylePopover])
+
    // Helper function to get banner styling and icon based on type
    const getBannerStyle = (type: Banner['type']) => {
       switch (type) {
@@ -273,6 +307,15 @@ export default function Products() {
          return
       }
 
+      // Check if Bow Ties requires style selection
+      if (product.category === 'Bow ties' && !selectedBowStyles[product.id]) {
+         toast.error('Please select a bow tie style first', {
+            description: 'Choose between elastic slip-on or adjustable strap',
+            duration: 3000,
+         })
+         return
+      }
+
       // Check if Treat Jar requires custom name
       if (product.category === 'Treat Jars' && !customNames[product.id]?.trim()) {
          toast.error('Please enter a custom name for the treat jar', {
@@ -287,10 +330,15 @@ export default function Products() {
 
       if (typeof window !== 'undefined') {
          const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+         const bowStyleText = product.category === 'Bow ties' && selectedBowStyles[product.id] 
+            ? bowTieStyles.find(style => style.id === selectedBowStyles[product.id])?.name || ''
+            : ''
+         
          const existingItem = cart.find((item: any) => 
             item.id === product.id && 
             item.size === sizeToUse && 
-            item.customName === (customNames[product.id] || '')
+            item.customName === (customNames[product.id] || '') &&
+            item.bowStyle === (selectedBowStyles[product.id] || 0)
          )
 
          if (existingItem) {
@@ -302,7 +350,9 @@ export default function Products() {
                quantity, 
                price: sizePrice, // Use size-specific price
                originalPrice: sizeOriginalPrice, // Use size-specific original price
-               customName: product.category === 'Treat Jars' ? customNames[product.id] || '' : undefined
+               customName: product.category === 'Treat Jars' ? customNames[product.id] || '' : undefined,
+               bowStyle: product.category === 'Bow ties' ? selectedBowStyles[product.id] : undefined,
+               bowStyleName: product.category === 'Bow ties' ? bowStyleText : undefined
             }
             cart.push(cartItem)
          }
@@ -314,9 +364,13 @@ export default function Products() {
          const customNameText = product.category === 'Treat Jars' && customNames[product.id] 
             ? ` with custom name "${customNames[product.id]}"` 
             : ''
+         
+         const bowStyleDisplayText = product.category === 'Bow ties' && bowStyleText
+            ? ` (${bowStyleText})`
+            : ''
 
          toast.success('Added to cart!', {
-            description: `${product.title} (Size: ${sizeToUse})${customNameText} added to your cart`,
+            description: `${product.title} (Size: ${sizeToUse})${bowStyleDisplayText}${customNameText} added to your cart`,
             duration: 3000,
          })
       }
@@ -862,7 +916,7 @@ export default function Products() {
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: index * 0.1 }}
-                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex sm:flex-col'
+                        className='bg-white rounded-2xl overflow-hidden shadow-lg card-hover flex sm:flex-col relative'
                      >
                         <div className='relative group my-auto sm:my-0 w-2/5 sm:w-full'>
                            <Image
@@ -1010,6 +1064,71 @@ export default function Products() {
                                     <p className='text-xs text-text-light mt-1'>
                                        Max 20 characters. This will be printed on your jar.
                                     </p>
+                                 </div>
+                              )}
+
+                              {/* Bow Tie Style Selection */}
+                              {product.category === 'Bow ties' && (
+                                 <div className='mt-4'>
+                                    <div className='flex items-center gap-2 mb-2'>
+                                       <label className='block text-xs font-medium text-text-dark'>
+                                          Bow Tie Style *
+                                       </label>
+                                       <button
+                                          type='button'
+                                          onClick={() => setShowBowStylePopover(showBowStylePopover === product.id ? '' : product.id)}
+                                          className='p-1 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors'
+                                          title='View style options'
+                                       >
+                                          <InfoIcon className='w-3 h-3 text-blue-600' />
+                                       </button>
+                                    </div>
+                                    
+                                    {/* Style Options */}
+                                    <div className='flex gap-1'>
+                                       {bowTieStyles.map((style) => (
+                                          <button
+                                             key={style.id}
+                                             type='button'
+                                             onClick={() => setSelectedBowStyles(prev => ({
+                                                ...prev,
+                                                [product.id]: style.id
+                                             }))}
+                                             className={`flex items-center justify-center w-8 h-8 text-xs rounded-md border transition-all ${
+                                                selectedBowStyles[product.id] === style.id
+                                                   ? 'bg-blue-500 text-white border-blue-500'
+                                                   : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
+                                             }`}
+                                             title={style.description}
+                                          >
+                                             <span className='text-lg'>{style.icon}</span>
+                                          </button>
+                                       ))}
+                                    </div>
+                                 </div>
+                              )}
+
+                              {/* Bow Tie Style Popover - Positioned center of card */}
+                              {product.category === 'Bow ties' && showBowStylePopover === product.id && (
+                                 <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 w-64 bg-white border border-gray-200 rounded-lg shadow-xl p-3 bow-style-popover'>
+                                    <div className='space-y-2'>
+                                       {bowTieStyles.map((style) => (
+                                          <div key={style.id} className='flex items-start gap-2 p-2 rounded border-l-2 border-blue-200 bg-blue-50'>
+                                             <span className='text-lg'>{style.icon}</span>
+                                             <div>
+                                                <h4 className='font-medium text-sm text-gray-800'>{style.name}</h4>
+                                                <p className='text-xs text-gray-600'>{style.description}</p>
+                                                <p className='text-xs text-blue-600 mt-1'>{style.details}</p>
+                                             </div>
+                                          </div>
+                                       ))}
+                                    </div>
+                                    <button
+                                       onClick={() => setShowBowStylePopover('')}
+                                       className='absolute top-1 right-1 p-1 text-gray-400 hover:text-gray-600'
+                                    >
+                                       <X className='w-4 h-4' />
+                                    </button>
                                  </div>
                               )}
                            </div>
@@ -1293,7 +1412,7 @@ export default function Products() {
                               <div className='block md:hidden mb-2'>
                                  <SizeChart />
                               </div>
-                              <div className='flex flex-wrap gap-2'>
+                              <div className='flex flex-wrap gap-2 justify-start sm:justify-center'>
                                  {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 0 
                                     ? selectedProduct.sizePricing.filter(sp => sp.price > 0).map((sizePricing) => {
                                        const size = sizePricing.size
@@ -1365,6 +1484,73 @@ export default function Products() {
                                  <p className='text-xs text-text-light mt-1'>
                                     Max 20 characters. This will be printed on your jar.
                                  </p>
+                              </div>
+                           )}
+
+                           {/* Bow Tie Style Selection in Modal */}
+                           {selectedProduct.category === 'Bow ties' && (
+                              <div className='mb-6 relative'>
+                                 <div className='flex items-center gap-2 mb-3'>
+                                    <label className='block text-sm font-medium text-text-dark'>
+                                       Bow Tie Style *
+                                    </label>
+                                    <button
+                                       type='button'
+                                       onClick={() => setShowBowStylePopover(showBowStylePopover === selectedProduct.id ? '' : selectedProduct.id)}
+                                       className='p-1 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors'
+                                       title='View style options'
+                                    >
+                                       <InfoIcon className='w-4 h-4 text-blue-600' />
+                                    </button>
+                                 </div>
+                                 
+                                 {/* Style Options */}
+                                 <div className='flex gap-3'>
+                                    {bowTieStyles.map((style) => (
+                                       <button
+                                          key={style.id}
+                                          type='button'
+                                          onClick={() => setSelectedBowStyles(prev => ({
+                                             ...prev,
+                                             [selectedProduct.id]: style.id
+                                          }))}
+                                          className={`flex items-center gap-2 px-4 py-3 text-sm rounded-lg border-2 transition-all ${
+                                             selectedBowStyles[selectedProduct.id] === style.id
+                                                ? 'bg-blue-500 text-white border-blue-500 shadow-lg'
+                                                : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300'
+                                          }`}
+                                       >
+                                          <span className='text-lg'>{style.icon}</span>
+                                          <div className='text-left'>
+                                             <div className='font-medium'>{style.name}</div>
+                                          </div>
+                                       </button>
+                                    ))}
+                                 </div>
+
+                                 {/* Popover */}
+                                 {showBowStylePopover === selectedProduct.id && (
+                                    <div className='absolute z-10 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-xl p-4 bow-style-popover'>
+                                       <div className='space-y-3'>
+                                          {bowTieStyles.map((style) => (
+                                             <div key={style.id} className='flex items-start gap-3 p-3 rounded-lg border-l-4 border-blue-200 bg-blue-50'>
+                                                <span className='text-2xl'>{style.icon}</span>
+                                                <div>
+                                                   <h4 className='font-semibold text-sm text-gray-800'>{style.name}</h4>
+                                                   <p className='text-sm text-gray-600 mt-1'>{style.description}</p>
+                                                   <p className='text-sm text-blue-600 mt-1 font-medium'>{style.details}</p>
+                                                </div>
+                                             </div>
+                                          ))}
+                                       </div>
+                                       <button
+                                          onClick={() => setShowBowStylePopover('')}
+                                          className='absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600'
+                                       >
+                                          <X className='w-5 h-5' />
+                                       </button>
+                                    </div>
+                                 )}
                               </div>
                            )}
 

@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 export default function About() {
   const stats = [
     { icon: <Users className="w-8 h-8" />, number: "1000+", label: "Happy Customers" },
-    { icon: <Award className="w-8 h-8" />, number: "500+", label: "Products Sold" },
+    { icon: <Award className="w-8 h-8" />, number: "2000+", label: "Products Sold" },
     { icon: <Truck className="w-8 h-8" />, number: "50+", label: "Cities Served" },
     { icon: <Heart className="w-8 h-8" />, number: "100%", label: "Love & Care" }
   ];
@@ -57,15 +57,19 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="space-y-6"
               >
-                <h2 className="text-3xl font-heading font-bold text-text-dark">Our Story</h2>
+                {/* <h2 className="text-3xl font-heading font-bold text-text-dark">About Us – Hezal Accessories</h2> */}
                 <p className="font-body text-text-body leading-relaxed">
-                  Founded with a simple belief that every pet deserves the best, Hezal Accessories started as a small dream to create beautiful, functional, and safe accessories for our furry friends.
+                  At Hezal Accessories, we believe pets are not just companions – they&apos;re family, our little bundles of joy who deserve nothing but the best.
+                  Born out of unconditional love for furry babies, our brand is dedicated to creating stylish, quirky, and heartwarming accessories that add charm to every wag, woof, and purr.
                 </p>
                 <p className="font-body text-text-body leading-relaxed">
-                  We understand the special bond between pets and their families. That&apos;s why every product in our collection is carefully selected and tested to ensure it meets our high standards of quality, safety, and style.
+                  From playful bandanas and bow ties to elegant collars, leashes, and customized treat jars, each product is thoughtfully designed with comfort, durability, and a touch of luxury. We love blending fun prints, trendy colors, and quality craftsmanship so your four-legged darling looks and feels absolutely paw-some.
                 </p>
                 <p className="font-body text-text-body leading-relaxed">
-                  From premium collars and leashes to cozy beds and fun toys, we&apos;re committed to enhancing the lives of pets and bringing smiles to pet parents everywhere.
+                  What started as a passion project soon grew into a space where pet parents could find accessories as unique as their fur kids. Every piece we create carries a piece of love, joy, and the belief that pets bring sparkle to our everyday lives.
+                </p>
+                <p className="font-body text-text-body leading-relaxed">
+                  At Hezal Accessories, it&apos;s always about celebrating love, one paw at a time.
                 </p>
               </motion.div>
             </div>
