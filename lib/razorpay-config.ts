@@ -39,6 +39,9 @@ export interface CartItem {
    details?: string[]
    inStock?: boolean
    originalPrice?: number
+   customName?: string
+   bowStyle?: number
+   bowStyleName?: string
 }
 
 // Razorpay configuration

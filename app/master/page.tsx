@@ -2571,6 +2571,12 @@ export default function AdminDashboard() {
                                           <div>
                                              <span className='font-medium'>{item.title}</span>
                                              <p className='text-sm text-text-light'>Size: {item.size} • Category: {item.category}</p>
+                                             {item.customName && (
+                                                <p className='text-xs text-primary-pink italic'>Custom Name: &quot;{item.customName}&quot;</p>
+                                             )}
+                                             {item.bowStyleName && (
+                                                <p className='text-xs text-blue-600 italic'>Bow Style: {item.bowStyleName}</p>
+                                             )}
                                           </div>
                                        </div>
                                        <span className='font-medium'>

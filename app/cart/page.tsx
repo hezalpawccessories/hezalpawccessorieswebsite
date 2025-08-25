@@ -16,6 +16,8 @@ interface CartItem extends Product {
    quantity: number
    size: string
    customName?: string
+   bowStyle?: number
+   bowStyleName?: string
 }
 
 interface CheckoutForm {
@@ -79,14 +81,14 @@ export default function Cart() {
       }
    }, [])
 
-   const updateQuantity = (id: string, size: string, customName: string | undefined, newQuantity: number) => {
+   const updateQuantity = (id: string, size: string, customName: string | undefined, bowStyle: number | undefined, newQuantity: number) => {
       if (newQuantity <= 0) {
-         removeItem(id, size, customName)
+         removeItem(id, size, customName, bowStyle)
          return
       }
 
       const updatedCart = cartItems.map((item) => 
-         (item.id === id && item.size === size && item.customName === customName) 
+         (item.id === id && item.size === size && item.customName === customName && item.bowStyle === bowStyle) 
             ? { ...item, quantity: newQuantity } 
             : item
       )
@@ -97,9 +99,9 @@ export default function Cart() {
       }
    }
 
-   const removeItem = (id: string, size: string, customName: string | undefined) => {
+   const removeItem = (id: string, size: string, customName: string | undefined, bowStyle: number | undefined) => {
       const updatedCart = cartItems.filter((item) => 
-         !(item.id === id && item.size === size && item.customName === customName)
+         !(item.id === id && item.size === size && item.customName === customName && item.bowStyle === bowStyle)
       )
       setCartItems(updatedCart)
       if (typeof window !== 'undefined') {
@@ -276,6 +278,11 @@ export default function Cart() {
                                        Custom Name: &quot;{item.customName}&quot;
                                     </p>
                                  )}
+                                 {item.bowStyleName && (
+                                    <p className='font-body text-blue-600 text-sm mb-2 italic'>
+                                       Bow Tie Style: {item.bowStyleName}
+                                    </p>
+                                 )}
                                  <div className='flex items-center justify-center md:justify-start space-x-2'>
                                     <span className='text-xl font-accent font-bold text-primary-pink'>₹{item.price}</span>
                                     {item.originalPrice === 0 ? '' : (
@@ -294,14 +301,14 @@ export default function Cart() {
                               <div className='flex items-center space-x-4'>
                                  <div className='flex items-center space-x-2'>
                                     <button
-                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.quantity - 1)}
+                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.bowStyle, item.quantity - 1)}
                                        className='quantity-btn'
                                     >
                                        <Minus className='w-4 h-4' />
                                     </button>
                                     <span className='w-8 text-center font-heading font-semibold'>{item.quantity}</span>
                                     <button
-                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.quantity + 1)}
+                                       onClick={() => updateQuantity(item.id, item.size, item.customName, item.bowStyle, item.quantity + 1)}
                                        className='quantity-btn'
                                     >
                                        <Plus className='w-4 h-4' />
@@ -309,7 +316,7 @@ export default function Cart() {
                                  </div>
 
                                  <button
-                                    onClick={() => removeItem(item.id, item.size, item.customName)}
+                                    onClick={() => removeItem(item.id, item.size, item.customName, item.bowStyle)}
                                     className='text-red-500 hover:text-red-700 p-2'
                                  >
                                     <Trash2 className='w-5 h-5' />

@@ -22,6 +22,8 @@ export interface OrderItem {
   image: string
   category: string
   customName?: string
+  bowStyle?: number
+  bowStyleName?: string
 }
 
 export interface CustomerDetails {

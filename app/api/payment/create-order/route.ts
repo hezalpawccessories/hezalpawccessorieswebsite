@@ -17,6 +17,9 @@ interface CartItem {
   size: string
   image: string
   category: string
+  customName?: string
+  bowStyle?: number
+  bowStyleName?: string
 }
 
 interface CustomerDetails {
@@ -92,7 +95,10 @@ export async function POST(request: NextRequest) {
           quantity: item.quantity,
           size: item.size,
           image: item.image,
-          category: item.category
+          category: item.category,
+          customName: item.customName,
+          bowStyle: item.bowStyle,
+          bowStyleName: item.bowStyleName
         })),
         orderSummary: {
           subtotal: amount,
