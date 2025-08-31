@@ -41,6 +41,16 @@ const razorpay = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY
 
 export async function POST(request: NextRequest) {
   try {
+    // TEMPORARY: masked logging to help debug deployed env values (safe)
+    try {
+      const publicKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || ''
+      const secretKey = process.env.RAZORPAY_KEY_SECRET || ''
+      const mask = (s: string) => s ? `${s.slice(0,4)}...${s.slice(-4)}` : '(not set)'
+      console.log('Masked Razorpay envs - NEXT_PUBLIC_RAZORPAY_KEY_ID:', mask(publicKey), ' RAZORPAY_KEY_SECRET length:', secretKey ? secretKey.length : '(not set)')
+    } catch (logErr) {
+      console.error('Masked env logging failed', logErr)
+    }
+
     // Check if Razorpay is properly configured
     if (!razorpay) {
       return NextResponse.json(
