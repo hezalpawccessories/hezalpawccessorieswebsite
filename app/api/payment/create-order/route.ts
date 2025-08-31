@@ -41,6 +41,25 @@ const razorpay = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY
 
 export async function POST(request: NextRequest) {
   try {
+    // Helper to recursively remove undefined values (Firestore doesn't accept undefined)
+    const removeUndefined = (value: any): any => {
+      if (value === undefined) return undefined
+      if (value === null) return null
+      if (Array.isArray(value)) {
+        return value
+          .map((v) => removeUndefined(v))
+          .filter((v) => v !== undefined)
+      }
+      if (typeof value === 'object') {
+        const out: any = {}
+        Object.keys(value).forEach((k) => {
+          const v = removeUndefined(value[k])
+          if (v !== undefined) out[k] = v
+        })
+        return out
+      }
+      return value
+    }
     // TEMPORARY: masked logging to help debug deployed env values (safe)
     try {
       const publicKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || ''
@@ -88,15 +107,27 @@ export async function POST(request: NextRequest) {
 
     // Create order in Firebase
     try {
-      const firebaseOrderData = {
+      // Diagnostic: find any undefined paths in order data (helps track unsupported undefined fields)
+      const findUndefinedPaths = (obj: any, prefix = ''): string[] => {
+        if (obj === undefined) return [prefix || '(root)']
+        if (obj === null) return []
+        if (Array.isArray(obj)) {
+          return obj.flatMap((v, i) => findUndefinedPaths(v, `${prefix}[${i}]`))
+        }
+        if (typeof obj === 'object') {
+          return Object.keys(obj).flatMap((k) => findUndefinedPaths(obj[k], prefix ? `${prefix}.${k}` : k))
+        }
+        return []
+      }
+    const firebaseOrderData = {
         orderId: receipt,
         customerDetails: {
           name: customerDetails.name,
           email: customerDetails.email,
           phone: customerDetails.phone,
           address: customerDetails.address,
-          pincode: customerDetails.pincode,
-          alternatePhone: customerDetails.alternatePhone
+      pincode: customerDetails.pincode,
+      alternatePhone: customerDetails.alternatePhone
         },
         items: cartItems.map((item: CartItem) => ({
           id: item.id,
@@ -106,9 +137,9 @@ export async function POST(request: NextRequest) {
           size: item.size,
           image: item.image,
           category: item.category,
-          customName: item.customName,
-          bowStyle: item.bowStyle,
-          bowStyleName: item.bowStyleName
+      customName: item.customName,
+      bowStyle: item.bowStyle,
+      bowStyleName: item.bowStyleName
         })),
         orderSummary: {
           subtotal: amount,
@@ -123,7 +154,16 @@ export async function POST(request: NextRequest) {
         orderStatus: 'placed' as const
       }
 
-      const firebaseOrderResult = await createOrder(firebaseOrderData)
+      // Log any undefined fields (diagnostic)
+      const undefinedPaths = findUndefinedPaths(firebaseOrderData)
+      if (undefinedPaths.length > 0) {
+        console.warn('Detected undefined fields in firebaseOrderData:', undefinedPaths)
+      }
+
+      // Clean undefined values before sending to Firestore
+      const cleanedOrderData = removeUndefined(firebaseOrderData)
+
+      const firebaseOrderResult = await createOrder(cleanedOrderData)
       if (firebaseOrderResult.success) {
         console.log('Order saved to Firebase:', firebaseOrderResult.orderId)
       } else {
@@ -131,7 +171,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create payment log in Firebase
-      const paymentLogData = {
+  const paymentLogData = {
         transactionId: `TXN_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`,
         razorpayOrderId: order.id,
         customerDetails: {
@@ -154,7 +194,10 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      const paymentLogResult = await createPaymentLog(paymentLogData)
+  // Clean undefined values before creating payment log
+  const cleanedPaymentLog = removeUndefined(paymentLogData)
+
+  const paymentLogResult = await createPaymentLog(cleanedPaymentLog)
       if (paymentLogResult.success) {
         console.log('Payment log created in Firebase:', paymentLogResult.paymentLogId)
       } else {

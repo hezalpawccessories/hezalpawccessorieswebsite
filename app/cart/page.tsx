@@ -346,7 +346,7 @@ export default function Cart() {
                            <span className='font-heading font-semibold'>{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
                         </div>
                         {shipping === 0 && (
-                           <p className='text-sm font-body text-primary-blue'>🎉 Free shipping on orders over ₹1000!</p>
+                           <p className='text-sm font-body text-primary-blue'>🎉 Free shipping on orders over ₹799!</p>
                         )}
                         <hr />
                         <div className='flex justify-between text-lg font-heading font-bold'>
