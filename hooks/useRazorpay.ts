@@ -60,14 +60,6 @@ export const useRazorpay = ({ onSuccess, onFailure }: UseRazorpayProps) => {
         throw new Error(orderData.error || 'Failed to create order')
       }
 
-      // TEMP LOG: confirm order id and public key are correct before opening checkout
-      try {
-        console.log('Razorpay initiate: PUBLIC KEY (masked):', (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '').slice(0,6) + '...')
-        console.log('Razorpay initiate: order from server:', orderData.order)
-      } catch (e) {
-        // ignore
-      }
-
       // Step 2: Configure Razorpay options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
