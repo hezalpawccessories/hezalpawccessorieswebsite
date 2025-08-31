@@ -1862,7 +1862,7 @@ export default function AdminDashboard() {
                                              Payment: {order.paymentDetails.paymentStatus}
                                           </p>
                                        </div>
-                                       <div className='flex items-center space-x-4'>
+                                       <div className='flex flex-col sm:flex-row items-center space-x-4 gap-4 sm:gap-0'>
                                           <select
                                              value={order.orderStatus}
                                              onChange={(e) =>
@@ -1894,7 +1894,7 @@ export default function AdminDashboard() {
                                                 setSelectedOrder(order)
                                                 setShowOrderModal(true)
                                              }}
-                                             className='btn-secondary'
+                                             className='btn-secondary text-xs sm:text-base'
                                           >
                                              View Details
                                           </button>
