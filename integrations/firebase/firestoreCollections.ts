@@ -45,6 +45,19 @@ export interface Collection {
    updatedAt: Date
 }
 
+export interface Coupon {
+   id: string
+   name: string
+   code: string
+   discountType: 'percentage' | 'flat'
+   discountValue: number
+   applicableCategories: string[]
+   applicableCollections: string[]
+   isActive: boolean
+   createdAt: Date
+   updatedAt: Date
+}
+
 interface Order {
    id: string
    customerName: string
@@ -62,6 +75,7 @@ const paymentsCollection = collection(db, 'payments')
 const ordersCollection = collection(db, 'orders')
 const bannersCollection = collection(db, 'banners')
 const collectionsCollection = collection(db, 'collections')
+const couponsCollection = collection(db, 'coupons')
 
 // export const addProduct = async (product: Product) => {
 //    const docRef = await addDoc(productsCollection, product)
@@ -149,5 +163,35 @@ export const updateCollection = async (id: string, updatedData: Partial<Collecti
 
 export const deleteCollection = async (id: string) => {
    const docRef = doc(db, 'collections', id)
+   await deleteDoc(docRef)
+}
+
+// Coupon management functions
+export const addCoupon = async (coupon: Coupon) => {
+   const docRef = doc(db, 'coupons', coupon.id)
+   await setDoc(docRef, coupon)
+   return coupon.id
+}
+
+export const getCoupons = async () => {
+   const snapshot = await getDocs(couponsCollection)
+   return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return { 
+         id: docSnap.id, 
+         ...data,
+         createdAt: data.createdAt?.toDate?.() || new Date(),
+         updatedAt: data.updatedAt?.toDate?.() || new Date()
+      } as Coupon
+   })
+}
+
+export const updateCoupon = async (id: string, updatedData: Partial<Coupon>) => {
+   const docRef = doc(db, 'coupons', id)
+   await updateDoc(docRef, { ...updatedData, updatedAt: new Date() })
+}
+
+export const deleteCoupon = async (id: string) => {
+   const docRef = doc(db, 'coupons', id)
    await deleteDoc(docRef)
 }

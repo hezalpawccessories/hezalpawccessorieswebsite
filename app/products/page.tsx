@@ -1571,7 +1571,7 @@ export default function Products() {
                                     </label>
                                  </div>
                                  <p className='text-sm text-gray-600'>
-                                    Add a perfectly matching bow tie to complement your collar. The bow tie will be custom-made to match the collar's design and color.
+                                    Add a perfectly matching bow tie to complement your collar. The bow tie will be custom-made to match the collar&apos;s design and color.
                                  </p>
                               </div>
                            )}

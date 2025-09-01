@@ -24,6 +24,7 @@ import {
    Clock,
    Image as ImageIcon,
    Copy,
+   Percent,
 } from 'lucide-react'
 import { products as initialProducts, Product, sizes, SizePricing } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
@@ -41,7 +42,12 @@ import {
    addCollection,
    getCollections,
    updateCollection,
-   deleteCollection
+   deleteCollection,
+   Coupon,
+   addCoupon,
+   getCoupons,
+   updateCoupon,
+   deleteCoupon
 } from '@/integrations/firebase/firestoreCollections'
 import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
 import { getPayments, PaymentLog } from '@/lib/firebase/payments'
@@ -120,6 +126,20 @@ export default function AdminDashboard() {
    }])
    const [bannerImages, setBannerImages] = useState<string[]>([''])
    const [loadingBanners, setLoadingBanners] = useState(false)
+
+   // Coupon management state
+   const [coupons, setCoupons] = useState<Coupon[]>([])
+   const [showAddCoupon, setShowAddCoupon] = useState(false)
+   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null)
+   const [newCoupon, setNewCoupon] = useState({
+      name: '',
+      code: '',
+      discountType: 'percentage' as 'percentage' | 'flat',
+      discountValue: 0,
+      applicableCategories: [] as string[],
+      applicableCollections: [] as string[],
+      isActive: true
+   })
 
    // Helper function to get price for specific size (same as Products page)
    const getPriceForSize = (product: Product, size?: string) => {
@@ -570,6 +590,19 @@ export default function AdminDashboard() {
          .catch((error) => {
             console.error('Error fetching collections:', error)
          })
+
+      // Load coupons from Firestore
+      getCoupons()
+         .then((fetchedCoupons) => {
+            setCoupons(fetchedCoupons)
+         })
+         .catch((error) => {
+            console.error('Error fetching coupons:', error)
+            toast.error('Failed to load coupons', {
+               description: 'There was an issue loading coupons from the database',
+               duration: 4000,
+            })
+         })
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -719,6 +752,107 @@ export default function AdminDashboard() {
       }
    }
 
+   // Coupon management functions
+   const handleAddCoupon = async (e: React.FormEvent) => {
+      e.preventDefault()
+      
+      if (!newCoupon.name.trim() || !newCoupon.code.trim() || newCoupon.discountValue <= 0) {
+         toast.error('Please fill all required fields', {
+            description: 'Name, code, and discount value are required',
+            duration: 4000,
+         })
+         return
+      }
+
+      // Check if coupon code already exists
+      const existingCoupon = coupons.find(c => c.code.toLowerCase() === newCoupon.code.toLowerCase())
+      if (existingCoupon) {
+         toast.error('Coupon code already exists', {
+            description: 'Please use a different coupon code',
+            duration: 4000,
+         })
+         return
+      }
+
+      const coupon: Coupon = {
+         id: uuidv4(),
+         ...newCoupon,
+         createdAt: new Date(),
+         updatedAt: new Date()
+      }
+
+      try {
+         await addCoupon(coupon)
+         setCoupons([...coupons, coupon])
+         setNewCoupon({
+            name: '',
+            code: '',
+            discountType: 'percentage',
+            discountValue: 0,
+            applicableCategories: [],
+            applicableCollections: [],
+            isActive: true
+         })
+         setShowAddCoupon(false)
+         toast.success('Coupon created successfully!', {
+            description: `Coupon "${coupon.name}" has been added`,
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error adding coupon:', error)
+         toast.error('Failed to create coupon', {
+            description: 'There was an issue creating the coupon. Please try again.',
+            duration: 4000,
+         })
+      }
+   }
+
+   const handleEditCoupon = async (e: React.FormEvent) => {
+      e.preventDefault()
+      
+      if (!editingCoupon) return
+
+      try {
+         const updatedCoupon = {
+            ...editingCoupon,
+            updatedAt: new Date()
+         }
+         
+         await updateCoupon(editingCoupon.id, updatedCoupon)
+         setCoupons(coupons.map(c => c.id === editingCoupon.id ? updatedCoupon : c))
+         setEditingCoupon(null)
+         toast.success('Coupon updated successfully!', {
+            description: `Coupon "${updatedCoupon.name}" has been updated`,
+            duration: 3000,
+         })
+      } catch (error) {
+         console.error('Error updating coupon:', error)
+         toast.error('Failed to update coupon', {
+            description: 'There was an issue updating the coupon. Please try again.',
+            duration: 4000,
+         })
+      }
+   }
+
+   const handleDeleteCoupon = async (couponId: string) => {
+      if (window.confirm('Are you sure you want to delete this coupon?')) {
+         try {
+            await deleteCoupon(couponId)
+            setCoupons(coupons.filter(c => c.id !== couponId))
+            toast.success('Coupon deleted successfully', {
+               description: 'The coupon has been removed',
+               duration: 3000,
+            })
+         } catch (error) {
+            console.error('Error deleting coupon:', error)
+            toast.error('Failed to delete coupon', {
+               description: 'There was an issue deleting the coupon. Please try again.',
+               duration: 4000,
+            })
+         }
+      }
+   }
+
    const updateOrderStatus = async (orderId: string, status: Order['orderStatus']) => {
       try {
          const result = await updateOrderStatusFirebase(orderId, status)
@@ -855,6 +989,7 @@ export default function AdminDashboard() {
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
                   { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5' /> },
+                  { id: 'coupons', label: 'Coupons', icon: <Percent className='w-5 h-5' /> },
                   { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
                   { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
                   // { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
@@ -2020,6 +2155,103 @@ export default function AdminDashboard() {
                   </motion.div>
                )}
 
+               {activeTab === 'coupons' && (
+                  <motion.div
+                     key='coupons'
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: -20 }}
+                     className='space-y-6'
+                  >
+                     <div className='flex justify-between items-center'>
+                        <h1 className='text-3xl font-bold text-primary-blue'>Discount Coupons</h1>
+                        <button
+                           onClick={() => setShowAddCoupon(true)}
+                           className='flex items-center space-x-2 bg-primary-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors shadow-lg'
+                        >
+                           <Plus className='w-5 h-5' />
+                           <span>Add Coupon</span>
+                        </button>
+                     </div>
+
+                     {/* Coupons List */}
+                     <div className='grid gap-4'>
+                        {coupons.length === 0 ? (
+                           <div className='text-center py-12 bg-white rounded-lg shadow-lg'>
+                              <Percent className='w-16 h-16 text-gray-300 mx-auto mb-4' />
+                              <h3 className='text-xl font-semibold text-gray-500 mb-2'>No coupons yet</h3>
+                              <p className='text-gray-400 mb-6'>Create your first discount coupon to start offering promotions</p>
+                              <button
+                                 onClick={() => setShowAddCoupon(true)}
+                                 className='bg-primary-blue text-white px-6 py-2 rounded-lg hover:bg-primary-blue/90 transition-colors'
+                              >
+                                 Add First Coupon
+                              </button>
+                           </div>
+                        ) : (
+                           coupons.map((coupon) => (
+                              <div key={coupon.id} className='bg-white p-6 rounded-lg shadow-lg border border-gray-100'>
+                                 <div className='flex justify-between items-start'>
+                                    <div className='flex-1'>
+                                       <div className='flex items-center space-x-3 mb-2'>
+                                          <h3 className='text-xl font-semibold text-primary-blue'>{coupon.name}</h3>
+                                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                             coupon.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                          }`}>
+                                             {coupon.isActive ? 'Active' : 'Inactive'}
+                                          </span>
+                                       </div>
+                                       <div className='flex items-center space-x-4 mb-3'>
+                                          <div className='bg-gray-100 px-3 py-1 rounded-lg font-mono text-sm font-medium'>
+                                             {coupon.code}
+                                          </div>
+                                          <div className='text-lg font-semibold text-primary-pink'>
+                                             {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`} OFF
+                                          </div>
+                                       </div>
+                                       
+                                       {/* Applicable Categories/Collections */}
+                                       <div className='space-y-2 text-sm text-gray-600'>
+                                          {coupon.applicableCategories.length > 0 && (
+                                             <div>
+                                                <span className='font-medium'>Categories:</span> {coupon.applicableCategories.join(', ')}
+                                             </div>
+                                          )}
+                                          {coupon.applicableCollections.length > 0 && (
+                                             <div>
+                                                <span className='font-medium'>Collections:</span> {coupon.applicableCollections.join(', ')}
+                                             </div>
+                                          )}
+                                          {coupon.applicableCategories.length === 0 && coupon.applicableCollections.length === 0 && (
+                                             <div className='text-green-600 font-medium'>Applicable to all products</div>
+                                          )}
+                                       </div>
+                                    </div>
+                                    
+                                    <div className='flex space-x-2'>
+                                       <button
+                                          onClick={() => setEditingCoupon(coupon)}
+                                          className='p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors'
+                                          title='Edit coupon'
+                                       >
+                                          <Edit className='w-5 h-5' />
+                                       </button>
+                                       <button
+                                          onClick={() => handleDeleteCoupon(coupon.id)}
+                                          className='p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors'
+                                          title='Delete coupon'
+                                       >
+                                          <Trash2 className='w-5 h-5' />
+                                       </button>
+                                    </div>
+                                 </div>
+                              </div>
+                           ))
+                        )}
+                     </div>
+                  </motion.div>
+               )}
+
                {/* {activeTab === 'analytics' && (
                   <div className='py-12'>
                      <h1 className='text-3xl font-bold text-primary-blue mb-6'>Analytics</h1>
@@ -2783,6 +3015,377 @@ export default function AdminDashboard() {
                            </div>
                         )}
                      </div>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+
+         {/* Add Coupon Modal */}
+         <AnimatePresence>
+            {showAddCoupon && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='modal-overlay'
+                  onClick={() => setShowAddCoupon(false)}
+               >
+                  <motion.div
+                     initial={{ scale: 0.8, opacity: 0 }}
+                     animate={{ scale: 1, opacity: 1 }}
+                     exit={{ scale: 0.8, opacity: 0 }}
+                     className='modal-content max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative max-h-[90vh] overflow-y-auto'
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <button
+                        onClick={() => setShowAddCoupon(false)}
+                        className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10'
+                     >
+                        <X className='w-6 h-6' />
+                     </button>
+
+                     <h2 className='text-2xl font-bold text-primary-blue mb-6'>Add Discount Coupon</h2>
+
+                     <form onSubmit={handleAddCoupon} className='space-y-6'>
+                        {/* Basic Info */}
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Coupon Name *
+                              </label>
+                              <input
+                                 type='text'
+                                 value={newCoupon.name}
+                                 onChange={(e) => setNewCoupon({ ...newCoupon, name: e.target.value })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 placeholder='e.g., New Year Sale'
+                                 required
+                              />
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Coupon Code *
+                              </label>
+                              <input
+                                 type='text'
+                                 value={newCoupon.code}
+                                 onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 placeholder='e.g., NEWYEAR2024'
+                                 required
+                              />
+                           </div>
+                        </div>
+
+                        {/* Discount Settings */}
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Discount Type *
+                              </label>
+                              <select
+                                 value={newCoupon.discountType}
+                                 onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as 'percentage' | 'flat' })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                              >
+                                 <option value='percentage'>Percentage (%)</option>
+                                 <option value='flat'>Flat Amount (₹)</option>
+                              </select>
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Discount Value *
+                              </label>
+                              <input
+                                 type='number'
+                                 value={newCoupon.discountValue}
+                                 onChange={(e) => setNewCoupon({ ...newCoupon, discountValue: parseFloat(e.target.value) || 0 })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 placeholder={newCoupon.discountType === 'percentage' ? 'e.g., 20' : 'e.g., 100'}
+                                 min='0'
+                                 max={newCoupon.discountType === 'percentage' ? '100' : undefined}
+                                 required
+                              />
+                           </div>
+                        </div>
+
+                        {/* Applicable Categories */}
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>
+                              Applicable Categories (Leave empty for all categories)
+                           </label>
+                           <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                              {['Collars', 'Leashes', 'Collar-leash set', 'Bow ties', 'Bandanas', 'Harnesses', 'Toys', 'Accessories'].map((category) => (
+                                 <label key={category} className='flex items-center space-x-2'>
+                                    <input
+                                       type='checkbox'
+                                       checked={newCoupon.applicableCategories.includes(category)}
+                                       onChange={(e) => {
+                                          if (e.target.checked) {
+                                             setNewCoupon({
+                                                ...newCoupon,
+                                                applicableCategories: [...newCoupon.applicableCategories, category]
+                                             })
+                                          } else {
+                                             setNewCoupon({
+                                                ...newCoupon,
+                                                applicableCategories: newCoupon.applicableCategories.filter(c => c !== category)
+                                             })
+                                          }
+                                       }}
+                                       className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                                    />
+                                    <span className='text-sm'>{category}</span>
+                                 </label>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Applicable Collections */}
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>
+                              Applicable Collections (Leave empty for all collections)
+                           </label>
+                           <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                              {collections.map((collection) => (
+                                 <label key={collection.id} className='flex items-center space-x-2'>
+                                    <input
+                                       type='checkbox'
+                                       checked={newCoupon.applicableCollections.includes(collection.name)}
+                                       onChange={(e) => {
+                                          if (e.target.checked) {
+                                             setNewCoupon({
+                                                ...newCoupon,
+                                                applicableCollections: [...newCoupon.applicableCollections, collection.name]
+                                             })
+                                          } else {
+                                             setNewCoupon({
+                                                ...newCoupon,
+                                                applicableCollections: newCoupon.applicableCollections.filter(c => c !== collection.name)
+                                             })
+                                          }
+                                       }}
+                                       className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                                    />
+                                    <span className='text-sm'>{collection.name}</span>
+                                 </label>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Active Status */}
+                        <div>
+                           <label className='flex items-center space-x-2'>
+                              <input
+                                 type='checkbox'
+                                 checked={newCoupon.isActive}
+                                 onChange={(e) => setNewCoupon({ ...newCoupon, isActive: e.target.checked })}
+                                 className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                              />
+                              <span className='text-sm font-medium'>Activate coupon immediately</span>
+                           </label>
+                        </div>
+
+                        <div className='flex space-x-4 pt-4'>
+                           <button
+                              type='submit'
+                              className='flex-1 bg-primary-blue text-white py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors'
+                           >
+                              Create Coupon
+                           </button>
+                           <button
+                              type='button'
+                              onClick={() => setShowAddCoupon(false)}
+                              className='px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors'
+                           >
+                              Cancel
+                           </button>
+                        </div>
+                     </form>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+
+         {/* Edit Coupon Modal */}
+         <AnimatePresence>
+            {editingCoupon && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='modal-overlay'
+                  onClick={() => setEditingCoupon(null)}
+               >
+                  <motion.div
+                     initial={{ scale: 0.8, opacity: 0 }}
+                     animate={{ scale: 1, opacity: 1 }}
+                     exit={{ scale: 0.8, opacity: 0 }}
+                     className='modal-content max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative max-h-[90vh] overflow-y-auto'
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <button
+                        onClick={() => setEditingCoupon(null)}
+                        className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10'
+                     >
+                        <X className='w-6 h-6' />
+                     </button>
+
+                     <h2 className='text-2xl font-bold text-primary-blue mb-6'>Edit Coupon</h2>
+
+                     <form onSubmit={handleEditCoupon} className='space-y-6'>
+                        {/* Basic Info */}
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Coupon Name *
+                              </label>
+                              <input
+                                 type='text'
+                                 value={editingCoupon.name}
+                                 onChange={(e) => setEditingCoupon({ ...editingCoupon, name: e.target.value })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 required
+                              />
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Coupon Code *
+                              </label>
+                              <input
+                                 type='text'
+                                 value={editingCoupon.code}
+                                 onChange={(e) => setEditingCoupon({ ...editingCoupon, code: e.target.value.toUpperCase() })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 required
+                              />
+                           </div>
+                        </div>
+
+                        {/* Discount Settings */}
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Discount Type *
+                              </label>
+                              <select
+                                 value={editingCoupon.discountType}
+                                 onChange={(e) => setEditingCoupon({ ...editingCoupon, discountType: e.target.value as 'percentage' | 'flat' })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                              >
+                                 <option value='percentage'>Percentage (%)</option>
+                                 <option value='flat'>Flat Amount (₹)</option>
+                              </select>
+                           </div>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Discount Value *
+                              </label>
+                              <input
+                                 type='number'
+                                 value={editingCoupon.discountValue}
+                                 onChange={(e) => setEditingCoupon({ ...editingCoupon, discountValue: parseFloat(e.target.value) || 0 })}
+                                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 min='0'
+                                 max={editingCoupon.discountType === 'percentage' ? '100' : undefined}
+                                 required
+                              />
+                           </div>
+                        </div>
+
+                        {/* Applicable Categories */}
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>
+                              Applicable Categories
+                           </label>
+                           <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                              {['Collars', 'Leashes', 'Collar-leash set', 'Bow ties', 'Bandanas', 'Harnesses', 'Toys', 'Accessories'].map((category) => (
+                                 <label key={category} className='flex items-center space-x-2'>
+                                    <input
+                                       type='checkbox'
+                                       checked={editingCoupon.applicableCategories.includes(category)}
+                                       onChange={(e) => {
+                                          if (e.target.checked) {
+                                             setEditingCoupon({
+                                                ...editingCoupon,
+                                                applicableCategories: [...editingCoupon.applicableCategories, category]
+                                             })
+                                          } else {
+                                             setEditingCoupon({
+                                                ...editingCoupon,
+                                                applicableCategories: editingCoupon.applicableCategories.filter(c => c !== category)
+                                             })
+                                          }
+                                       }}
+                                       className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                                    />
+                                    <span className='text-sm'>{category}</span>
+                                 </label>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Applicable Collections */}
+                        <div>
+                           <label className='block text-sm font-medium text-text-dark mb-2'>
+                              Applicable Collections
+                           </label>
+                           <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                              {collections.map((collection) => (
+                                 <label key={collection.id} className='flex items-center space-x-2'>
+                                    <input
+                                       type='checkbox'
+                                       checked={editingCoupon.applicableCollections.includes(collection.name)}
+                                       onChange={(e) => {
+                                          if (e.target.checked) {
+                                             setEditingCoupon({
+                                                ...editingCoupon,
+                                                applicableCollections: [...editingCoupon.applicableCollections, collection.name]
+                                             })
+                                          } else {
+                                             setEditingCoupon({
+                                                ...editingCoupon,
+                                                applicableCollections: editingCoupon.applicableCollections.filter(c => c !== collection.name)
+                                             })
+                                          }
+                                       }}
+                                       className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                                    />
+                                    <span className='text-sm'>{collection.name}</span>
+                                 </label>
+                              ))}
+                           </div>
+                        </div>
+
+                        {/* Active Status */}
+                        <div>
+                           <label className='flex items-center space-x-2'>
+                              <input
+                                 type='checkbox'
+                                 checked={editingCoupon.isActive}
+                                 onChange={(e) => setEditingCoupon({ ...editingCoupon, isActive: e.target.checked })}
+                                 className='rounded border-gray-300 text-primary-blue focus:ring-primary-blue'
+                              />
+                              <span className='text-sm font-medium'>Coupon is active</span>
+                           </label>
+                        </div>
+
+                        <div className='flex space-x-4 pt-4'>
+                           <button
+                              type='submit'
+                              className='flex-1 bg-primary-blue text-white py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors'
+                           >
+                              Update Coupon
+                           </button>
+                           <button
+                              type='button'
+                              onClick={() => setEditingCoupon(null)}
+                              className='px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors'
+                           >
+                              Cancel
+                           </button>
+                        </div>
+                     </form>
                   </motion.div>
                </motion.div>
             )}
