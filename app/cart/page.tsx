@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Trash2, Plus, Minus, ShoppingBag, X, CheckCircle, ArrowLeft, Percent, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
@@ -100,15 +100,8 @@ export default function Cart() {
          })
    }, [])
 
-   // Validate coupon when cart items change
-   useEffect(() => {
-      if (appliedCoupon) {
-         validateCouponForCurrentCart(appliedCoupon)
-      }
-   }, [cartItems, appliedCoupon])
-
    // Coupon validation function
-   const validateCouponForCurrentCart = (coupon: Coupon) => {
+   const validateCouponForCurrentCart = useCallback((coupon: Coupon) => {
       if (!coupon.isActive) {
          setAppliedCoupon(null)
          toast.error('This coupon is no longer active')
@@ -142,7 +135,14 @@ export default function Cart() {
       }
 
       return true
-   }
+   }, [cartItems, setAppliedCoupon])
+
+   // Validate coupon when cart items change
+   useEffect(() => {
+      if (appliedCoupon) {
+         validateCouponForCurrentCart(appliedCoupon)
+      }
+   }, [cartItems, appliedCoupon, validateCouponForCurrentCart])
 
    const applyCoupon = async () => {
       if (!couponCode.trim()) {
@@ -480,13 +480,13 @@ export default function Cart() {
                                  value={couponCode}
                                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                  placeholder='Enter coupon code'
-                                 className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent'
+                                 className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-pink focus:border-transparent'
                                  onKeyPress={(e) => e.key === 'Enter' && applyCoupon()}
                               />
                               <button
                                  onClick={applyCoupon}
                                  disabled={couponValidating || !couponCode.trim()}
-                                 className='px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-primary-blue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                                 className='px-4 py-2 bg-primary-pink text-white rounded-lg hover:bg-primary-pink/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
                               >
                                  {couponValidating ? 'Validating...' : 'Apply'}
                               </button>

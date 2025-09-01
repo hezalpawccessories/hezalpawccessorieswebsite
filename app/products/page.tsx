@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, Suspense } from 'react'
 import { Search, Filter, Star, ShoppingCart, Plus, Minus, X, SortAscIcon, SortDesc, Eye, InfoIcon, ChevronLeft, ChevronRight, Tag, Gift, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
@@ -38,6 +38,25 @@ const unslugToCategory = (slug: string, categoriesList: string[]) => {
 }
 
 export default function Products() {
+   return (
+      <Suspense fallback={
+         <div className="gradient-bg min-h-screen">
+            <Navbar />
+            <div className="flex items-center justify-center min-h-[50vh]">
+               <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-blue mx-auto mb-4"></div>
+                  <p className="text-text-light">Loading products...</p>
+               </div>
+            </div>
+            <Footer />
+         </div>
+      }>
+         <ProductsContent />
+      </Suspense>
+   )
+}
+
+function ProductsContent() {
    const [selectedCategory, setSelectedCategory] = useState('All')
    const [selectedCollection, setSelectedCollection] = useState('All')
    const [showSaleOnly, setShowSaleOnly] = useState(false) // New state for sale filter
