@@ -65,6 +65,11 @@ export interface Order {
     carrier?: string
     estimatedDelivery?: Timestamp
   }
+  emailTracking?: {
+    mailSent: boolean
+    sentAt?: Timestamp
+    sentBy?: string
+  }
   notes?: string
 }
 
@@ -343,6 +348,42 @@ export const addTrackingInfo = async (
     return { success: true }
   } catch (error) {
     console.error('Error adding tracking info:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
+// Update email tracking status
+export const updateEmailTrackingStatus = async (
+  orderId: string,
+  emailData: {
+    mailSent: boolean
+    sentBy?: string
+  }
+) => {
+  try {
+    const orderRef = doc(ordersCollection, orderId)
+    
+    const updateData: any = {
+      'emailTracking.mailSent': emailData.mailSent,
+      'timestamps.updatedAt': Timestamp.now()
+    }
+
+    if (emailData.mailSent) {
+      updateData['emailTracking.sentAt'] = Timestamp.now()
+      if (emailData.sentBy) {
+        updateData['emailTracking.sentBy'] = emailData.sentBy
+      }
+    }
+
+    await updateDoc(orderRef, updateData)
+    
+    console.log('Email tracking status updated:', orderId, emailData.mailSent)
+    return { success: true }
+  } catch (error) {
+    console.error('Error updating email tracking status:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

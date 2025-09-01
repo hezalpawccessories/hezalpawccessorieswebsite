@@ -25,6 +25,8 @@ import {
    Image as ImageIcon,
    Copy,
    Percent,
+   Mail,
+   Send,
 } from 'lucide-react'
 import { products as initialProducts, Product, sizes, SizePricing, categories } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
@@ -49,7 +51,7 @@ import {
    updateCoupon,
    deleteCoupon
 } from '@/integrations/firebase/firestoreCollections'
-import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order } from '@/lib/firebase/orders'
+import { getOrders, updateOrderStatus as updateOrderStatusFirebase, Order, updateEmailTrackingStatus } from '@/lib/firebase/orders'
 import { getPayments, PaymentLog } from '@/lib/firebase/payments'
 import { v4 as uuidv4 } from 'uuid'
 import { get } from 'node:http'
@@ -140,6 +142,10 @@ export default function AdminDashboard() {
       applicableCollections: [] as string[],
       isActive: true
    })
+
+   // Email notification state
+   const [showEmailModal, setShowEmailModal] = useState(false)
+   const [selectedOrderForEmail, setSelectedOrderForEmail] = useState<Order | null>(null)
 
    // Helper function to get price for specific size (same as Products page)
    const getPriceForSize = (product: Product, size?: string) => {
@@ -851,6 +857,108 @@ export default function AdminDashboard() {
             })
          }
       }
+   }
+
+   // Email notification functions
+   const handleOpenEmailModal = (order: Order) => {
+      setSelectedOrderForEmail(order)
+      setShowEmailModal(true)
+   }
+
+   const handleSendEmail = async (order: Order) => {
+      try {
+         const emailBody = generateEmailContent(order)
+         const subject = `Order Update - ${order.orderId}`
+         const mailtoLink = `mailto:${order.customerDetails.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`
+         
+         // Open email client
+         window.open(mailtoLink)
+         
+         // Update email tracking in Firestore
+         const result = await updateEmailTrackingStatus(order.id!, {
+            mailSent: true,
+            sentBy: 'Admin'
+         })
+         
+         if (result.success) {
+            // Update orders list to reflect email status
+            const updatedOrders = orders.map((ord) => 
+               ord.id === order.id 
+                  ? { 
+                     ...ord, 
+                     emailTracking: { 
+                        mailSent: true, 
+                        sentAt: new Date() as any,
+                        sentBy: 'Admin'
+                     }
+                   } 
+                  : ord
+            )
+            setOrders(updatedOrders)
+            
+            toast.success('Email opened and tracking updated', {
+               description: 'Don\'t forget to click send in your email app!',
+               duration: 4000,
+            })
+         } else {
+            toast.error('Email opened but tracking failed', {
+               description: 'Email client opened but failed to update tracking',
+               duration: 4000,
+            })
+         }
+         
+      } catch (error) {
+         console.error('Error handling email send:', error)
+         toast.error('Error processing email', {
+            description: 'Failed to update email tracking',
+            duration: 4000,
+         })
+      }
+      
+      // Close modal
+      setShowEmailModal(false)
+      setSelectedOrderForEmail(null)
+   }
+
+   const generateEmailContent = (order: Order) => {
+      return `Dear ${order.customerDetails.name},
+
+Thank you for shopping with Hezal Accessories! 🐾
+
+We're delighted to inform you that your order is currently being processed with care. Your furry friend is going to look absolutely pawsome with our premium pet accessories!
+
+Order Details:
+━━━━━━━━━━━━━━━━━━━━
+Order ID: ${order.orderId}
+Order Date: ${new Date(order.timestamps.createdAt.seconds * 1000).toLocaleDateString()}
+Total Amount: ₹${order.orderSummary.total}
+
+Items Ordered:
+${order.items.map(item => `• ${item.title} (Size: ${item.size}) - Qty: ${item.quantity} - ₹${item.price}`).join('\n')}
+
+Shipping Address:
+${order.customerDetails.address}
+${order.customerDetails.pincode}
+
+Current Status: Processing
+━━━━━━━━━━━━━━━━━━━━
+
+We take great pride in crafting each accessory with love and attention to detail. Your order will be carefully packaged and dispatched soon.
+
+📦 Important Note: You will receive separate tracking notifications from ShipRocket when your product is dispatched for delivery. Please keep an eye on your email and SMS for delivery updates.
+
+You'll receive tracking details once your order is shipped. In the meantime, feel free to check out our latest collections on Instagram @hezal_accessories.
+
+Thank you for choosing Hezal Accessories for your pet's style needs. We look forward to serving you again soon!
+
+With love and wags,
+Team Hezal Accessories 💜
+
+━━━━━━━━━━━━━━━━━━━━
+📞 Contact: +91-7060266900
+📧 Email: hezalaccessories@gmail.com
+🌐 Instagram: @hezal_accessories
+━━━━━━━━━━━━━━━━━━━━`
    }
 
    const updateOrderStatus = async (orderId: string, status: Order['orderStatus']) => {
@@ -2024,6 +2132,21 @@ export default function AdminDashboard() {
                                              <option value='delivered'>Delivered</option>
                                              <option value='cancelled'>Cancelled</option>
                                           </select>
+                                          
+                                          {/* Email Notification Button */}
+                                          <button
+                                             onClick={() => handleOpenEmailModal(order)}
+                                             disabled={order.emailTracking?.mailSent === true}
+                                             className={`flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                                order.emailTracking?.mailSent === true
+                                                   ? 'bg-green-100 text-green-800 cursor-not-allowed' 
+                                                   : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                                             }`}
+                                          >
+                                             <Mail className='w-3 h-3' />
+                                             <span>{order.emailTracking?.mailSent === true ? 'Sent' : 'Pending'}</span>
+                                          </button>
+                                          
                                           <button
                                              onClick={() => {
                                                 setSelectedOrder(order)
@@ -3386,6 +3509,150 @@ export default function AdminDashboard() {
                            </button>
                         </div>
                      </form>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
+
+         {/* Email Notification Modal */}
+         <AnimatePresence>
+            {showEmailModal && selectedOrderForEmail && (
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className='modal-overlay'
+                  onClick={() => setShowEmailModal(false)}
+               >
+                  <motion.div
+                     initial={{ scale: 0.8, opacity: 0 }}
+                     animate={{ scale: 1, opacity: 1 }}
+                     exit={{ scale: 0.8, opacity: 0 }}
+                     className='modal-content max-w-6xl bg-white rounded-2xl shadow-2xl p-8 relative max-h-[90vh] overflow-y-auto'
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <button
+                        onClick={() => setShowEmailModal(false)}
+                        className='absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10'
+                     >
+                        <X className='w-6 h-6' />
+                     </button>
+
+                     <h2 className='text-2xl font-bold text-primary-blue mb-6 flex items-center justify-between'>
+                        <div className='flex items-center'>
+                           <Mail className='w-6 h-6 mr-2' />
+                           Send Order Update Email
+                        </div>
+                        {selectedOrderForEmail?.emailTracking?.mailSent && (
+                           <div className='flex items-center space-x-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm'>
+                              <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                              <span>Email Already Sent</span>
+                              {selectedOrderForEmail.emailTracking.sentAt && (
+                                 <span className='text-xs opacity-75'>
+                                    ({new Date(selectedOrderForEmail.emailTracking.sentAt.seconds * 1000).toLocaleDateString()})
+                                 </span>
+                              )}
+                           </div>
+                        )}
+                     </h2>
+
+                     <div className='flex flex-col gap-8'>
+                        {/* Customer & Order Details - Top on large screens */}
+                        <div className='w-full bg-gray-50 p-6 rounded-lg'>
+                           <h3 className='text-lg font-semibold text-text-dark mb-4'>Customer & Order Details</h3>
+                           
+                           <div className='space-y-3'>
+                              <div>
+                                 <span className='font-medium text-text-dark'>Customer Name:</span>
+                                 <p className='text-text-light'>{selectedOrderForEmail.customerDetails.name}</p>
+                              </div>
+                              
+                              <div>
+                                 <span className='font-medium text-text-dark'>Email:</span>
+                                 <p className='text-text-light'>{selectedOrderForEmail.customerDetails.email}</p>
+                              </div>
+                              
+                              <div>
+                                 <span className='font-medium text-text-dark'>Phone:</span>
+                                 <p className='text-text-light'>{selectedOrderForEmail.customerDetails.phone}</p>
+                              </div>
+                              
+                              <div>
+                                 <span className='font-medium text-text-dark'>Order ID:</span>
+                                 <p className='text-text-light font-mono'>{selectedOrderForEmail.orderId}</p>
+                              </div>
+                              
+                              <div>
+                                 <span className='font-medium text-text-dark'>Order Date:</span>
+                                 <p className='text-text-light'>
+                                    {new Date(selectedOrderForEmail.timestamps.createdAt.seconds * 1000).toLocaleDateString()}
+                                 </p>
+                              </div>
+                              
+                              <div>
+                                 <span className='font-medium text-text-dark'>Total Amount:</span>
+                                 <p className='text-primary-pink font-bold'>₹{selectedOrderForEmail.orderSummary.total}</p>
+                              </div>
+                           </div>
+
+                           <h4 className='text-md font-semibold text-text-dark mt-6 mb-3'>Order Items:</h4>
+                           <div className='space-y-2'>
+                              {selectedOrderForEmail.items.map((item, index) => (
+                                 <div key={index} className='bg-white p-3 rounded border'>
+                                    <div className='flex justify-between items-start'>
+                                       <div>
+                                          <p className='font-medium'>{item.title}</p>
+                                          <p className='text-sm text-text-light'>Size: {item.size} • Qty: {item.quantity}</p>
+                                       </div>
+                                       <p className='font-semibold'>₹{item.price}</p>
+                                    </div>
+                                 </div>
+                              ))}
+                           </div>
+
+                           <div className='mt-4 p-3 bg-white rounded border'>
+                              <span className='font-medium text-text-dark'>Shipping Address:</span>
+                              <p className='text-text-light text-sm mt-1'>
+                                 {selectedOrderForEmail.customerDetails.address}<br/>
+                                 {selectedOrderForEmail.customerDetails.pincode}
+                              </p>
+                           </div>
+                        </div>
+
+                        {/* Email Preview - Bottom on large screens */}
+                        <div className='w-full'>
+                           <h3 className='text-lg font-semibold text-text-dark mb-4'>Email Preview</h3>
+                           <div className='bg-white border border-gray-200 rounded-lg p-4 h-96 overflow-y-auto text-sm'>
+                              <pre className='whitespace-pre-wrap font-sans text-text-dark leading-relaxed'>
+                                 {generateEmailContent(selectedOrderForEmail)}
+                              </pre>
+                           </div>
+                        </div>
+                     </div>
+
+                     {/* Action Buttons */}
+                     <div className='flex justify-between items-center mt-8 pt-6 border-t'>
+                        <div className='sm:block hidden text-sm text-text-light'>
+                           <p>📧 This will open your email client with pre-filled content</p>
+                           <p>✨ Review and click send in your email app</p>
+                        </div>
+                        
+                        <div className='flex space-x-4'>
+                           <button
+                              onClick={() => setShowEmailModal(false)}
+                              className='px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors'
+                           >
+                              Cancel
+                           </button>
+                           <button
+                              onClick={() => handleSendEmail(selectedOrderForEmail)}
+                              className='flex items-center justify-center space-x-2 bg-primary-blue text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors min-w-[140px]'
+                           >
+                              <Send className='w-4 h-4 flex-shrink-0' />
+                              <span className='whitespace-nowrap'>Send Email</span>
+                           </button>
+                        </div>
+                     </div>
                   </motion.div>
                </motion.div>
             )}
