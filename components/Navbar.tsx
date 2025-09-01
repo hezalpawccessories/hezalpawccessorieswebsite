@@ -14,7 +14,7 @@ export default function Navbar() {
    const pathname = usePathname()
 
    // Check if we should show the cart button (not on landing page or master page)
-   const showCartButton = pathname !== '/' && pathname !== '/master'
+   const showCartButton = pathname !== '/' && pathname !== '/master' && pathname !== '/cart'
 
    const showShopButton = pathname !== '/products'
 
@@ -41,7 +41,7 @@ export default function Navbar() {
 
    return (
       <nav className='bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50'>
-         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+         <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex justify-between items-center h-16 sm:h-20'>
                {/* Logo */}
                <ProgressLink

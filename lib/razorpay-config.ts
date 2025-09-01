@@ -42,6 +42,7 @@ export interface CartItem {
    customName?: string
    bowStyle?: number
    bowStyleName?: string
+   hasMatchingBowTie?: boolean
 }
 
 // Razorpay configuration

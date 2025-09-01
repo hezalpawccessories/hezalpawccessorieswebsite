@@ -55,6 +55,7 @@ export default function Products() {
    const [shakeProduct, setShakeProduct] = useState<string>('') // Track which product to shake
    const [customNames, setCustomNames] = useState<{ [key: string]: string }>({}) // Track custom names per product
    const [selectedBowStyles, setSelectedBowStyles] = useState<{ [key: string]: number }>({}) // Track bow style per product
+   const [matchingBowTies, setMatchingBowTies] = useState<{ [key: string]: boolean }>({}) // Track matching bow tie addon per product
    
    // Bow tie styles
    const bowTieStyles = [
@@ -92,23 +93,32 @@ export default function Products() {
    }, [productsList])
 
    // Helper function to get price for specific size
-   const getPriceForSize = (product: Product, size?: string) => {
-      if (!size || !product.sizePricing || product.sizePricing.length === 0) {
-         return { price: product.price, originalPrice: product.originalPrice }
+   const getPriceForSize = (product: Product, size?: string, includeBowTie: boolean = false) => {
+      let basePrice = product.price
+      let baseOriginalPrice = product.originalPrice
+      
+      if (size && product.sizePricing && product.sizePricing.length > 0) {
+         const sizePrice = product.sizePricing.find(sp => sp.size === size)
+         if (sizePrice) {
+            basePrice = sizePrice.price
+            baseOriginalPrice = sizePrice.originalPrice
+         }
       }
       
-      const sizePrice = product.sizePricing.find(sp => sp.size === size)
-      if (sizePrice) {
-         return { price: sizePrice.price, originalPrice: sizePrice.originalPrice }
-      }
+      // Add bow tie addon cost for applicable categories
+      const bowTieAddon = includeBowTie && (product.category === 'Collars' || product.category === 'Collar-leash set') ? 100 : 0
       
-      return { price: product.price, originalPrice: product.originalPrice }
+      return { 
+         price: basePrice + bowTieAddon, 
+         originalPrice: (baseOriginalPrice || 0) + bowTieAddon 
+      }
    }
 
    // Helper function to get current pricing for display
    const getCurrentPricing = (product: Product, productId: string) => {
       const selectedSize = selectedSizes[productId]
-      return getPriceForSize(product, selectedSize)
+      const hasBowTieAddon = matchingBowTies[productId] || false
+      return getPriceForSize(product, selectedSize, hasBowTieAddon)
    }
 
    // Helper function to get price range for display
@@ -326,7 +336,8 @@ export default function Products() {
       }
 
       // Get the correct pricing for the selected size
-      const { price: sizePrice, originalPrice: sizeOriginalPrice } = getPriceForSize(product, sizeToUse)
+      const hasBowTieAddon = matchingBowTies[product.id] || false
+      const { price: sizePrice, originalPrice: sizeOriginalPrice } = getPriceForSize(product, sizeToUse, hasBowTieAddon)
 
       if (typeof window !== 'undefined') {
          const cart = JSON.parse(localStorage.getItem('cart') || '[]')
@@ -338,7 +349,8 @@ export default function Products() {
             item.id === product.id && 
             item.size === sizeToUse && 
             item.customName === (customNames[product.id] || '') &&
-            item.bowStyle === (selectedBowStyles[product.id] || 0)
+            item.bowStyle === (selectedBowStyles[product.id] || 0) &&
+            item.hasMatchingBowTie === (matchingBowTies[product.id] || false)
          )
 
          if (existingItem) {
@@ -352,7 +364,8 @@ export default function Products() {
                originalPrice: sizeOriginalPrice, // Use size-specific original price
                customName: product.category === 'Treat Jars' ? customNames[product.id] || '' : undefined,
                bowStyle: product.category === 'Bow ties' ? selectedBowStyles[product.id] : undefined,
-               bowStyleName: product.category === 'Bow ties' ? bowStyleText : undefined
+               bowStyleName: product.category === 'Bow ties' ? bowStyleText : undefined,
+               hasMatchingBowTie: (product.category === 'Collars' || product.category === 'Collar-leash set') ? matchingBowTies[product.id] || false : undefined
             }
             cart.push(cartItem)
          }
@@ -369,8 +382,12 @@ export default function Products() {
             ? ` (${bowStyleText})`
             : ''
 
+         const bowTieAddonText = (product.category === 'Collars' || product.category === 'Collar-leash set') && matchingBowTies[product.id]
+            ? ' + Matching Bow Tie'
+            : ''
+
          toast.success('Added to cart!', {
-            description: `${product.title} (Size: ${sizeToUse})${bowStyleDisplayText}${customNameText} added to your cart`,
+            description: `${product.title} (Size: ${sizeToUse})${bowStyleDisplayText}${customNameText}${bowTieAddonText} added to your cart`,
             duration: 3000,
          })
       }
@@ -569,7 +586,7 @@ export default function Products() {
       <>
          <Navbar />
          <main className='gradient-bg min-h-screen'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                {/* Header */}
                <motion.div
                   initial={{ opacity: 0, y: 50 }}
@@ -1025,9 +1042,16 @@ export default function Products() {
                                  {selectedSizes[product.id] ? (
                                     // Show specific price when size is selected
                                     <>
-                                       <span className='text-lg font-accent font-bold text-primary-pink'>
-                                          ₹{getCurrentPricing(product, product.id).price}
-                                       </span>
+                                       <div className='flex flex-col'>
+                                          <span className='text-lg font-accent font-bold text-primary-pink'>
+                                             ₹{getCurrentPricing(product, product.id).price}
+                                          </span>
+                                          {(product.category === 'Collars' || product.category === 'Collar-leash set') && matchingBowTies[product.id] && (
+                                             <span className='text-xs text-pink-600 font-medium'>
+                                                Includes Bow Tie (+₹100)
+                                             </span>
+                                          )}
+                                       </div>
                                        {getCurrentPricing(product, product.id).originalPrice === 0 ? '' :
                                           <>
                                           {getCurrentPricing(product, product.id).originalPrice && (
@@ -1049,11 +1073,18 @@ export default function Products() {
                                                    {minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`}
                                                 </span>
                                              </div>
+                                             <div className='flex gap-2'>
                                              {product.sizePricing && product.sizePricing.length > 1 && (
                                                 <span className='text-xs text-text-light'>
-                                                   {product.sizePricing.length} sizes available
+                                                   Price varies by size
                                                 </span>
                                              )}
+                                             {(product.category === 'Collars' || product.category === 'Collar-leash set') && (
+                                                <span className='text-xs text-pink-600'>
+                                                   + optional bow tie (₹100)
+                                                </span>
+                                             )}
+                                             </div>
                                           </div>
                                        )
                                     })()
@@ -1083,6 +1114,37 @@ export default function Products() {
                                  </div>
                               )}
                            </div>
+
+                           {/* Matching Bow Tie Toggle for Collars and Collar-leash set */}
+                           {(product.category === 'Collars' || product.category === 'Collar-leash set') && (
+                              <div className='mb-4 p-3 bg-pink-50 border border-pink-200 rounded-lg'>
+                                 <div className='flex items-center justify-between'>
+                                    <div className='flex items-center gap-2'>
+                                       <label className='text-xs sm:text-sm font-heading font-bold text-text-dark cursor-pointer'>
+                                          Matching Attached Bow Tie
+                                       </label>
+                                       <span className='text-xs text-pink-600 bg-pink-100 px-2 py-1 rounded-full'>
+                                          +₹100
+                                       </span>
+                                    </div>
+                                    <label className='relative inline-flex items-center cursor-pointer'>
+                                       <input
+                                          type='checkbox'
+                                          checked={matchingBowTies[product.id] || false}
+                                          onChange={(e) => setMatchingBowTies(prev => ({
+                                             ...prev,
+                                             [product.id]: e.target.checked
+                                          }))}
+                                          className='sr-only peer'
+                                       />
+                                       <div className='w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500'></div>
+                                    </label>
+                                 </div>
+                                 <p className='text-xs text-gray-600 mt-1'>
+                                    Add a perfectly matching bow tie to complement your collar
+                                 </p>
+                              </div>
+                           )}
 
                            {/* Bow Tie Style Selection - Separate section for better mobile UX */}
                            {product.category === 'Bow ties' && (
@@ -1345,11 +1407,18 @@ export default function Products() {
                                  {selectedSize ? (
                                     // Show specific price when size is selected (same as product card)
                                     <>
-                                       <span className='text-2xl font-bold text-primary-pink'>
-                                          ₹{getPriceForSize(selectedProduct, selectedSize).price}
-                                       </span>
+                                       <div className='flex flex-col'>
+                                          <span className='text-2xl font-bold text-primary-pink'>
+                                             ₹{getPriceForSize(selectedProduct, selectedSize, matchingBowTies[selectedProduct.id] || false).price}
+                                          </span>
+                                          {(selectedProduct.category === 'Collars' || selectedProduct.category === 'Collar-leash set') && matchingBowTies[selectedProduct.id] && (
+                                             <span className='text-xs sm:text-sm text-pink-600 font-medium'>
+                                                Includes Bow Tie (+₹100)
+                                             </span>
+                                          )}
+                                       </div>
                                        {(() => {
-                                          const currentPricing = getPriceForSize(selectedProduct, selectedSize)
+                                          const currentPricing = getPriceForSize(selectedProduct, selectedSize, matchingBowTies[selectedProduct.id] || false)
                                           return currentPricing.originalPrice === 0 ? "" : (
                                              <>
                                              {currentPricing.originalPrice && (
@@ -1375,6 +1444,11 @@ export default function Products() {
                                              {selectedProduct.sizePricing && selectedProduct.sizePricing.length > 1 && (
                                                 <span className='text-sm text-text-light'>
                                                    {selectedProduct.sizePricing.length} sizes available
+                                                </span>
+                                             )}
+                                             {(selectedProduct.category === 'Collars' || selectedProduct.category === 'Collar-leash set') && (
+                                                <span className='text-sm text-pink-600'>
+                                                   + optional bow tie (₹100)
                                                 </span>
                                              )}
                                           </div>
@@ -1467,6 +1541,37 @@ export default function Products() {
                                  />
                                  <p className='text-xs text-text-light mt-1'>
                                     Max 20 characters. This will be printed on your jar.
+                                 </p>
+                              </div>
+                           )}
+
+                           {/* Matching Bow Tie Toggle for Collars and Collar-leash set in Modal */}
+                           {(selectedProduct.category === 'Collars' || selectedProduct.category === 'Collar-leash set') && (
+                              <div className='mb-6 p-4 bg-pink-50 border border-pink-200 rounded-lg'>
+                                 <div className='flex items-center justify-between mb-2'>
+                                    <div className='flex items-center gap-2'>
+                                       <label className='text-lg font-heading font-bold text-text-dark cursor-pointer'>
+                                          Matching Attached Bow Tie
+                                       </label>
+                                       <span className='text-xs sm:text-sm text-pink-600 bg-pink-100 px-3 py-1 rounded-full font-medium'>
+                                          +₹100
+                                       </span>
+                                    </div>
+                                    <label className='relative inline-flex items-center cursor-pointer'>
+                                       <input
+                                          type='checkbox'
+                                          checked={matchingBowTies[selectedProduct.id] || false}
+                                          onChange={(e) => setMatchingBowTies(prev => ({
+                                             ...prev,
+                                             [selectedProduct.id]: e.target.checked
+                                          }))}
+                                          className='sr-only peer'
+                                       />
+                                       <div className='w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500'></div>
+                                    </label>
+                                 </div>
+                                 <p className='text-sm text-gray-600'>
+                                    Add a perfectly matching bow tie to complement your collar. The bow tie will be custom-made to match the collar's design and color.
                                  </p>
                               </div>
                            )}

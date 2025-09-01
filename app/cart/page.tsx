@@ -18,6 +18,7 @@ interface CartItem extends Product {
    customName?: string
    bowStyle?: number
    bowStyleName?: string
+   hasMatchingBowTie?: boolean
 }
 
 interface CheckoutForm {
@@ -99,9 +100,9 @@ export default function Cart() {
       }
    }
 
-   const removeItem = (id: string, size: string, customName: string | undefined, bowStyle: number | undefined) => {
+   const removeItem = (id: string, size: string, customName: string | undefined, bowStyle: number | undefined, hasMatchingBowTie?: boolean) => {
       const updatedCart = cartItems.filter((item) => 
-         !(item.id === id && item.size === size && item.customName === customName && item.bowStyle === bowStyle)
+         !(item.id === id && item.size === size && item.customName === customName && item.bowStyle === bowStyle && item.hasMatchingBowTie === hasMatchingBowTie)
       )
       setCartItems(updatedCart)
       if (typeof window !== 'undefined') {
@@ -253,7 +254,7 @@ export default function Cart() {
                   <div className='lg:col-span-2 space-y-4'>
                      {cartItems.map((item, index) => (
                         <motion.div
-                           key={item.id}
+                           key={`${item.id}-${item.size}-${item.customName || ''}-${item.bowStyle || ''}-${item.hasMatchingBowTie || ''}-${index}`}
                            initial={{ opacity: 0, x: -50 }}
                            animate={{ opacity: 1, x: 0 }}
                            transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -281,6 +282,12 @@ export default function Cart() {
                                  {item.bowStyleName && (
                                     <p className='font-body text-blue-600 text-sm mb-2 italic'>
                                        Bow Tie Style: {item.bowStyleName}
+                                    </p>
+                                 )}
+                                 {item.hasMatchingBowTie && (
+                                    <p className='font-body text-pink-600 text-sm mb-2 italic flex items-center gap-1'>
+                                       <span className='w-2 h-2 bg-pink-500 rounded-full'></span>
+                                       Includes Matching Bow Tie (+₹100)
                                     </p>
                                  )}
                                  <div className='flex items-center justify-center md:justify-start space-x-2'>
@@ -316,7 +323,7 @@ export default function Cart() {
                                  </div>
 
                                  <button
-                                    onClick={() => removeItem(item.id, item.size, item.customName, item.bowStyle)}
+                                    onClick={() => removeItem(item.id, item.size, item.customName, item.bowStyle, item.hasMatchingBowTie)}
                                     className='text-red-500 hover:text-red-700 p-2'
                                  >
                                     <Trash2 className='w-5 h-5' />
