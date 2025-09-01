@@ -12,6 +12,8 @@ import Select from 'react-select'
 import { select } from 'framer-motion/client'
 import { toast } from 'sonner'
 import { getProducts, getBanners, Banner, getCollections, Collection } from '@/integrations/firebase/firestoreCollections'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const sortOptions = [
    { value: 'name', label: 'Sort by Name' },
@@ -19,6 +21,21 @@ const sortOptions = [
    { value: 'price-high', label: 'Price: High to Low' },
    { value: 'rating', label: 'Highest Rated' },
 ]
+
+// slug helpers to map category names to URL-friendly slugs and back
+const slugifyCategory = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+
+const unslugToCategory = (slug: string, categoriesList: string[]) => {
+  const found = categoriesList.find((c) => slugifyCategory(c) === slug)
+  if (found) return found
+  return decodeURIComponent(slug).replace(/-/g, ' ')
+}
 
 export default function Products() {
    const [selectedCategory, setSelectedCategory] = useState('All')
@@ -536,6 +553,18 @@ export default function Products() {
       }
    }
 
+   const searchParams = useSearchParams()
+
+   // initialize selectedCategory from ?category=slug when present
+   useEffect(() => {
+      const catSlug = searchParams?.get('category')
+      if (catSlug && typeof catSlug === 'string') {
+         // `categories` is assumed to be the array used in this file to render pills
+         const resolved = unslugToCategory(catSlug, categories)
+         setSelectedCategory(resolved)
+      }
+   }, [searchParams])
+
    return (
       <>
          <Navbar />
@@ -739,17 +768,21 @@ export default function Products() {
                <div className='mb-8 space-y-4'>
                   {/* Category Pills */}
                   <div className='flex flex-wrap gap-3 justify-center'>
-                     {categories.map((category) => (
-                        <button
-                           key={category}
-                           onClick={() => setSelectedCategory(category)}
-                           className={`category-pill font-body font-medium ${
+                     {categories.map((category) => {
+                        const slug = slugifyCategory(category)
+                        return (
+                          <Link
+                            key={category}
+                            href={`/products/${slug}`}
+                            onClick={() => setSelectedCategory(category)}
+                            className={`category-pill font-body font-medium ${
                               selectedCategory === category ? 'active' : ''
-                           }`}
-                        >
-                           {category}
-                        </button>
-                     ))}
+                            }`}
+                          >
+                            {category}
+                          </Link>
+                        )
+                     })}
                   </div>
 
                   {/* Collection Pills - Smaller and differentiated */}
