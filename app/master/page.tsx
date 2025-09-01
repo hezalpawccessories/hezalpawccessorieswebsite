@@ -26,7 +26,7 @@ import {
    Copy,
    Percent,
 } from 'lucide-react'
-import { products as initialProducts, Product, sizes, SizePricing } from '@/lib/products'
+import { products as initialProducts, Product, sizes, SizePricing, categories } from '@/lib/products'
 import ProductModal from '../../components/ProductModal'
 import { 
    addProduct, 
@@ -3115,7 +3115,7 @@ export default function AdminDashboard() {
                               Applicable Categories (Leave empty for all categories)
                            </label>
                            <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
-                              {['Collars', 'Leashes', 'Collar-leash set', 'Bow ties', 'Bandanas', 'Harnesses', 'Toys', 'Accessories'].map((category) => (
+                              {categories.filter(cat => cat !== 'All').map((category) => (
                                  <label key={category} className='flex items-center space-x-2'>
                                     <input
                                        type='checkbox'
@@ -3299,7 +3299,7 @@ export default function AdminDashboard() {
                               Applicable Categories
                            </label>
                            <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
-                              {['Collars', 'Leashes', 'Collar-leash set', 'Bow ties', 'Bandanas', 'Harnesses', 'Toys', 'Accessories'].map((category) => (
+                              {categories.filter(cat => cat !== 'All').map((category) => (
                                  <label key={category} className='flex items-center space-x-2'>
                                     <input
                                        type='checkbox'
