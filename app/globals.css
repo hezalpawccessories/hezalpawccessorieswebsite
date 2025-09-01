@@ -700,3 +700,49 @@ body #nprogress .spinner-icon {
 .banner-transition-exit {
   animation: slide-out-left 0.5s ease-out;
 }
+
+/* Marquee Animation for Banner */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-continuous {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-continuous {
+  animation: marquee-continuous 40s linear infinite;
+}
+
+.animate-marquee-continuous:hover {
+  animation-play-state: paused;
+}
+
+/* Responsive marquee speed - No longer needed for continuous version */
+@media (max-width: 640px) {
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  
+  .animate-marquee-continuous {
+    animation: marquee-continuous 35s linear infinite;
+  }
+}

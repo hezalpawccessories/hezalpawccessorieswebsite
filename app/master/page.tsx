@@ -129,6 +129,10 @@ export default function AdminDashboard() {
    const [bannerImages, setBannerImages] = useState<string[]>([''])
    const [loadingBanners, setLoadingBanners] = useState(false)
 
+   // Simple banner management state
+   const [simpleBannerContent, setSimpleBannerContent] = useState('')
+   const [simpleBanners, setSimpleBanners] = useState<string[]>([])
+
    // Coupon management state
    const [coupons, setCoupons] = useState<Coupon[]>([])
    const [showAddCoupon, setShowAddCoupon] = useState(false)
@@ -453,19 +457,66 @@ export default function AdminDashboard() {
       }
    }
 
-   const toggleBannerStatus = async (bannerId: string, isActive: boolean) => {
+   // Simple Banner Management Functions
+   const addSimpleBanner = () => {
+      if (!simpleBannerContent.trim()) {
+         toast.error('Please enter banner content')
+         return
+      }
+      
+      setSimpleBanners(prev => [...prev, simpleBannerContent.trim()])
+      setSimpleBannerContent('')
+      toast.success('Banner added successfully')
+   }
+
+   const removeSimpleBanner = (index: number) => {
+      setSimpleBanners(prev => prev.filter((_, i) => i !== index))
+      toast.success('Banner removed')
+   }
+
+   const saveSimpleBanners = async () => {
+      if (simpleBanners.length === 0) {
+         toast.error('No banners to save')
+         return
+      }
+
+      setLoadingBanners(true)
       try {
-         await updateBanner(bannerId, { isActive })
+         // Convert simple banners to the required Banner format
+         const bannersToSave = simpleBanners.map((content, index) => ({
+            id: `simple_banner_${Date.now()}_${index}`,
+            title: content,
+            subtitle: '',
+            description: content,
+            imageUrl: '/logom.png', // Using default logo
+            linkUrl: '',
+            type: 'general' as Banner['type'],
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+         }))
+
+         // First deactivate all existing banners
+         const existingBanners = await getBanners()
+         await Promise.all(
+            existingBanners.map(banner => 
+               updateBanner(banner.id, { isActive: false })
+            )
+         )
+
+         // Add new simple banners
+         await Promise.all(
+            bannersToSave.map(banner => addBanner(banner))
+         )
+
          await loadBanners()
-         toast.success(`Banner ${isActive ? 'activated' : 'deactivated'} successfully`, {
-            duration: 3000,
-         })
+         setSimpleBanners([])
+         toast.success('Banners saved successfully!')
       } catch (error) {
-         console.error('Error updating banner status:', error)
-         toast.error('Failed to update banner status', {
-            description: 'Please try again',
-            duration: 4000,
-         })
+         console.error('Error saving simple banners:', error)
+         toast.error('Failed to save banners')
+      } finally {
+         setLoadingBanners(false)
       }
    }
 
@@ -1795,7 +1846,8 @@ Team Hezal Accessories 💜
                      transition={{ duration: 0.5 }}
                      className='bg-white rounded-xl shadow-lg p-6'
                   >
-                     <div className='flex justify-between items-center mb-6'>
+                     {/* COMMENTED OUT - Old Complex Banner Form */}
+                     {/* <div className='flex justify-between items-center mb-6'>
                         <h2 className='text-2xl font-heading font-bold text-text-dark'>Add Banner</h2>
                         <div className='flex gap-3'>
                            <button
@@ -1833,7 +1885,6 @@ Team Hezal Accessories 💜
                               </h3>
 
                               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                                 {/* Left Column - Basic Info */}
                                  <div className='space-y-4'>
                                     <div>
                                        <label className='block text-sm font-medium text-text-dark mb-2'>
@@ -1905,7 +1956,6 @@ Team Hezal Accessories 💜
                                     </div>
                                  </div>
 
-                                 {/* Right Column - Image & Link */}
                                  <div className='space-y-4'>
                                     <div>
                                        <label className='block text-sm font-medium text-text-dark mb-2'>
@@ -1981,12 +2031,107 @@ Team Hezal Accessories 💜
                               </div>
                            </div>
                         ))}
+                     </div> */}
+
+                     {/* New Simple Banner Form */}
+                     <div className='max-w-2xl mx-auto'>
+                        <h2 className='text-2xl font-heading font-bold text-text-dark text-center mb-8'>
+                           Banner Management
+                        </h2>
+                        
+                        <div className='bg-gray-50 rounded-lg p-6 space-y-4'>
+                           <div>
+                              <label className='block text-sm font-medium text-text-dark mb-2'>
+                                 Banner Content
+                              </label>
+                              <input
+                                 type='text'
+                                 value={simpleBannerContent}
+                                 onChange={(e) => setSimpleBannerContent(e.target.value)}
+                                 className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent text-lg'
+                                 placeholder='Enter your banner message (e.g., "🎉 Festival Sale - Get 50% OFF on all products! 🎉")'
+                              />
+                              <p className='text-xs text-gray-500 mt-1'>
+                                 This will appear as a scrolling banner at the top of the products page
+                              </p>
+                           </div>
+                           
+                           <div className='flex gap-3 pt-4'>
+                              <button
+                                 onClick={addSimpleBanner}
+                                 disabled={!simpleBannerContent.trim()}
+                                 className='flex-1 bg-primary-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                              >
+                                 <Plus className='w-4 h-4' />
+                                 Add Banner
+                              </button>
+                              
+                              <button
+                                 onClick={saveSimpleBanners}
+                                 disabled={loadingBanners}
+                                 className='flex-1 bg-primary-pink text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-pink/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                              >
+                                 <Save className='w-4 h-4' />
+                                 {loadingBanners ? 'Saving...' : 'Save Banners'}
+                              </button>
+                           </div>
+                        </div>
+
+                        {/* Current Banners Preview */}
+                        {simpleBanners.length > 0 && (
+                           <div className='mt-8'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-4'>Current Active Banners</h3>
+                              <div className='space-y-3'>
+                                 {simpleBanners.map((banner, index) => (
+                                    <div key={index} className='flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4'>
+                                       <div className='flex-1'>
+                                          <p className='text-gray-800'>{banner}</p>
+                                       </div>
+                                       <button
+                                          onClick={() => removeSimpleBanner(index)}
+                                          className='text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors'
+                                          title='Remove banner'
+                                       >
+                                          <Trash2 className='w-4 h-4' />
+                                       </button>
+                                    </div>
+                                 ))}
+                              </div>
+                           </div>
+                        )}
+
+                        {/* Preview Section */}
+                        {simpleBanners.length > 0 && (
+                           <div className='mt-8'>
+                              <h3 className='text-lg font-semibold text-text-dark mb-4'>Preview</h3>
+                              <div className='bg-gradient-to-r from-teal-400/90 via-blue-400/90 to-pink-300/90 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm'>
+                                 <div className='relative h-12 flex items-center bg-white/10'>
+                                    <div className='flex-1 overflow-hidden whitespace-nowrap'>
+                                       <div className='flex animate-marquee-continuous space-x-8'>
+                                          {/* Repeat banners multiple times for seamless scrolling */}
+                                          {Array.from({ length: 4 }, (_, repeatIndex) => 
+                                             simpleBanners.map((banner, bannerIndex) => (
+                                                <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-3 px-4'>
+                                                   <span className='text-xl'>🐾</span>
+                                                   <span className='text-white font-medium text-base'>
+                                                      {banner}
+                                                   </span>
+                                                   <span className='text-xl'>🐾</span>
+                                                </div>
+                                             ))
+                                          ).flat()}
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        )}
                      </div>
 
                      {/* Existing Banners */}
                      {banners.length > 0 && (
                         <div className='mt-12'>
-                           <h3 className='text-xl font-semibold text-text-dark mb-6'>Existing Banners</h3>
+                           <h3 className='text-xl font-semibold text-text-dark mb-6'>All Banners (Scrolling Display)</h3>
                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                               {banners.map((banner) => (
                                  <div key={banner.id} className='border border-gray-200 rounded-lg overflow-hidden'>
@@ -1998,11 +2143,6 @@ Team Hezal Accessories 💜
                                           height={200}
                                           className='w-full h-32 object-cover'
                                        />
-                                       <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${
-                                          banner.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                       }`}>
-                                          {banner.isActive ? 'Active' : 'Inactive'}
-                                       </div>
                                     </div>
                                     <div className='p-4'>
                                        <h4 className='font-semibold text-text-dark mb-1'>{banner.title}</h4>
@@ -2016,24 +2156,13 @@ Team Hezal Accessories 💜
                                           }`}>
                                              {banner.type.replace('-', ' ')}
                                           </span>
-                                          <div className='flex gap-2'>
-                                             <button
-                                                onClick={() => toggleBannerStatus(banner.id, !banner.isActive)}
-                                                className={`p-1 rounded ${
-                                                   banner.isActive ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'
-                                                }`}
-                                                title={banner.isActive ? 'Deactivate' : 'Activate'}
-                                             >
-                                                {banner.isActive ? <XCircle className='w-4 h-4' /> : <CheckCircle className='w-4 h-4' />}
-                                             </button>
-                                             <button
-                                                onClick={() => deleteBannerById(banner.id)}
-                                                className='p-1 text-red-600 hover:bg-red-50 rounded'
-                                                title='Delete'
-                                             >
-                                                <Trash2 className='w-4 h-4' />
-                                             </button>
-                                          </div>
+                                          <button
+                                             onClick={() => deleteBannerById(banner.id)}
+                                             className='p-1 text-red-600 hover:bg-red-50 rounded'
+                                             title='Delete'
+                                          >
+                                             <Trash2 className='w-4 h-4' />
+                                          </button>
                                        </div>
                                     </div>
                                  </div>

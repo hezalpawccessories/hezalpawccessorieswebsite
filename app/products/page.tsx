@@ -621,15 +621,14 @@ function ProductsContent() {
                   </p>
                </motion.div>
 
-               {/* Banner Carousel */}
-               {!loadingBanners && banners.length > 0 && (
+               {/* Banner Carousel - COMMENTED OUT */}
+               {/* {!loadingBanners && banners.length > 0 && (
                   <motion.div
                      initial={{ opacity: 0, y: 30 }}
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ duration: 0.8, delay: 0.2 }}
                      className='relative mb-12 rounded-2xl overflow-hidden shadow-2xl'
                   >
-                     {/* Main Banner Display */}
                      <div 
                         className='relative h-64 md:h-80 lg:h-96 cursor-pointer'
                         onTouchStart={onTouchStart}
@@ -647,9 +646,7 @@ function ProductsContent() {
                                  transition={{ duration: 0.5 }}
                                  className={`absolute inset-0 ${getBannerStyle(banners[currentBannerIndex].type).background}`}
                               >
-                                 {/* Banner Content */}
                                  <div className='relative h-full flex items-center justify-between px-6 md:px-12 lg:px-16'>
-                                    {/* Text Content */}
                                     <div className='flex-1 text-white z-10'>
                                        <div className='flex items-center gap-3 mb-4'>
                                           {(() => {
@@ -671,7 +668,7 @@ function ProductsContent() {
                                        </p>
                                        <button 
                                           onClick={(e) => {
-                                             e.stopPropagation() // Prevent banner click event
+                                             e.stopPropagation()
                                              banners[currentBannerIndex] && handleBannerClick(banners[currentBannerIndex])
                                           }}
                                           className='bg-white text-gray-800 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg'
@@ -679,8 +676,6 @@ function ProductsContent() {
                                           {getBannerStyle(banners[currentBannerIndex].type).cta}
                                        </button>
                                     </div>
-
-                                    {/* Banner Image/Logo */}
                                     <div className='hidden md:flex items-center justify-center w-48 lg:w-64 h-48 lg:h-64 relative'>
                                        <div className='w-32 lg:w-40 h-32 lg:h-40 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm banner-floating-element'>
                                           <Image
@@ -691,28 +686,16 @@ function ProductsContent() {
                                              className='w-20 lg:w-24 h-20 lg:h-24 object-contain'
                                           />
                                        </div>
-                                       {/* Floating decorative elements */}
                                        <div className='absolute -top-4 -right-4 w-8 h-8 bg-white/30 rounded-full animate-pulse banner-floating-element'></div>
                                        <div className='absolute -bottom-4 -left-4 w-6 h-6 bg-white/20 rounded-full animate-bounce'></div>
                                        <div className='absolute top-1/2 -left-8 w-4 h-4 bg-white/25 rounded-full animate-ping'></div>
                                     </div>
                                  </div>
-
-                                 {/* Gradient Overlay */}
                                  <div className='absolute inset-0 bg-black/10'></div>
-                                 
-                                 {/* Click indicator for mobile */}
-                                 {/* <div className='absolute top-4 left-4 md:hidden'>
-                                    <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm'>
-                                       Tap to explore
-                                    </div>
-                                 </div> */}
                               </motion.div>
                            )}
                         </AnimatePresence>
                      </div>
-
-                  {/* Navigation Controls */}
                   <div className='absolute inset-y-0 left-4 flex items-center'>
                      <button
                         onClick={(e) => {
@@ -737,8 +720,6 @@ function ProductsContent() {
                         <ChevronRight className='w-6 h-6' />
                      </button>
                   </div>
-
-                  {/* Dots Indicator */}
                   <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3'>
                      {banners.map((banner, index) => (
                         <button
@@ -756,8 +737,6 @@ function ProductsContent() {
                         />
                      ))}
                   </div>
-
-                  {/* Auto-play indicator with pause/play functionality */}
                   <div className='absolute top-4 right-4'>
                      <button
                         onClick={(e) => {
@@ -771,8 +750,6 @@ function ProductsContent() {
                         </div>
                      </button>
                   </div>
-
-                  {/* Swipe indicator for mobile */}
                   <div className='absolute bottom-16 right-4 md:hidden'>
                      <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm flex items-center gap-1'>
                         <ChevronLeft className='w-3 h-3' />
@@ -780,15 +757,6 @@ function ProductsContent() {
                         <ChevronRight className='w-3 h-3' />
                      </div>
                   </div>
-
-                  {/* Keyboard navigation hint for desktop */}
-                  {/* <div className='absolute bottom-16 left-4 hidden md:block'>
-                     <div className='bg-white/20 px-2 py-1 rounded-full text-white text-xs font-medium backdrop-blur-sm'>
-                        Use ← → keys or spacebar to control
-                     </div>
-                  </div> */}
-
-                  {/* Progress Bar */}
                   {isAutoplaying && (
                      <div className='absolute bottom-0 left-0 w-full h-1 bg-white/20'>
                         <div 
@@ -797,6 +765,35 @@ function ProductsContent() {
                         />
                      </div>
                   )}
+                  </motion.div>
+               )} */}
+
+               {/* New Sleek Banner */}
+               {!loadingBanners && banners.length > 0 && (
+                  <motion.div
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.6 }}
+                     className='mb-8 bg-gradient-to-r from-teal-400/90 via-blue-400/90 to-pink-300/90 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm'
+                  >
+                     <div className='relative h-12 flex items-center bg-white/10'>
+                        <div className='flex-1 overflow-hidden whitespace-nowrap'>
+                           <div className='flex animate-marquee-continuous space-x-8'>
+                              {/* Repeat banners multiple times for seamless scrolling */}
+                              {Array.from({ length: 4 }, (_, repeatIndex) => 
+                                 banners.map((banner, bannerIndex) => (
+                                    <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-3 px-4'>
+                                       <span className='text-xl'>🐾</span>
+                                       <span className='text-white font-medium text-base'>
+                                          {banner.title}
+                                       </span>
+                                       <span className='text-xl'>🐾</span>
+                                    </div>
+                                 ))
+                              ).flat()}
+                           </div>
+                        </div>
+                     </div>
                   </motion.div>
                )}
 
