@@ -729,7 +729,7 @@ body #nprogress .spinner-icon {
 }
 
 .animate-marquee-continuous {
-  animation: marquee-continuous 40s linear infinite;
+  animation: marquee-continuous 20s linear infinite;
 }
 
 .animate-marquee-continuous:hover {
@@ -743,6 +743,6 @@ body #nprogress .spinner-icon {
   }
   
   .animate-marquee-continuous {
-    animation: marquee-continuous 35s linear infinite;
+    animation: marquee-continuous 10s linear infinite;
   }
 }

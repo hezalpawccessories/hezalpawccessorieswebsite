@@ -976,7 +976,7 @@ export default function AdminDashboard() {
 
 Thank you for shopping with Hezal Accessories! 🐾
 
-We're delighted to inform you that your order is currently being processed with care. Your furry friend is going to look absolutely pawsome with our premium pet accessories!
+We're delighted to inform you that your order is currently being processed with care. Your furry baby is going to look absolutely pawsome with our premium pet accessories!
 
 Order Details:
 ━━━━━━━━━━━━━━━━━━━━
