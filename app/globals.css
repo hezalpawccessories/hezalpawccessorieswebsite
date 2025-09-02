@@ -711,12 +711,30 @@ body #nprogress .spinner-icon {
   }
 }
 
+@keyframes marquee-continuous-landing {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes marquee-continuous {
   0% {
     transform: translateX(100%);
   }
   100% {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee-continuous-smalls {
+  0% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(-300%);
   }
 }
 
@@ -729,10 +747,18 @@ body #nprogress .spinner-icon {
 }
 
 .animate-marquee-continuous {
+  animation: marquee-continuous 15s linear infinite;
+}
+
+.animate-marquee-continuous-landing {
   animation: marquee-continuous 20s linear infinite;
 }
 
 .animate-marquee-continuous:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee-continuous-landing:hover {
   animation-play-state: paused;
 }
 
@@ -742,7 +768,11 @@ body #nprogress .spinner-icon {
     animation: marquee 30s linear infinite;
   }
   
-  .animate-marquee-continuous {
-    animation: marquee-continuous 10s linear infinite;
+  .animate-marquee-continuous-smalls {
+    animation: marquee-continuous-smalls 25s linear infinite;
+  }
+  
+  .animate-marquee-continuous-landing {
+    animation: marquee-continuous-landing 25s linear infinite;
   }
 }

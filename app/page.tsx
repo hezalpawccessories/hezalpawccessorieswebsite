@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 
 export default function Home() {
    const features = [
@@ -54,9 +56,92 @@ export default function Home() {
       },
    ]
 
+   // Banner state
+   const [banners, setBanners] = useState<Banner[]>([])
+   const [loadingBanners, setLoadingBanners] = useState(true)
+
+   // Load banners from Firebase
+   const loadBanners = async () => {
+      try {
+         setLoadingBanners(true)
+         const fetchedBanners = await getBanners()
+         // Show all banners since we're using continuous scrolling now
+         setBanners(fetchedBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+      } catch (error) {
+         console.error('Error loading banners:', error)
+         setBanners([])
+      } finally {
+         setLoadingBanners(false)
+      }
+   }
+
+   // Load banners on component mount
+   useEffect(() => {
+      loadBanners()
+   }, [])
+
    return (
       <>
          <Navbar />
+         
+         {/* Prominent Landing Page Banner */}
+         {!loadingBanners && banners.length > 0 && (
+            <motion.div
+               initial={{ opacity: 0, y: -20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8 }}
+               className='relative bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 overflow-hidden'
+            >
+               {/* Background Pattern */}
+               <div className='absolute inset-0 bg-black/10'></div>
+               <div className='absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5'></div>
+               
+               {/* Floating Decorative Elements */}
+               <div className='absolute top-2 left-10 animate-bounce'>
+                  <Heart className='w-4 h-4 text-white/60' />
+               </div>
+               <div className='absolute bottom-2 right-16 animate-pulse'>
+                  <Gift className='w-5 h-5 text-white/60' />
+               </div>
+               <div className='absolute top-3 right-32 animate-bounce' style={{ animationDelay: '0.5s' }}>
+                  <Star className='w-3 h-3 text-white/60' />
+               </div>
+               
+               <div className='relative z-10 py-4 px-4'>
+                  <div className='max-w-7xl mx-auto'>
+                     <div className='flex items-center justify-center space-x-8 overflow-hidden'>
+                        <div className='flex animate-marquee-continuous-landing space-x-24'>
+                           {/* Repeat banners for seamless scrolling */}
+                           {Array.from({ length: 3 }, (_, repeatIndex) => 
+                              banners.map((banner, bannerIndex) => (
+                                 <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-4 whitespace-nowrap'>
+                                    {/* <span className='text-2xl'>✨</span> */}
+                                    <span className='text-white font-bold text-base sm:text-lg lg:text-xl tracking-wide'>
+                                       {banner.title}
+                                    </span>
+                                    {/* <span className='text-2xl'>🎉</span> */}
+                                    {banner.subtitle && (
+                                       <>
+                                          <span className='text-white/80 text-base lg:text-lg mx-2'>•</span>
+                                          <span className='text-white/90 font-medium text-base lg:text-lg'>
+                                             {banner.subtitle}
+                                          </span>
+                                       </>
+                                    )}
+                                    {/* <span className='text-2xl'>✨</span> */}
+                                 </div>
+                              ))
+                           ).flat()}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               
+               {/* Bottom gradient fade */}
+               <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent'></div>
+            </motion.div>
+         )}
+         
          <main className='pet-pattern-bg'>
             {/* Hero Section */}
             <section className='relative overflow-hidden hero-bg'>
@@ -80,7 +165,7 @@ export default function Home() {
                   </div>
                </div>
 
-               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10'>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
                      <motion.div
                         initial={{ opacity: 0, x: -50 }}

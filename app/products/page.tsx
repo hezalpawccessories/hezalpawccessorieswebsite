@@ -201,8 +201,8 @@ function ProductsContent() {
       try {
          setLoadingBanners(true)
          const fetchedBanners = await getBanners()
-         const activeBanners = fetchedBanners.filter(banner => banner.isActive)
-         setBanners(activeBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
+         // Show all banners since we're using continuous scrolling now
+         setBanners(fetchedBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()))
       } catch (error) {
          console.error('Error loading banners:', error)
          // Fall back to dummy data if fetch fails
@@ -778,13 +778,27 @@ function ProductsContent() {
                   >
                      <div className='relative h-12 flex items-center bg-white/10'>
                         <div className='flex-1 overflow-hidden whitespace-nowrap'>
-                           <div className='flex animate-marquee-continuous space-x-8'>
+                           <div className='hidden sm:flex animate-marquee-continuous space-x-8'>
                               {/* Repeat banners multiple times for seamless scrolling */}
                               {Array.from({ length: 4 }, (_, repeatIndex) => 
                                  banners.map((banner, bannerIndex) => (
                                     <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-3 px-4'>
                                        <span className='text-xl'>🐾</span>
-                                       <span className='text-white font-medium text-base'>
+                                       <span className='text-gray-800 font-medium text-base'>
+                                          {banner.title}
+                                       </span>
+                                       <span className='text-xl'>🐾</span>
+                                    </div>
+                                 ))
+                              ).flat()}
+                           </div>
+                           <div className='flex sm:hidden animate-marquee-continuous-smalls space-x-8'>
+                              {/* Repeat banners multiple times for seamless scrolling */}
+                              {Array.from({ length: 4 }, (_, repeatIndex) => 
+                                 banners.map((banner, bannerIndex) => (
+                                    <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-3 px-4'>
+                                       <span className='text-xl'>🐾</span>
+                                       <span className='text-gray-800 font-medium text-base'>
                                           {banner.title}
                                        </span>
                                        <span className='text-xl'>🐾</span>
