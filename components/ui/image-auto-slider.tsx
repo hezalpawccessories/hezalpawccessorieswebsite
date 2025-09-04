@@ -18,8 +18,10 @@ export default function ImageAutoSlider() {
     { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/272174770_614123276361632_1171529176954943132_n_zehqi5.jpg', title: 'Happy Pet 11' },
   ], [])
 
-  const images = happyPetItems.map(i => i.src)
-  const duplicatedImages = [...images, ...images]
+  const duplicatedItems = useMemo(() => {
+    const imgs = happyPetItems.map(i => ({ src: i.src, title: i.title }))
+    return [...imgs, ...imgs]
+  }, [happyPetItems])
 
   const BLUR_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23f3f4f6'/></svg>"
 
@@ -37,9 +39,15 @@ export default function ImageAutoSlider() {
         <div className="relative z-10 w-full flex items-center justify-center py-8">
           <div className="scroll-container w-full max-w-6xl">
             <div className="infinite-scroll flex gap-6 w-max">
-              {duplicatedImages.map((src, index) => (
+              {duplicatedItems.map((item, index) => (
                 <div key={index} className="image-item flex-shrink-0 w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-xl overflow-hidden shadow-sm relative">
-                  <Image src={src} alt={`Happy pet ${(index % images.length) + 1}`} fill className="object-cover" sizes="(max-width: 640px) 6rem, (max-width: 1024px) 8rem, 12rem" placeholder="blur" blurDataURL={BLUR_PLACEHOLDER} quality={60} />
+                  {/* Badge / Pill overlay */}
+                  <div className="absolute top-2 left-2 z-20">
+                    <span className="inline-block bg-white/90 text-gray-900 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm drop-shadow-sm">
+                      {item.title}
+                    </span>
+                  </div>
+                  <Image src={item.src} alt={item.title || `Happy pet ${index + 1}`} fill className="object-cover" sizes="(max-width: 640px) 6rem, (max-width: 1024px) 8rem, 12rem" placeholder="blur" blurDataURL={BLUR_PLACEHOLDER} quality={60} />
                 </div>
               ))}
             </div>
