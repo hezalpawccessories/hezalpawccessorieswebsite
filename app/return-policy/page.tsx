@@ -49,7 +49,7 @@ export default function ReturnPolicy() {
                 <div>
                   <h3 className='text-lg font-heading font-semibold text-gray-800 mb-2'>Damaged or Incorrect Orders</h3>
                   <p className='font-body text-gray-600'>
-                    If your order arrives damaged or incorrect, please email hezalpawccessories@gmail.com or call +91 70602 66900 within 24 hours of delivery. We will review on a case-by-case basis.
+                    If your order arrives damaged or incorrect, please email hezalaccessories@gmail.com or call +91 70602 66900 within 24 hours of delivery. We will review on a case-by-case basis.
                   </p>
                 </div>
               </div>
@@ -64,8 +64,8 @@ export default function ReturnPolicy() {
                 <p className='text-gray-700 font-medium text-sm sm:text-base break-words'>
                   <span className='block sm:inline'>For any questions, contact:</span>
                   <span className='block sm:inline mt-2 sm:mt-0'>
-                    <a href='mailto:hezalpawccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
-                      hezalpawccessories@gmail.com
+                    <a href='mailto:hezalaccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
+                      hezalaccessories@gmail.com
                     </a>
                   </span>
                   <span className='block sm:inline mt-2 sm:mt-0'>

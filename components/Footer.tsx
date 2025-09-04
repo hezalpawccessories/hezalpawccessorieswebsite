@@ -33,7 +33,7 @@ export default function Footer() {
                   </p>
                   <div className='flex items-center space-x-2 text-sm text-gray-300'>
                      <Mail className='w-4 h-4' />
-                     <span>hezalpawccessories@gmail.com</span>
+                     <span>hezalaccessories@gmail.com</span>
                   </div>
                </div>
 

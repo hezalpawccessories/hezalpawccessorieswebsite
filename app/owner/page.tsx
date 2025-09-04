@@ -239,7 +239,7 @@ export default function Owner() {
                      <div className='flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8'>
                         <div className='flex items-center space-x-2 text-white'>
                            <Mail className='w-5 h-5' />
-                           <span>hezalpawccessories@gmail.com</span>
+                           <span>hezalaccessories@gmail.com</span>
                         </div>
                         <div className='flex items-center space-x-2 text-white'>
                            <Phone className='w-5 h-5' />
