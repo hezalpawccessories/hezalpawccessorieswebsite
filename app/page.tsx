@@ -2,11 +2,12 @@
 
 import ProgressLink from '@/components/ProgressLink'
 import { ArrowRight, Star, Shield, Truck, Heart, Gift } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
-import { useState, useEffect, useRef, useMemo } from 'react'
+import ImageAutoSlider from '@/components/ui/image-auto-slider'
+import { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 
 export default function Home() {
@@ -37,22 +38,26 @@ export default function Home() {
       {
          name: '@sparkle.shiro',
          rating: 5,
-         comment: 'I was looking for bandanas for my furbaby for festive occasions and while scrolling through Instagram, I came across Hezal accessories profile and instantly liked their products. Hezal accessories has a wide collection for all occasions with exquisite designs. Also, the quality is top-notch. Service is good and products are delivered on time without requiring any follow up, glad to be their customer.',
+         comment:
+            'I was looking for bandanas for my furbaby for festive occasions and while scrolling through Instagram, I came across Hezal accessories profile and instantly liked their products. Hezal accessories has a wide collection for all occasions with exquisite designs. Also, the quality is top-notch. Service is good and products are delivered on time without requiring any follow up, glad to be their customer.',
       },
       {
          name: '@lexie_quinn_maben',
          rating: 5,
-         comment: 'Hezal accessories is my favourite small business. The person handling the business is a kind and a generous person. The accessories from here is a top tier. Every single accessory is made with the best quality and materials. Every print here is unique and adorable. I have purchased a lot of accessories and I was always satisfied with the products. My fur babies look very stunning with your accessories.',
+         comment:
+            "Hezal accessories is my favourite small business. The person handling the business is a kind and a generous person. The accessories from here is a top tier. Every single accessory is made with the best quality and materials. Every print here is unique and adorable. I have purchased a lot of accessories and I was always satisfied with the products. My fur babies look very stunning with your accessories.",
       },
       {
          name: '@boozo_boi',
          rating: 5,
-         comment: 'I had tried from different brand they had just provided a strap to attach which wasn\'t looking that great. And the collar is also of a nice length. All the products are not only adorable but durable as well.',
+         comment:
+            "I had tried from different brand they had just provided a strap to attach which wasn't looking that great. And the collar is also of a nice length. All the products are not only adorable but durable as well.",
       },
       {
          name: '@bing_nova',
          rating: 5,
-         comment: 'We ordered our first ever bandana from Hezal, the quality was absolutely amazing, everything from the fabric to the pattern was just spectacular. Now we\'re the proud owners of easily 20 HA pieces 😍',
+         comment:
+            "We ordered our first ever bandana from Hezal, the quality was absolutely amazing, everything from the fabric to the pattern was just spectacular. Now we're the proud owners of easily 20 HA pieces 😍",
       },
    ]
 
@@ -80,86 +85,12 @@ export default function Home() {
       loadBanners()
    }, [])
 
-   // Happy Pets mini-carousel items and responsive slide logic
-   // Optimized Cloudinary URLs: inserted transformation to use auto format/quality and crop to 800x800
-   const happyPetItems = useMemo(() => [
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/287312017_440724157868763_8123535573385101371_n_gbsokk.jpg', title: 'Happy Pet 1' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/241312174_534383720955271_3438449773866577894_n_zzvg77.jpg', title: 'Happy Pet 2' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/286480875_377847924328079_4008121744032669407_n_y7jqmg.jpg', title: 'Happy Pet 3' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963916/327548327_3177782035866949_179112891589676750_n_o9jcdi.jpg', title: 'Happy Pet 4' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/322924510_142221248631298_4512437418189425826_n_dhm5me.jpg', title: 'Happy Pet 5' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/290007258_179777054478160_4353043592713499427_n_rg9yaq.jpg', title: 'Happy Pet 6' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/287312017_440724157868763_8123535573385101371_n_gbsokk.jpg', title: 'Happy Pet 7' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/283434743_153422697190659_4480803216439245309_n_mo28gg.jpg', title: 'Happy Pet 8' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/278460836_1513183882416940_690120010142730407_n_cz83fa.jpg', title: 'Happy Pet 9' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/266275373_624245152032151_9028644669941105180_n_pjddcu.jpg', title: 'Happy Pet 10' },
-      { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/272174770_614123276361632_1171529176954943132_n_zehqi5.jpg', title: 'Happy Pet 11' },
-   ], [])
-
-   // Simple neutral tiny SVG used as a blur placeholder (LQIP)
-   const BLUR_PLACEHOLDER = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><rect width='10' height='10' fill='%23f3f4f6'/></svg>"
-
-   // Touch/swipe handling refs
-   const touchStartX = useRef<number | null>(null)
-   const touchDeltaX = useRef<number>(0)
-
-   // ARIA live message for screen readers when slide changes
-   const [liveMessage, setLiveMessage] = useState('')
-
-   const [imagesPerSlide, setImagesPerSlide] = useState(() => {
-      if (typeof window === 'undefined') return 3
-      const w = window.innerWidth
-      if (w < 640) return 1
-      if (w < 1024) return 2
-      return 3
-   })
-
-   const [slides, setSlides] = useState<string[][]>(() => {
-      const chunks: string[][] = []
-      for (let i = 0; i < happyPetItems.length; i += 3) {
-         chunks.push(happyPetItems.slice(i, i + 3).map(it => it.src))
-      }
-      return chunks
-   })
-
-   useEffect(() => {
-   const rebuild = () => {
-         const w = window.innerWidth
-         const per = w < 640 ? 1 : w < 1024 ? 2 : 3
-         setImagesPerSlide(per)
-         const chunks: string[][] = []
-         for (let i = 0; i < happyPetItems.length; i += per) {
-            chunks.push(happyPetItems.slice(i, i + per).map(it => it.src))
-         }
-      setSlides(chunks)
-      // reset index to 0 when layout changes to avoid out-of-range indexes
-      setHappyIndex(0)
-   }
-   rebuild()
-   window.addEventListener('resize', rebuild)
-   return () => window.removeEventListener('resize', rebuild)
-   }, [happyPetItems])
-
-   const [happyIndex, setHappyIndex] = useState(0)
-   useEffect(() => {
-      if (slides.length <= 1) return
-      const t = setInterval(() => {
-         setHappyIndex(i => (i + 1) % slides.length)
-      }, 3500)
-      return () => clearInterval(t)
-   }, [slides.length])
-
-      // announce slide changes for screen readers
-      useEffect(() => {
-         const total = slides.length || 0
-         const current = slides.length > 0 ? (happyIndex + 1) : 0
-         if (total > 0) setLiveMessage(`Showing ${current} of ${total} slides`)
-      }, [happyIndex, slides.length])
+   // The previous mini-carousel state/logic was removed in favor of ImageAutoSlider component above.
 
    return (
       <>
          <Navbar />
-         
+
          {/* Prominent Landing Page Banner */}
          {!loadingBanners && banners.length > 0 && (
             <motion.div
@@ -184,6 +115,7 @@ export default function Home() {
                </div>
                
                <div className='relative z-10 py-4 px-4'>
+                  
                   <div className='max-w-7xl mx-auto'>
                      <div className='flex items-center justify-center space-x-8 overflow-hidden'>
                         <div className='flex animate-marquee-continuous-landing space-x-24'>
@@ -217,9 +149,9 @@ export default function Home() {
                <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent'></div>
             </motion.div>
          )}
-         
          <main className='pet-pattern-bg'>
-            {/* Hero Section */}
+            
+
             <section className='relative overflow-hidden hero-bg'>
                {/* Floating Pet Icons */}
                <div className='absolute inset-0 pointer-events-none'>
@@ -240,7 +172,6 @@ export default function Home() {
                      <Gift className='w-7 h-7 text-pink-400' />
                   </div>
                </div>
-
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>
                   <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
                      <motion.div
@@ -464,85 +395,18 @@ export default function Home() {
                </div>
             </section>
 
-            {/* Our Happy Pets Mini Carousel */}
+            {/* Our Happy Pets Auto Slider */}
             <section className='py-8 lg:py-12 bg-white'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                   <div className='text-center mb-6'>
                      <h3 className='text-2xl font-semibold'>Our Happy Pets 🐾</h3>
                      <p className='text-sm text-gray-500'>A few snaps from our lovely customers</p>
                   </div>
-
-                  <div
-                     className='relative'
-                     onTouchStart={(e) => {
-                        touchStartX.current = e.touches[0].clientX
-                     }}
-                     onTouchMove={(e) => {
-                        if (touchStartX.current === null) return
-                        touchDeltaX.current = e.touches[0].clientX - touchStartX.current
-                     }}
-                     onTouchEnd={() => {
-                        const delta = touchDeltaX.current
-                        const threshold = 40
-                        if (delta > threshold) {
-                           // swipe right -> prev
-                           if (slides.length > 0) setHappyIndex((n) => (n - 1 + slides.length) % slides.length)
-                        } else if (delta < -threshold) {
-                           // swipe left -> next
-                           if (slides.length > 0) setHappyIndex((n) => (n + 1) % slides.length)
-                        }
-                        touchStartX.current = null
-                        touchDeltaX.current = 0
-                     }}
-                  >
-                     <div className={`grid gap-4 ${imagesPerSlide === 1 ? 'grid-cols-1' : imagesPerSlide === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                        {happyPetItems.slice(happyIndex * imagesPerSlide, happyIndex * imagesPerSlide + imagesPerSlide).map((it, i) => (
-                           <div key={i} className='w-full aspect-square rounded-lg overflow-hidden border border-gray-100 relative'>
-                              <Image src={it.src} alt={it.title} width={400} height={400} className='w-full h-full object-cover' loading='lazy' quality={60} placeholder='blur' blurDataURL={BLUR_PLACEHOLDER} />
-                              <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2'>
-                                 <p className='text-white text-sm font-semibold truncate'>{it.title}</p>
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-
-                     {/* Controls */}
-                     <div className='absolute inset-y-0 left-0 flex items-center'>
-                        <button
-                           onClick={() => slides.length > 0 && setHappyIndex((n) => (n - 1 + slides.length) % slides.length)}
-                           className={`bg-white/90 p-2 rounded-full shadow-sm -ml-2 ${slides.length === 0 ? 'opacity-40 pointer-events-none' : ''}`}
-                           aria-label='Previous'
-                        >
-                           ◀
-                        </button>
-                     </div>
-                     <div className='absolute inset-y-0 right-0 flex items-center'>
-                        <button
-                           onClick={() => slides.length > 0 && setHappyIndex((n) => (n + 1) % slides.length)}
-                           className={`bg-white/90 p-2 rounded-full shadow-sm -mr-2 ${slides.length === 0 ? 'opacity-40 pointer-events-none' : ''}`}
-                           aria-label='Next'
-                        >
-                           ▶
-                        </button>
-                     </div>
-
-                     {/* Indicators */}
-                     <div className='mt-4 flex items-center justify-center space-x-2'>
-                        {slides.map((_, idx) => (
-                           <button
-                              key={idx}
-                              onClick={() => setHappyIndex(idx)}
-                              className={`w-2 h-2 rounded-full ${idx === happyIndex ? 'bg-pink-500' : 'bg-gray-300'}`}
-                              aria-label={`Go to slide ${idx + 1}`}
-                           />
-                        ))}
-                     </div>
-
-                     {/* ARIA live for screen readers */}
-                     <span className='sr-only' aria-live='polite'>{liveMessage}</span>
-                  </div>
+                  <ImageAutoSlider />
                </div>
             </section>
+
+            
 
             {/* CTA Section */}
             <section className='py-16 lg:py-20 bg-gradient-to-r from-pink-500 to-pink-600 relative overflow-hidden'>
