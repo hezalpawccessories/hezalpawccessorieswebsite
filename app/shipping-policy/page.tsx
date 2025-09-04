@@ -83,6 +83,10 @@ export default function ShippingPolicy() {
                   </span>
                 </p>
               </div>
+
+              <div className='mt-6'>
+                <p className='text-sm text-gray-600'>Prices are inclusive of all taxes, packaging and handling.</p>
+              </div>
             </div>
           </div>
         </div>

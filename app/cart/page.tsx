@@ -549,6 +549,10 @@ export default function Cart() {
                            </div>
                         </div>
 
+                          <div className='mb-4'>
+                             <p className='text-sm text-gray-600'>Prices are inclusive of all taxes, packaging and handling.</p>
+                          </div>
+
                         <button
                            onClick={() => setShowCheckout(true)}
                            className='btn-primary w-full'

@@ -1122,20 +1122,16 @@ function ProductsContent() {
                               </div> 
                               {/* <span>Name</span> */}
                               {product.category === 'Treat Jars' && (
-                                 <div className='mt-4'>
-                                    <label className='block text-xs font-medium text-text-dark mb-2'>
-                                       Custom Name for Jar *
-                                    </label>
-                                    <input 
-                                       name='customName'
+                                 <div className='mb-6'>
+                                    <input
                                        type='text'
                                        value={customNames[product.id] || ''}
                                        onChange={(e) => setCustomNames(prev => ({
                                           ...prev,
-                                          [product.id]: e.target.value
+                                          [product.id]: (e.target as HTMLInputElement).value
                                        }))}
                                        className='border border-gray-300 rounded-md p-2 w-36 text-sm focus:ring-2 focus:ring-primary-pink focus:border-transparent'
-                                       placeholder='Snuggle&apos;s Treats'
+                                       placeholder="Snuggle's Treats"
                                        maxLength={20}
                                     />
                                     <p className='text-xs text-text-light mt-1'>
@@ -1282,6 +1278,8 @@ function ProductsContent() {
                               <ShoppingCart className='w-4 h-4' />
                               <span>{isInCart(product.id) ? 'In Cart' : 'Add to Cart'}</span>
                            </button>
+
+                              <p className='text-xs text-gray-600 mt-3'>For Express Delivery <a href='/contact' className='text-pink-600 hover:underline ml-1'>Contact us</a>.</p>
                         </div>
                      </motion.div>
                   ))}
