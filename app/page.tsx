@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
 import ImageAutoSlider from '@/components/ui/image-auto-slider'
+import AnimatedSlideshow from '@/components/ui/animated-slideshow'
 import { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 
@@ -291,66 +292,38 @@ export default function Home() {
                      transition={{ duration: 0.8 }}
                      className='text-center mb-12'
                   >
-                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
+                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-2 leading-tight'>
                         Pet Accessories
                      </h2>
-                     <p className='text-lg font-body text-gray-600'>Discover our most popular pet accessories</p>
+                     <p className='text-lg font-body text-gray-600'>Adorable Finds, One Category at a Time</p>
                   </motion.div>
 
-                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
-                     {[
+
+                  {/* Animated categories slideshow */}
+                  <AnimatedSlideshow
+                     slides={[
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_v6ppiw.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757081273/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_qxqxbn.png',
                            title: 'Bandana/Neck Scarf',
-                           description: 'Stylish bandanas and neck scarfs to make your pet look adorable.',
                         },
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_kxgvl7.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757082005/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_qgcyy9.png',
                            title: 'Bow Ties',
-                           description: 'Elegant bow ties perfect for special occasions and formal events.',
                         },
                         {
                            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg',
                            title: 'Collars',
-                           description: 'Premium quality collars for comfort, style, and safety.',
                         },
                         {
                            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.33.09_20740e7c_n08afc.jpg',
                            title: 'Collar-Leash Set',
-                           description: 'Complete matching sets for convenient and stylish walks.',
                         },
                         {
                            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.34.56_e1ff4a5d_vur11d.jpg',
                            title: 'Treat Jars',
-                           description: 'Beautiful jars to keep your pet treats fresh and organized.',
                         },
-                     ].map((product, index) => (
-                        <motion.div
-                           key={index}
-                           initial={{ opacity: 0, y: 50 }}
-                           whileInView={{ opacity: 1, y: 0 }}
-                           transition={{ duration: 0.8, delay: index * 0.1 }}
-                           className='product-card'
-                        >
-                           <div className='product-tag'>
-                              {['💖 Popular', '✨ New', '🏆 Best Seller', '🎯 Featured', '⭐ Top Rated'][index % 5]}
-                           </div>
-                           <Image
-                              width={300}
-                              height={192}
-                              src={product.image}
-                              alt={product.title}
-                              className='w-full h-48 object-contain product-image'
-                              quality={70}
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                           />
-                           <div className='p-6'>
-                              <h3 className='text-lg subheading text-gray-900 mb-2'>{product.title}</h3>
-                              <p className='font-body text-gray-600 text-sm leading-relaxed'>{product.description}</p>
-                           </div>
-                        </motion.div>
-                     ))}
-                  </div>
+                     ]}
+                  />
 
                   <div className='text-center mt-12'>
                      <ProgressLink href='/products'>
