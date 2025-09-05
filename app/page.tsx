@@ -59,6 +59,12 @@ export default function Home() {
          comment:
             "We ordered our first ever bandana from Hezal, the quality was absolutely amazing, everything from the fabric to the pattern was just spectacular. Now we're the proud owners of easily 20 HA pieces 😍",
       },
+      {
+         name: '@victor_labrador_doggo',
+         rating: 5,
+         comment:
+            "I absolutely love Hezal Accessories, the best brand for my dog's outfits! 💕 Their products are stylish, well-made, and super comfortable for pets. The fabric quality is excellent – soft, durable, and gentle on the skin. The designs are creative and available in all sizes, making it easy to find the perfect fit. I have a reversible bandana (Mickey Mouse + polka dots), a festive Christmas bandana, and an army-style bowtie – all of them look amazing on my dog and fit perfectly. Stylish, comfy, and always bringing compliments. Highly recommend! 🐾✨We absolutely love you guys ♥ Keep growing and shining always ✨"
+      }
    ]
 
    // Banner state
@@ -294,27 +300,27 @@ export default function Home() {
                   <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
                      {[
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748839/tifvu5yxe0bazzkjzwkc.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_v6ppiw.jpg',
                            title: 'Bandana/Neck Scarf',
                            description: 'Stylish bandanas and neck scarfs to make your pet look adorable.',
                         },
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748847/kqf32mly7jml2teksnuq.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_kxgvl7.jpg',
                            title: 'Bow Ties',
                            description: 'Elegant bow ties perfect for special occasions and formal events.',
                         },
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748848/lqvbjpqp2at20lbvyc3e.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg',
                            title: 'Collars',
                            description: 'Premium quality collars for comfort, style, and safety.',
                         },
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755748848/qctbldtccje0xz7snf9j.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.33.09_20740e7c_n08afc.jpg',
                            title: 'Collar-Leash Set',
                            description: 'Complete matching sets for convenient and stylish walks.',
                         },
                         {
-                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755700962/cdes14y3aody7smerz7p.jpg',
+                           image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.34.56_e1ff4a5d_vur11d.jpg',
                            title: 'Treat Jars',
                            description: 'Beautiful jars to keep your pet treats fresh and organized.',
                         },
@@ -334,7 +340,7 @@ export default function Home() {
                               height={192}
                               src={product.image}
                               alt={product.title}
-                              className='w-full h-48 object-cover product-image'
+                              className='w-full h-48 object-contain product-image'
                               quality={70}
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                            />

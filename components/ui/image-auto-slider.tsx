@@ -5,17 +5,18 @@ import Image from 'next/image'
 
 export default function ImageAutoSlider() {
   const happyPetItems = useMemo(() => [
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/287312017_440724157868763_8123535573385101371_n_gbsokk.jpg', title: 'Happy Pet 1' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/241312174_534383720955271_3438449773866577894_n_zzvg77.jpg', title: 'Pawfully.yours' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/286480875_377847924328079_4008121744032669407_n_y7jqmg.jpg', title: 'Happy Pet 3' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963916/327548327_3177782035866949_179112891589676750_n_o9jcdi.jpg', title: 'Happy Pet 4' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/322924510_142221248631298_4512437418189425826_n_dhm5me.jpg', title: 'Happy Pet 5' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/290007258_179777054478160_4353043592713499427_n_rg9yaq.jpg', title: 'Happy Pet 6' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/287312017_440724157868763_8123535573385101371_n_gbsokk.jpg', title: 'Happy Pet 7' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/283434743_153422697190659_4480803216439245309_n_mo28gg.jpg', title: 'Happy Pet 8' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/278460836_1513183882416940_690120010142730407_n_cz83fa.jpg', title: 'zolathechonkygal' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/266275373_624245152032151_9028644669941105180_n_pjddcu.jpg', title: 'Happy Pet 10' },
-    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/272174770_614123276361632_1171529176954943132_n_zehqi5.jpg', title: 'Happy Pet 11' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/287312017_440724157868763_8123535573385101371_n_gbsokk.jpg', title: '@bruno_the.golden.boy_' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963914/241312174_534383720955271_3438449773866577894_n_zzvg77.jpg', title: '@pawfully.yours' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800//v1757077947/WhatsApp_Image_2025-09-04_at_19.49.01_16785791_od8tnd.jpg', title: '@lexie_quinn_maben' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963916/327548327_3177782035866949_179112891589676750_n_o9jcdi.jpg', title: '@thewhiskeypatootie' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/322924510_142221248631298_4512437418189425826_n_dhm5me.jpg', title: '@lexie_quinn_maben' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963915/290007258_179777054478160_4353043592713499427_n_rg9yaq.jpg', title: '@the_pooch_patisserie' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/239541482_215300797205090_6848654758273246870_n_jifkin.jpg', title: '@_buxxoo_19' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/283434743_153422697190659_4480803216439245309_n_mo28gg.jpg', title: '@uno_golden_boy' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/278460836_1513183882416940_690120010142730407_n_cz83fa.jpg', title: '@zolathechonkygal' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/266275373_624245152032151_9028644669941105180_n_pjddcu.jpg', title: '@sparkey_the_golden_retriever' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/q_auto,f_auto,c_fill,g_auto,w_800,h_800/v1756963913/272174770_614123276361632_1171529176954943132_n_zehqi5.jpg', title: '@shiro.barked' },
+    { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757077947/WhatsApp_Image_2025-09-05_at_12.42.55_528d0761_lhqqyh.jpg', title: '@happy.dog.rumi' },
   ], [])
 
   const duplicatedItems = useMemo(() => {
