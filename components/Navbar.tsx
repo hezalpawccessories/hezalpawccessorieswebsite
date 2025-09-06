@@ -48,13 +48,13 @@ export default function Navbar() {
                   href='/'
                   className='flex items-center space-x-2 sm:space-x-3'
                >
-                  <div className='bg-pink-50 rounded-full p-1.5 sm:p-2'>
+                  <div className='bg-pink-50 rounded-full p-1.5'>
                      <Image
                         src='/logom.png'
                         alt='Hezal Accessories Logo'
                         width={24}
                         height={24}
-                        className='rounded-full sm:w-7 sm:h-7'
+                        className='rounded-full sm:w-9 sm:h-9'
                      />
                   </div>
 
