@@ -1,5 +1,6 @@
-'use client'
+"use client"
 
+import React from 'react'
 import ProgressLink from '@/components/ProgressLink'
 import { ArrowRight, Star, Shield, Truck, Heart, Gift } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,6 +11,7 @@ import ImageAutoSlider from '@/components/ui/image-auto-slider'
 import AnimatedSlideshow from '@/components/ui/animated-slideshow'
 import { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
+import ScrollBaseAnimation from '@/components/ui/text-marquee'
 
 export default function Home() {
    const features = [
@@ -99,19 +101,19 @@ export default function Home() {
          <Navbar />
 
          {/* Prominent Landing Page Banner */}
-         {!loadingBanners && banners.length > 0 && (
+         {/* {!loadingBanners && banners.length > 0 && (
             <motion.div
                initial={{ opacity: 0, y: -20 }}
                animate={{ opacity: 1, y: 0 }}
                transition={{ duration: 0.8 }}
                className='relative bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 overflow-hidden'
-            >
+            > */}
                {/* Background Pattern */}
-               <div className='absolute inset-0 bg-black/10'></div>
-               <div className='absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5'></div>
+               {/* <div className='absolute inset-0 bg-black/10'></div>
+               <div className='absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5'></div> */}
                
                {/* Floating Decorative Elements */}
-               <div className='absolute top-2 left-10 animate-bounce'>
+               {/* <div className='absolute top-2 left-10 animate-bounce'>
                   <Heart className='w-4 h-4 text-white/60' />
                </div>
                <div className='absolute bottom-2 right-16 animate-pulse'>
@@ -119,22 +121,22 @@ export default function Home() {
                </div>
                <div className='absolute top-3 right-32 animate-bounce' style={{ animationDelay: '0.5s' }}>
                   <Star className='w-3 h-3 text-white/60' />
-               </div>
+               </div> */}
                
-               <div className='relative z-10 py-4 px-4'>
+               {/* <div className='relative z-10 py-4 px-4'>
                   
                   <div className='max-w-7xl mx-auto'>
                      <div className='flex items-center justify-center space-x-8 overflow-hidden'>
-                        <div className='flex animate-marquee-continuous-landing space-x-24'>
+                        <div className='flex animate-marquee-continuous-landing space-x-24'> */}
                            {/* Repeat banners for seamless scrolling */}
-                           {Array.from({ length: 3 }, (_, repeatIndex) => 
+                           {/* {Array.from({ length: 3 }, (_, repeatIndex) => 
                               banners.map((banner, bannerIndex) => (
                                  <div key={`${repeatIndex}-${bannerIndex}`} className='flex items-center space-x-4 whitespace-nowrap'>
-                                    {/* <span className='text-2xl'>✨</span> */}
+                                    
                                     <span className='text-white font-bold text-base sm:text-lg lg:text-xl tracking-wide'>
                                        {banner.title}
                                     </span>
-                                    {/* <span className='text-2xl'>🎉</span> */}
+                                    
                                     {banner.subtitle && (
                                        <>
                                           <span className='text-white/80 text-base lg:text-lg mx-2'>•</span>
@@ -142,20 +144,50 @@ export default function Home() {
                                              {banner.subtitle}
                                           </span>
                                        </>
-                                    )}
+                                    )} */}
                                     {/* <span className='text-2xl'>✨</span> */}
-                                 </div>
+                                 {/* </div>
                               ))
                            ).flat()}
                         </div>
                      </div>
                   </div>
-               </div>
+               </div> */}
                
                {/* Bottom gradient fade */}
-               <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent'></div>
+               {/* <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent'></div>
             </motion.div>
-         )}
+         )} */}
+
+{!loadingBanners && banners.length > 0 && (
+   <div className='w-full bg-gradient-to-l from-transparent via-pink-500/20 to-transparent overflow-hidden'>
+      {/* Horizontal inline marquee: all banners shown one after another */}
+      <div className='h-12 md:h-12 flex items-center'>
+         <ScrollBaseAnimation
+            delay={0}
+            baseVelocity={-1}
+            className='font-bold tracking-[-0.02em]'
+         >
+            <div className='flex items-center space-x-12'>
+                      {Array.from({ length: 3 }, (_, repeatIndex) =>
+                           banners.map((banner, bannerIndex) => (
+                               <React.Fragment key={`${repeatIndex}-${bannerIndex}`}>
+                                  <span className='inline-block text-base md:text-lg font-bold'>
+                                     {banner.title}
+                                     {banner.subtitle ? <span className='mx-2 text-base md:text-lg font-normal'>• {banner.subtitle}</span> : null}
+                                  </span>
+                                  <span className='text-xl'>🐾</span>
+                               </React.Fragment>
+                           ))
+                      )}
+            </div>
+         </ScrollBaseAnimation>
+      </div>
+   </div>
+)}
+
+        
+              
          <main className='pet-pattern-bg'>
             
 

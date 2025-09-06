@@ -120,7 +120,7 @@ export default function AnimatedSlideshow({ slides }: { slides: Slide[] }) {
 
         {/* Image area (taller aspect ratio) */}
         <div className='w-full md:w-2/3 max-w-4xl'>
-          <div className='relative w-full h-auto min-h-[24rem] md:min-h-[22rem] rounded-lg overflow-hidden '>
+          <div className='relative w-full h-auto min-h-[24rem] md:min-h-[22rem] rounded-lg overflow-hidden'>
             {/* Render images stacked; we keep Image elements so Next optimizes them */}
             <ActiveImages slides={slides} />
           </div>
@@ -156,7 +156,7 @@ function ActiveImages({ slides }: { slides: Slide[] }) {
           className={`absolute inset-0 transition-opacity duration-700 ${i === activeSlide ? 'opacity-100 z-30' : 'opacity-0 z-0'}`}
           aria-hidden={i !== activeSlide}
         >
-          <Image src={s.image} alt={s.title} fill className='object-contain' sizes='(max-width: 768px) 100vw, 50vw' priority={i === activeSlide} />
+          <Image src={s.image} alt={s.title} fill className='object-contain pb-8' sizes='(max-width: 768px) 100vw, 50vw' priority={i === activeSlide} />
         </div>
       ))}
     </>
