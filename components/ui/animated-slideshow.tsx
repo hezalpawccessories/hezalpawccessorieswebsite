@@ -52,20 +52,29 @@ export const TextStaggerHover = React.forwardRef<HTMLElement, React.HTMLAttribut
       ref={ref as any}
       onMouseEnter={handleMouse}
       onFocus={handleMouse}
+      aria-label={text}
     >
-      {characters.map((char, i) => (
-        <span key={`${char}-${i}`} className='relative inline-block overflow-hidden leading-none'>
-          <MotionConfig transition={{ delay: i * 0.02, duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}>
-            <motion.span className='inline-block opacity-20' initial={{ y: '0%' }} animate={isActive ? { y: '-110%' } : { y: '0%' }}>
-              {char}
-            </motion.span>
+      {characters.map((char, i) => {
+        const key = `char-${i}`
+        // render visible spacer for whitespace so spaces are preserved visually
+        if (char === ' ' || char === '\u00A0') {
+          return <span key={key} className='inline-block w-3 md:w-4' aria-hidden='true' />
+        }
 
-            <motion.span className='absolute left-0 top-0 inline-block opacity-100' initial={{ y: '110%' }} animate={isActive ? { y: '0%' } : { y: '110%' }}>
-              {char}
-            </motion.span>
-          </MotionConfig>
-        </span>
-      ))}
+        return (
+          <span key={key} className='relative inline-block overflow-hidden leading-none'>
+            <MotionConfig transition={{ delay: i * 0.02, duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}>
+              <motion.span className='inline-block opacity-20' initial={{ y: '0%' }} animate={isActive ? { y: '-110%' } : { y: '0%' }}>
+                {char}
+              </motion.span>
+
+              <motion.span className='absolute left-0 top-0 inline-block opacity-100' initial={{ y: '110%' }} animate={isActive ? { y: '0%' } : { y: '110%' }}>
+                {char}
+              </motion.span>
+            </MotionConfig>
+          </span>
+        )
+      })}
     </span>
   )
 })
@@ -141,7 +150,7 @@ function TitleButton({ title, index }: { title: string; index: number }) {
         isActive ? 'text-primary-pink font-bold' : 'text-gray-700 hover:text-gray-900'
       )}
     >
-      <TextStaggerHover index={index} text={title} className='text-2xl md:text-3xl font-bold uppercase tracking-tight' />
+  <TextStaggerHover index={index} text={title} className='text-2xl md:text-3xl font-bold tracking-tight uppercase' />
     </button>
   )
 }
