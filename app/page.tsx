@@ -259,7 +259,13 @@ export default function Home() {
                               sizes="(max-width: 768px) 100vw, 50vw"
                            />
                         </div>
-                        <div className='absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg'>
+                                    <div
+                                       className='absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg cursor-pointer'
+                                       onClick={() => {
+                                          const el = document.getElementById('happy-pets')
+                                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                       }}
+                                    >
                            <p className='font-body font-semibold'>🐕 Happy Pets</p>
                            <p className='text-sm font-body opacity-90'>1000+ Satisfied Customers</p>
                         </div>
@@ -407,7 +413,7 @@ export default function Home() {
             </section>
 
             {/* Our Happy Pets Auto Slider */}
-            <section className='py-8 lg:py-12 bg-white'>
+            <section id='happy-pets' className='py-8 lg:py-12 bg-white'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                   <div className='text-center mb-6'>
                      <h3 className='text-2xl font-semibold'>Our Happy Pets 🐾</h3>

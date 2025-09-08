@@ -795,6 +795,8 @@ export default function AdminDashboard() {
                   description: `${updatedProduct.title} has been updated`,
                   duration: 4000,
                })
+             // Clear any uploaded image previews after successful update
+             setUploadedImages([])
             })
             .catch((error) => {
                console.error('Error updating product:', error)
@@ -804,8 +806,11 @@ export default function AdminDashboard() {
                })
             })
          setProducts(updatedProducts)
-         setShowEditModal(false)
-         setSelectedProduct(null)
+          // close modal and clear selection; also clear any uploaded previews to reset the form
+          setShowEditModal(false)
+          setUploadedImages([])
+          setSelectedProduct(null)
+          setUploadedImages([])
       }
    }
 
@@ -2536,7 +2541,7 @@ Team Hezal Accessories 💜
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className='modal-overlay'
-                  onClick={() => setShowEditModal(false)}
+                  onClick={() => { setShowEditModal(false); setUploadedImages([]) }}
                >
                   <motion.div
                      initial={{ scale: 0.8, opacity: 0 }}
@@ -2546,7 +2551,7 @@ Team Hezal Accessories 💜
                      onClick={(e) => e.stopPropagation()}
                   >
                      <button
-                        onClick={() => setShowEditModal(false)}
+                        onClick={() => { setShowEditModal(false); setUploadedImages([]) }}
                         className='absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg'
                         title='Close'
                      >
