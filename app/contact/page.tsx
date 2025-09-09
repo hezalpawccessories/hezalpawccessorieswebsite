@@ -102,7 +102,13 @@ export default function Contact() {
                         >
                            <div className='text-primary-blue mb-4 flex justify-center'>{info.icon}</div>
                            <h3 className='text-lg font-heading font-bold text-text-dark mb-2'>{info.title}</h3>
-                           <p className='font-body text-primary-pink font-semibold mb-1'>{info.details}</p>
+                           {info.title === 'Email Us' ? (
+                              <a href={`mailto:${info.details}`} className='font-body text-primary-pink font-semibold mb-1 block'>{info.details}</a>
+                           ) : info.title === 'Call Us' ? (
+                              <a href={`tel:${(info.details || '').toString().replace(/\s+/g, '')}`} className='font-body text-primary-pink font-semibold mb-1 block'>{info.details}</a>
+                           ) : (
+                              <p className='font-body text-primary-pink font-semibold mb-1'>{info.details}</p>
+                           )}
                            <p className='font-body text-text-body text-sm'>{info.description}</p>
                         </motion.div>
                      ))}
