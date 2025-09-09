@@ -70,7 +70,7 @@ export default function Footer() {
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
-                           Contact
+                           Contact Us
                         </ProgressLink>
                      </li>
                   </ul>
