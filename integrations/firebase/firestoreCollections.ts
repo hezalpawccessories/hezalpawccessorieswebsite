@@ -76,6 +76,7 @@ const ordersCollection = collection(db, 'orders')
 const bannersCollection = collection(db, 'banners')
 const collectionsCollection = collection(db, 'collections')
 const couponsCollection = collection(db, 'coupons')
+const landingPageCollection = collection(db, 'landing page')
 
 // export const addProduct = async (product: Product) => {
 //    const docRef = await addDoc(productsCollection, product)
@@ -195,3 +196,37 @@ export const deleteCoupon = async (id: string) => {
    const docRef = doc(db, 'coupons', id)
    await deleteDoc(docRef)
 }
+
+// Landing page management functions
+export interface LandingPageRecord {
+   id: string
+   url: string
+   createdAt: Date
+}
+
+
+// Use a fixed doc id for landing image
+export const LANDING_MAIN_DOC_ID = 'main';
+
+export const setLandingMain = async (url: string) => {
+   const docRef = doc(db, 'landing page', LANDING_MAIN_DOC_ID);
+   const landing: LandingPageRecord = {
+      id: LANDING_MAIN_DOC_ID,
+      url,
+      createdAt: new Date(),
+   };
+   await setDoc(docRef, landing);
+   return LANDING_MAIN_DOC_ID;
+};
+
+export const getLandingMain = async (): Promise<LandingPageRecord | null> => {
+   const snap = await getDocs(landingPageCollection);
+   const docs = snap.docs.filter(d => d.id === LANDING_MAIN_DOC_ID);
+   if (docs.length === 0) return null;
+   const data = docs[0].data();
+   return {
+      id: docs[0].id,
+      url: data.url || '',
+      createdAt: data.createdAt?.toDate?.() || new Date(),
+   };
+};

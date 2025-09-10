@@ -72,7 +72,7 @@ export default function AdminDashboard() {
    )
    const [password, setPassword] = useState('')
    const [showPassword, setShowPassword] = useState(false)
-   const [activeTab, setActiveTab] = useState('products')
+   const [activeTab, setActiveTab] = useState<string>('products')
    const [products, setProducts] = useState<Product[]>([])
    const [orders, setOrders] = useState<Order[]>([])
    const [payments, setPayments] = useState<PaymentLog[]>([])
@@ -132,6 +132,10 @@ export default function AdminDashboard() {
    // Simple banner management state
    const [simpleBannerContent, setSimpleBannerContent] = useState('')
    const [simpleBanners, setSimpleBanners] = useState<string[]>([])
+
+      // Landing page state
+      const [selectedLandingUrl, setSelectedLandingUrl] = useState<string | null>(null)
+      const [landingRecords, setLandingRecords] = useState<any[]>([])
 
    // Coupon management state
    const [coupons, setCoupons] = useState<Coupon[]>([])
@@ -277,6 +281,36 @@ export default function AdminDashboard() {
          duration: 2000,
       })
    }
+
+      // Landing page handlers
+
+      const loadLandingRecords = async () => {
+         try {
+            const { getLandingMain } = await import('@/integrations/firebase/firestoreCollections')
+            const record = await getLandingMain()
+            setLandingRecords(record ? [record] : [])
+            if (record && record.url) setSelectedLandingUrl(record.url)
+         } catch (error) {
+            console.error('Failed to load landing record', error)
+         }
+      }
+
+      const handleSaveLanding = async () => {
+         if (!selectedLandingUrl) {
+            toast.error('Please provide a URL to save')
+            return
+         }
+         try {
+            const { setLandingMain } = await import('@/integrations/firebase/firestoreCollections')
+            await setLandingMain(selectedLandingUrl)
+            toast.success('Landing image saved')
+            setUploadedImages([])
+            await loadLandingRecords()
+         } catch (error) {
+            console.error('Error saving landing image', error)
+            toast.error('Failed to save landing image')
+         }
+      }
 
    // Banner upload widget
    const showBannerUploadWidget = (bannerIndex: number) => {
@@ -660,6 +694,9 @@ export default function AdminDashboard() {
                duration: 4000,
             })
          })
+
+   // Load landing page records (defined below)
+   loadLandingRecords()
    }, [])
 
    const handleLogin = (e: React.FormEvent) => {
@@ -1153,6 +1190,7 @@ Team Hezal Accessories 💜
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
                   { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5' /> },
+                  { id: 'landing-page', label: 'LandingPage', icon: <ImageIcon className='w-5 h-5' /> },
                   { id: 'coupons', label: 'Coupons', icon: <Percent className='w-5 h-5' /> },
                   { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
                   { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
@@ -1186,6 +1224,74 @@ Team Hezal Accessories 💜
                   }}
                />
             )}
+
+               {activeTab === 'landing-page' && (
+                  <motion.div
+                     key='landing-page'
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: -20 }}
+                     className='space-y-6'
+                  >
+                     <div className='bg-white p-6 rounded-lg shadow'>
+                        <h2 className='text-xl font-semibold mb-4'>Landing Page Image</h2>
+                        <p className='text-sm text-text-light mb-4'>Upload or paste a URL for the main landing image. Saving will replace the previous landing image saved in Firestore.</p>
+
+                        <div className='flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0'>
+                           <button
+                              onClick={showUploadWidget}
+                              className='btn-primary inline-flex items-center space-x-2'
+                           >
+                              <ImageIcon className='w-4 h-4' />
+                              <span>Upload to Cloudinary</span>
+                           </button>
+
+                           <button
+                              type='button'
+                              onClick={() => setUploadedImages([])}
+                              className='bg-gray-100 px-4 py-2 rounded-lg'
+                           >
+                              Clear Uploads
+                           </button>
+                        </div>
+
+                        <div className='mt-4'>
+                           <label className='block text-sm font-medium text-text-light mb-2'>Uploaded Preview</label>
+                           <div className='flex items-start space-x-4'>
+                              {uploadedImages.length === 0 ? (
+                                 <div className='text-text-light'>No uploads yet</div>
+                              ) : (
+                                 uploadedImages.map((url) => (
+                                    <div key={url} className='w-40'>
+                                       <img src={url} alt='preview' className='rounded-md w-full h-24 object-cover' />
+                                       <div className='flex mt-2 space-x-2'>
+                                          <button onClick={() => copyToClipboard(url)} className='px-2 py-1 bg-gray-100 rounded'>Copy URL</button>
+                                          <button onClick={() => setSelectedLandingUrl(url)} className='px-2 py-1 bg-primary-blue text-white rounded'>Use</button>
+                                       </div>
+                                    </div>
+                                 ))
+                              )}
+                           </div>
+                        </div>
+
+                        <div className='mt-6'>
+                           <label className='block text-sm font-medium text-text-light mb-2'>Paste URL</label>
+                           <div className='flex space-x-2'>
+                              <input value={selectedLandingUrl || ''} onChange={(e) => setSelectedLandingUrl(e.target.value)} placeholder='https://...' className='flex-1 px-3 py-2 border rounded' />
+                              <button onClick={() => copyToClipboard(selectedLandingUrl || '')} className='px-4 py-2 bg-gray-100 rounded'>Copy</button>
+                           </div>
+                        </div>
+
+                        <div className='mt-6 flex space-x-3'>
+                           <button onClick={handleSaveLanding} className='btn-primary inline-flex items-center space-x-2'>
+                              <Save className='w-4 h-4' />
+                              <span>Save</span>
+                           </button>
+                           <button onClick={() => { setSelectedLandingUrl(''); setUploadedImages([]) }} className='px-4 py-2 bg-gray-100 rounded'>Cancel</button>
+                        </div>
+                     </div>
+                  </motion.div>
+               )}
 
             {/* Tab Content */}
             <AnimatePresence mode='wait'>

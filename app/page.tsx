@@ -10,10 +10,21 @@ import Image from 'next/image'
 import ImageAutoSlider from '@/components/ui/image-auto-slider'
 import AnimatedSlideshow from '@/components/ui/animated-slideshow'
 import { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react'
-import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
+import { getBanners, Banner, getLandingMain } from '@/integrations/firebase/firestoreCollections'
 import ScrollBaseAnimation from '@/components/ui/text-marquee'
 
 export default function Home() {
+   const [landingImageUrl, setLandingImageUrl] = useState<string | null>(null);
+   useEffect(() => {
+      (async () => {
+         try {
+            const record = await getLandingMain();
+            setLandingImageUrl(record?.url || null);
+         } catch (err) {
+            setLandingImageUrl(null);
+         }
+      })();
+   }, []);
    const features = [
       {
          icon: <Shield className='w-8 h-8' />,
@@ -249,15 +260,27 @@ export default function Home() {
                            {/* Decorative elements */}
                            <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                            <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
-                           <Image
-                              width={500}
-                              height={320}
-                              src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'
-                              alt='Happy puppy with accessories'
-                              className='w-full h-96 object-cover rounded-xl'
-                              quality={75}
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                           />
+                           {landingImageUrl ? (
+                              <Image
+                                 width={500}
+                                 height={320}
+                                 src={landingImageUrl}
+                                 alt='Landing banner'
+                                 className='w-full h-96 object-cover rounded-xl'
+                                 quality={75}
+                                 sizes="(max-width: 768px) 100vw, 50vw"
+                              />
+                           ) : (
+                              <Image
+                                 width={500}
+                                 height={320}
+                                 src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'
+                                 alt='Happy puppy with accessories'
+                                 className='w-full h-96 object-cover rounded-xl'
+                                 quality={75}
+                                 sizes="(max-width: 768px) 100vw, 50vw"
+                              />
+                           )}
                         </div>
                                     <div
                                        className='absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-pink-500 text-white p-4 rounded-xl shadow-lg cursor-pointer'
