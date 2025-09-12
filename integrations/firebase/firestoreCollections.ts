@@ -45,6 +45,13 @@ export interface Collection {
    updatedAt: Date
 }
 
+export interface Category {
+   id: string
+   name: string
+   createdAt: Date
+   updatedAt: Date
+}
+
 export interface Coupon {
    id: string
    name: string
@@ -75,6 +82,7 @@ const paymentsCollection = collection(db, 'payments')
 const ordersCollection = collection(db, 'orders')
 const bannersCollection = collection(db, 'banners')
 const collectionsCollection = collection(db, 'collections')
+const categoriesCollection = collection(db, 'categories')
 const couponsCollection = collection(db, 'coupons')
 const landingPageCollection = collection(db, 'landing page')
 
@@ -165,6 +173,36 @@ export const updateCollection = async (id: string, updatedData: Partial<Collecti
 export const deleteCollection = async (id: string) => {
    const docRef = doc(db, 'collections', id)
    await deleteDoc(docRef)
+}
+
+// Category management functions
+export const addCategory = async (category: { id: string; name: string }) => {
+   const docRef = doc(db, 'categories', category.id)
+   await setDoc(docRef, { ...category, createdAt: new Date(), updatedAt: new Date() })
+   return category.id
+}
+
+export const getCategories = async (): Promise<Category[]> => {
+   const snapshot = await getDocs(categoriesCollection)
+   return snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return {
+         id: docSnap.id,
+         name: data.name || docSnap.id,
+         createdAt: data.createdAt?.toDate?.() || new Date(),
+         updatedAt: data.updatedAt?.toDate?.() || new Date(),
+      } as Category
+   })
+}
+
+export const deleteCategory = async (id: string) => {
+   const docRef = doc(db, 'categories', id)
+   await deleteDoc(docRef)
+}
+
+export const updateCategory = async (id: string, updatedData: Partial<Category>) => {
+   const docRef = doc(db, 'categories', id)
+   await updateDoc(docRef, { ...updatedData, updatedAt: new Date() })
 }
 
 // Coupon management functions

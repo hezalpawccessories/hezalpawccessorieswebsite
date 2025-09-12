@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -113,6 +113,30 @@ export default function AdminDashboard() {
    const [newCollectionName, setNewCollectionName] = useState('')
    const [showAddCollection, setShowAddCollection] = useState(false)
    const [showManageCollections, setShowManageCollections] = useState(false)
+   // Category management state
+   const [categoriesList, setCategoriesList] = useState<{ id: string; name: string }[]>([])
+   const [newCategoryName, setNewCategoryName] = useState('')
+   const [showAddCategory, setShowAddCategory] = useState(false)
+   const [showManageCategories, setShowManageCategories] = useState(false)
+      // Inline status for category operations (add/delete)
+      const [categoryStatus, setCategoryStatus] = useState<{
+         type: 'success' | 'error' | 'info'
+         message: string
+      } | null>(null)
+      const categoryStatusTimerRef = useRef<number | null>(null)
+
+      const showCategoryStatus = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+         setCategoryStatus({ message, type })
+         // clear previous timer
+         if (categoryStatusTimerRef.current) {
+            window.clearTimeout(categoryStatusTimerRef.current)
+         }
+         // auto-hide after 3.5s
+         categoryStatusTimerRef.current = window.setTimeout(() => {
+            setCategoryStatus(null)
+            categoryStatusTimerRef.current = null
+         }, 3500)
+      }
 
    // Banner management state
    const [banners, setBanners] = useState<Banner[]>([])
@@ -202,6 +226,72 @@ export default function AdminDashboard() {
          }
       }
    }, [])
+
+   // Load categories from Firestore
+   const loadCategories = async () => {
+      try {
+            const { getCategories } = await import('@/integrations/firebase/firestoreCollections')
+            const cats = await getCategories()
+            // default categories from lib/products (imported at top as `categories`)
+         // Exclude reserved 'All' from defaults for admin list
+         const defaultNames = (categories || []).filter((n) => n && typeof n === 'string' && n !== 'All')
+            // Map defaults to stable ids so admin can treat them specially
+            const defaultMapped = defaultNames.map((name) => ({ id: `default-${name.replace(/\s+/g, '-').toLowerCase()}`, name }))
+            // Filter out firestore categories that duplicate defaults by name
+            const firestoreMapped = cats.filter(c => !defaultNames.includes(c.name)).map(c => ({ id: c.id, name: c.name }))
+            const merged = [...defaultMapped, ...firestoreMapped]
+            setCategoriesList(merged)
+            // default selection if current newProduct.category is not in list
+            if (!merged.find(c => c.name === newProduct.category) && merged.length > 0) {
+               setNewProduct({ ...newProduct, category: merged[0].name })
+            }
+      } catch (err) {
+         console.error('Failed to load categories', err)
+      }
+   }
+
+   useEffect(() => { loadCategories() }, [])
+
+   const handleAddCategory = async () => {
+      if (!newCategoryName.trim()) {
+         toast.error('Please enter a category name')
+         return
+      }
+      try {
+         const { addCategory } = await import('@/integrations/firebase/firestoreCollections')
+         const id = uuidv4()
+         await addCategory({ id, name: newCategoryName.trim() })
+           toast.success('Category added')
+           showCategoryStatus('Category added', 'success')
+           setNewCategoryName('')
+           setShowAddCategory(false)
+           await loadCategories()
+      } catch (err) {
+         console.error('Failed to add category', err)
+           toast.error('Failed to add category')
+           showCategoryStatus('Failed to add category', 'error')
+      }
+   }
+
+   const handleDeleteCategory = async (id: string, name: string) => {
+         // Prevent deleting built-in default categories
+         if (id.startsWith('default-')) {
+            showCategoryStatus('Cannot delete default category', 'error')
+            return
+         }
+         if (!window.confirm(`Delete category "${name}"? This will not remove products referencing it.`)) return
+         try {
+            const { deleteCategory } = await import('@/integrations/firebase/firestoreCollections')
+            await deleteCategory(id)
+            toast.success('Category deleted')
+            showCategoryStatus('Category deleted', 'success')
+            await loadCategories()
+         } catch (err) {
+            console.error('Failed to delete category', err)
+            toast.error('Failed to delete category')
+            showCategoryStatus('Failed to delete category', 'error')
+         }
+   }
 
    const showUploadWidget = () => {
       if (typeof window !== 'undefined' && window.cloudinary) {
@@ -1446,7 +1536,7 @@ Team Hezal Accessories 💜
                            onSubmit={handleAddProduct}
                            className='space-y-6'
                         >
-                           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                           <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
                               <div>
                                  <label className='block text-sm font-medium text-text-dark mb-2'>
                                     Product Title *
@@ -1461,25 +1551,150 @@ Team Hezal Accessories 💜
                               </div>
                               <div>
                                  <label className='block text-sm font-medium text-text-dark mb-2'>Category *</label>
-                                 <select
-                                    required
-                                    value={newProduct.category}
-                                    onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
-                                 >
-                                    <option value='Bandana/neck scarf'>Bandana/neck scarf</option>
-                                    <option value='Bow ties'>Bow ties</option>
-                                    <option value='Collars'>Collars</option>
-                                    <option value='Collar-leash set'>Collar-leash set</option>
-                                    <option value='Treat Jars'>Treat Jars</option>
-                                 </select>
+                                 <div className='flex flex-col sm:flex-row gap-2'>
+                                    <select
+                                       required
+                                       value={newProduct.category}
+                                       onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                                       className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                    >
+                                       {categoriesList.length === 0 && (
+                                          <option value=''>{'-- no categories --'}</option>
+                                       )}
+                                       {categoriesList.map((cat) => (
+                                          <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                       ))}
+                                    </select>
+                                    <div className='flex gap-2 sm:flex-col md:flex-row'>
+                                       <button
+                                          type='button'
+                                          onClick={() => setShowAddCategory(true)}
+                                          className='w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2'
+                                       >
+                                          <Plus className='hidden sm:inline w-4 h-4' />
+                                          <span className=''>Add Category</span>
+                                          
+                                       </button>
+                                       {categoriesList.length > 0 && (
+                                          <button
+                                             type='button'
+                                             onClick={() => setShowManageCategories(!showManageCategories)}
+                                             className='w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2'
+                                          >
+                                             <Edit className='hidden sm:inline w-4 h-4' />
+                                             <span className=''>Manage Category</span>
+                                             
+                                          </button>
+                                       )}
+                                    </div>
+                                 </div>
+
+                                 {/* Add Category Modal */}
+                                 {showAddCategory && (
+                                    <div className='p-4 border border-gray-200 rounded-lg bg-gray-50 mt-3'>
+                                       <h4 className='text-sm font-medium text-text-dark mb-2'>Add New Category</h4>
+                                                          <div className='flex flex-col sm:flex-row gap-2'>
+                                          <input
+                                             type='text'
+                                             placeholder='Category name (e.g., Bandana/neck scarf)'
+                                             value={newCategoryName}
+                                             onChange={(e) => setNewCategoryName(e.target.value)}
+                                             className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                                             onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                   e.preventDefault()
+                                                   handleAddCategory()
+                                                }
+                                             }}
+                                          />
+                                          <div className='flex gap-2 sm:flex-col md:flex-row w-full'>
+                                             <button
+                                                type='button'
+                                                onClick={handleAddCategory}
+                                                className='w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                                             >
+                                                Add
+                                             </button>
+                                             <button
+                                                type='button'
+                                                onClick={() => { setShowAddCategory(false); setNewCategoryName('') }}
+                                                className='w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors'
+                                             >
+                                                Cancel
+                                             </button>
+                                          </div>
+                                       </div>
+                                        {/* Inline status indicator for add/delete */}
+                                        {categoryStatus && (
+                                           <div className='mt-2 flex items-center gap-2'>
+                                              <div className={`px-3 py-1 rounded-full text-sm font-medium ${categoryStatus.type === 'success' ? 'bg-green-100 text-green-800' : categoryStatus.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                                                 {categoryStatus.message}
+                                              </div>
+                                              <button
+                                                 type='button'
+                                                 onClick={() => setCategoryStatus(null)}
+                                                 className='text-xs text-text-light hover:text-text-dark'
+                                                 aria-label='Dismiss status'
+                                              >
+                                                 Dismiss
+                                              </button>
+                                           </div>
+                                        )}
+                                    </div>
+                                 )}
+
+                                 {/* Manage Categories Section */}
+                                 {showManageCategories && categoriesList.length > 0 && (
+                                    <div className='p-4 border border-gray-200 rounded-lg bg-gray-50 mt-3'>
+                                       <h4 className='text-sm font-medium text-text-dark mb-3'>Manage Categories</h4>
+                                       <div className='space-y-2 max-h-40 overflow-y-auto'>
+                                          {categoriesList.map((cat) => (
+                                             <div key={cat.id} className='flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-3 rounded-lg shadow-sm'>
+                                                <span className='text-sm font-medium text-text-dark mb-2 sm:mb-0'>{cat.name}</span>
+                                                <div className='flex w-full sm:w-auto gap-2'>
+                                                   <button
+                                                      type='button'
+                                                      onClick={() => { if (cat.id.startsWith('default-')) { showCategoryStatus('Cannot delete default category', 'error'); return } if (window.confirm(`Are you sure you want to delete the category "${cat.name}"?`)) handleDeleteCategory(cat.id, cat.name) }}
+                                                      className='w-full sm:w-auto px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center gap-1 text-xs'
+                                                   >
+                                                      <Trash2 className='w-3 h-3' />
+                                                      Delete
+                                                   </button>
+                                                </div>
+                                             </div>
+                                          ))}
+                                       </div>
+                                             {/* Inline status indicator for manage panel */}
+                                             {categoryStatus && (
+                                                <div className='mt-3 flex items-center gap-2'>
+                                                   <div className={`px-3 py-1 rounded-full text-sm font-medium ${categoryStatus.type === 'success' ? 'bg-green-100 text-green-800' : categoryStatus.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                                                      {categoryStatus.message}
+                                                   </div>
+                                                   <button
+                                                      type='button'
+                                                      onClick={() => setCategoryStatus(null)}
+                                                      className='text-xs text-text-light hover:text-text-dark'
+                                                   >
+                                                      Dismiss
+                                                   </button>
+                                                </div>
+                                             )}
+                                       <button
+                                          type='button'
+                                          onClick={() => setShowManageCategories(false)}
+                                          className='mt-3 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm'
+                                       >
+                                          Close
+                                       </button>
+                                    </div>
+                                 )}
                               </div>
                            </div>
 
                            {/* Collection Selection */}
-                           <div className='space-y-4'>
+                              <div className='space-y-4'>
                               <label className='block text-sm font-medium text-text-dark mb-2'>Collection</label>
-                              <div className='flex gap-2'>
+                              <div className='flex flex-col sm:flex-row gap-2'>
                                  <select
                                     value={newProduct.collection || ''}
                                     onChange={(e) => setNewProduct({ ...newProduct, collection: e.target.value })}
@@ -1492,24 +1707,24 @@ Team Hezal Accessories 💜
                                        </option>
                                     ))}
                                  </select>
-                                 <button
-                                    type='button'
-                                    onClick={() => setShowAddCollection(true)}
-                                    className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2'
-                                 >
-                                    <Plus className='w-4 h-4' />
-                                    Add Collection
-                                 </button>
-                                 {collections.length > 0 && (
+                                 <div className='flex gap-2 sm:flex-col md:flex-row w-full sm:w-auto'>
                                     <button
                                        type='button'
-                                       onClick={() => setShowManageCollections(!showManageCollections)}
-                                       className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2'
+                                       onClick={() => setShowAddCollection(true)}
+                                       className='w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-sm'
                                     >
-                                       <Edit className='w-4 h-4' />
-                                       Manage
+                                       Add Collection
                                     </button>
-                                 )}
+                                    {collections.length > 0 && (
+                                       <button
+                                          type='button'
+                                          onClick={() => setShowManageCollections(!showManageCollections)}
+                                          className='w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-sm'
+                                       >
+                                          Manage Collections
+                                       </button>
+                                    )}
+                                 </div>
                               </div>
                               
                               {/* Add Collection Modal */}
@@ -1557,20 +1772,21 @@ Team Hezal Accessories 💜
                                     <h4 className='text-sm font-medium text-text-dark mb-3'>Manage Collections</h4>
                                     <div className='space-y-2 max-h-32 overflow-y-auto'>
                                        {collections.map((collection) => (
-                                          <div key={collection.id} className='flex items-center justify-between bg-white p-3 rounded-lg shadow-sm'>
-                                             <span className='text-sm font-medium text-text-dark'>{collection.name}</span>
-                                             <button
-                                                type='button'
-                                                onClick={() => {
-                                                   if (window.confirm(`Are you sure you want to delete the collection "${collection.name}"?`)) {
-                                                      handleDeleteCollection(collection.id)
-                                                   }
-                                                }}
-                                                className='px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center gap-1 text-xs'
-                                             >
-                                                <Trash2 className='w-3 h-3' />
-                                                Delete
-                                             </button>
+                                          <div key={collection.id} className='flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-3 rounded-lg shadow-sm'>
+                                             <span className='text-sm font-medium text-text-dark mb-2 sm:mb-0'>{collection.name}</span>
+                                             <div className='w-full sm:w-auto'>
+                                                <button
+                                                   type='button'
+                                                   onClick={() => {
+                                                      if (window.confirm(`Are you sure you want to delete the collection "${collection.name}"?`)) {
+                                                         handleDeleteCollection(collection.id)
+                                                      }
+                                                   }}
+                                                   className='w-full sm:w-auto px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-xs sm:text-sm'
+                                                >
+                                                   Delete
+                                                </button>
+                                             </div>
                                           </div>
                                        ))}
                                     </div>

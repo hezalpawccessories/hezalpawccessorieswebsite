@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import SizeChart from '@/components/SizeChart'
 import Image from 'next/image'
-import { categories, sizes, Product } from '@/lib/products'
+import { sizes, Product } from '@/lib/products'
 import Select from 'react-select'
 import { select } from 'framer-motion/client'
 import { toast } from 'sonner'
@@ -68,6 +68,7 @@ function ProductsContent() {
    const [cartItems, setCartItems] = useState<any[]>([])
    const [productsList, setProductsList] = useState<Product[]>([])
    const [collections, setCollections] = useState<Collection[]>([])
+   const [categoriesList, setCategoriesList] = useState<string[]>(['All'])
    const [loading, setLoading] = useState(true)
    const [mainImage, setMainImage] = useState<string>('')
    const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({}) // Track size per product
@@ -194,6 +195,23 @@ function ProductsContent() {
          .catch((error) => {
             console.error('Error fetching collections:', error)
          })
+      // Load categories from Firestore
+      ;(async () => {
+         try {
+            const { getCategories } = await import('@/integrations/firebase/firestoreCollections')
+            const cats = await getCategories()
+            // Ensure default categories from lib/products are always present
+            const { categories: defaultCategories } = await import('@/lib/products')
+            // exclude the reserved 'All' from defaults to avoid duplication
+            const defaultNames = (defaultCategories || []).filter((n: string) => n && typeof n === 'string' && n !== 'All')
+            const firestoreNames = cats.map(c => c.name)
+            // Merge without duplicates, keep order: All, defaults (excluding 'All'), then extra firestore categories
+            const merged = ['All', ...Array.from(new Set([...defaultNames, ...firestoreNames]))]
+            setCategoriesList(merged)
+         } catch (err) {
+            console.error('Failed to load categories', err)
+         }
+      })()
    }, [])
 
    // Load banners from Firebase
@@ -603,8 +621,8 @@ function ProductsContent() {
    useEffect(() => {
       const catSlug = searchParams?.get('category')
       if (catSlug && typeof catSlug === 'string') {
-         // `categories` is assumed to be the array used in this file to render pills
-         const resolved = unslugToCategory(catSlug, categories)
+         // `categoriesList` is the array used in this file to render pills
+         const resolved = unslugToCategory(catSlug, categoriesList)
          setSelectedCategory(resolved)
       }
    }, [searchParams])
@@ -822,8 +840,8 @@ function ProductsContent() {
                {/* Filters */}
                <div className='mb-8 space-y-4'>
                   {/* Category Pills */}
-                  <div className='flex flex-wrap gap-3 justify-center'>
-                     {categories.map((category) => {
+                           <div className='flex flex-wrap gap-3 justify-center'>
+                               {categoriesList.map((category) => {
                         const slug = slugifyCategory(category)
                         return (
                           <Link
@@ -837,7 +855,7 @@ function ProductsContent() {
                             {category}
                           </Link>
                         )
-                     })}
+                               })}
                   </div>
 
                   {/* Collection Pills - Smaller and differentiated */}
