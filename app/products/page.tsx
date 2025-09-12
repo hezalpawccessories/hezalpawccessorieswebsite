@@ -470,6 +470,14 @@ function ProductsContent() {
    // Keyboard navigation for banner
    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
+         // If user is focused on an input/textarea or editable element, don't intercept keys
+         const active = document.activeElement as HTMLElement | null
+         if (active) {
+            const tag = active.tagName.toLowerCase()
+            const isEditable = active.getAttribute('contenteditable') === 'true'
+            if (tag === 'input' || tag === 'textarea' || isEditable) return
+         }
+
          switch (event.key) {
             case 'ArrowLeft':
                event.preventDefault()
