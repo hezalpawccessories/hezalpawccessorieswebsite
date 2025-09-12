@@ -1,5 +1,5 @@
 import { db } from './firebaseconfig'
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc, getDoc } from 'firebase/firestore'
 
 export interface SizePricing {
    size: string
@@ -220,6 +220,7 @@ export const setLandingMain = async (url: string) => {
 };
 
 export const getLandingMain = async (): Promise<LandingPageRecord | null> => {
+   // client-oriented fallback: read all docs but prefer main id
    const snap = await getDocs(landingPageCollection);
    const docs = snap.docs.filter(d => d.id === LANDING_MAIN_DOC_ID);
    if (docs.length === 0) return null;
@@ -230,3 +231,21 @@ export const getLandingMain = async (): Promise<LandingPageRecord | null> => {
       createdAt: data.createdAt?.toDate?.() || new Date(),
    };
 };
+
+// Server-friendly getter: read the fixed document directly (better for SSR)
+export const getLandingMainServer = async (): Promise<LandingPageRecord | null> => {
+   try {
+      const docRef = doc(db, 'landing page', LANDING_MAIN_DOC_ID)
+      const snap = await getDoc(docRef)
+      if (!snap.exists()) return null
+      const data = snap.data()
+      return {
+         id: snap.id,
+         url: data.url || '',
+         createdAt: data.createdAt?.toDate?.() || new Date(),
+      }
+   } catch (err) {
+      console.error('getLandingMainServer error', err)
+      return null
+   }
+}

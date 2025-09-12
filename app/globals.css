@@ -397,7 +397,46 @@ body #nprogress .peg {
   transform: translateY(-50%) !important;
   top: 50% !important;
 }
-*/
+
+/* Bento-style testimonials: use CSS columns to create a masonry flow for variable-height cards. */
+.bento-container {
+  /* default: single column for smallest screens */
+  column-count: 1;
+  column-gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  /* small and above: 2 columns */
+  .bento-container {
+    column-count: 2;
+    column-gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* large and above: 3 columns for wider screens */
+  .bento-container {
+    column-count: 3;
+    column-gap: 1.5rem;
+  }
+}
+
+/* Prevent cards from breaking across columns and give spacing */
+.break-inside-avoid {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.testimonial-card {
+  background: white;
+  border: 1px solid var(--border-light);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+}
+
 
 @keyframes nprogress-peg-bounce {
   0%, 100% { 
