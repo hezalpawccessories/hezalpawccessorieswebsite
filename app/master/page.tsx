@@ -1266,55 +1266,61 @@ Team Hezal Accessories 💜
          <div className='bg-white shadow-lg'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                <div className='flex justify-between items-center h-16'>
-                  <h1 className='text-3xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
-                     Admin Dashboard
+                  <h1 className='text-xl sm:text-2xl lg:text-3xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                     <span className='hidden sm:inline'>Admin Dashboard</span>
+                     <span className='sm:hidden'>Admin</span>
                   </h1>
-                  <ProgressLink
-                     href='/'
-                     onClick={() => {
-                        if (typeof window !== 'undefined') {
-                           localStorage.setItem('isAuthenticated', 'false')
-                        }
-                        setIsAuthenticated(false)
-                     }}
-                     className='text-text-light hover:text-primary-pink'
-                  >
-                     Logout
-                  </ProgressLink>
+                  <div className='flex items-center space-x-3'>
+                     <ProgressLink
+                        href='/products'
+                        className='flex items-center space-x-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium bg-primary-pink text-white shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 text-sm sm:text-base'
+                     >
+                        <svg className='w-4 h-4 sm:inline hidden' fill='currentColor' viewBox='0 0 20 20'>
+                           <path fillRule='evenodd' d='M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z' clipRule='evenodd' />
+                        </svg>
+                        <span>Website</span>
+                     </ProgressLink>
+                     <ProgressLink
+                        href='/'
+                        onClick={() => {
+                           if (typeof window !== 'undefined') {
+                              localStorage.setItem('isAuthenticated', 'false')
+                           }
+                           setIsAuthenticated(false)
+                        }}
+                        className='text-text-light hover:text-primary-pink text-sm sm:text-base'
+                     >
+                        Logout
+                     </ProgressLink>
+                  </div>
                </div>
             </div>
          </div>
 
-         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 '>
+         <div className='max-w-7xl mx-auto px-3 sm:px-5 lg:px-7 py-8 '>
             {/* Tabs */}
-            <div className='flex space-x-1 bg-white p-1 rounded-lg mb-8 shadow-lg w-full sm:justify-center justify-around'>
+            <div className='flex justify-between bg-white p-1 rounded-lg mb-8 shadow-lg w-full overflow-x-auto'>
                {[
-                  { id: 'products', label: 'Products', icon: <Package className='w-5 h-5' /> },
-                  { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5' /> },
-                  { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5' /> },
-                  { id: 'landing-page', label: 'LandingPage', icon: <ImageIcon className='w-5 h-5' /> },
-                  { id: 'coupons', label: 'Coupons', icon: <Percent className='w-5 h-5' /> },
-                  { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5' /> },
-                  { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5' /> },
+                  { id: 'products', label: 'Products', icon: <Package className='w-5 h-5 sm:w-5 sm:h-5' /> },
+                  { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5 sm:w-5 sm:h-5' /> },
+                  { id: 'add-banner', label: 'Add Banner', icon: <ImageIcon className='w-5 h-5 sm:w-5 sm:h-5' /> },
+                  { id: 'landing-page', label: 'Landing', icon: <svg className='w-5 h-5 sm:w-5 sm:h-5' fill='currentColor' viewBox='0 0 20 20'><path fillRule='evenodd' d='M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z' clipRule='evenodd' /></svg> },
+                  { id: 'coupons', label: 'Coupons', icon: <Percent className='w-5 h-5 sm:w-5 sm:h-5' /> },
+                  { id: 'orders', label: 'Orders', icon: <ShoppingBag className='w-5 h-5 sm:w-5 sm:h-5' /> },
+                  { id: 'payments', label: 'Payments', icon: <CreditCard className='w-5 h-5 sm:w-5 sm:h-5' /> },
                   // { id: 'analytics', label: 'Analytics', icon: <BarChart3 className='w-5 h-5' /> },
                ].map((tab) => (
                   <button
                      key={tab.id}
                      onClick={() => setActiveTab(tab.id)}
-                     className={`flex items-center space-x-1 lg:space-x-2 px-3 py-1.5 lg:px-6 lg:py-3 rounded-lg font-medium transition-colors ${
+                     className={`flex flex-1 items-center justify-center space-x-1 sm:space-x-2 px-2 py-3 sm:px-3 sm:py-2.5 lg:px-4 lg:py-3 rounded-lg font-medium transition-colors whitespace-nowrap min-w-0 ${
                         activeTab === tab.id ? 'bg-primary-blue text-white' : 'text-text-light hover:text-primary-blue'
                      }`}
                   >
                      {tab.icon}
-                     {!isMobile && <span>{tab.label}</span>}
+                     <span className='hidden sm:inline text-xs sm:text-sm lg:text-base'>{tab.label}</span>
                   </button>
                ))}
-               <ProgressLink
-                  href='/products'
-                  className='flex items-center space-x-2 px-6 py-3 rounded-lg font-medium   bg-primary-pink text-white text-center  shadow-md hover:bg-primary-pink/80 transition-all hover:scale-95 duration-200 sm:text-base text-sm'
-               >
-                  Website
-               </ProgressLink>
             </div>
 
             {openProductModal && selectedProduct && (
@@ -1405,25 +1411,23 @@ Team Hezal Accessories 💜
                      exit={{ opacity: 0, y: -20 }}
                      className='space-y-6'
                   >
-                     <div className='flex justify-between items-center'>
-                        {!isMobile && (
-                           <h2 className='text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
-                              Products Management
-                           </h2>
-                        )}
-                        <div className='relative'>
-                           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5' />
+                     <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4'>
+                        <h2 className='text-xl sm:text-2xl font-nunito font-extrabold text-text-dark leading-tight tracking-wide'>
+                           Products Management
+                        </h2>
+                        <div className='relative w-full sm:w-auto'>
+                           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-text-light w-4 h-4 sm:w-5 sm:h-5' />
                            <input
                               type='text'
                               placeholder='Search products...'
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
-                              className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue'
+                              className='w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-sm sm:text-base'
                            />
                         </div>
                      </div>
 
-                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
                         {filteredProducts.map((product) => (
                            <div
                               key={product.id}
@@ -1459,24 +1463,24 @@ Team Hezal Accessories 💜
                                  onClick={() => handleImageClick(product.id)}
                               />
 
-                              <div className='p-4'>
-                                 <h3 className='font-bold text-text-dark mb-2 hover:underline'>{product.title}</h3>
-                                 <p className='text-text-light text-sm mb-2'>{product.category}</p>
-                                 <div className='flex items-center justify-between mb-4'>
-                                    <div className='flex flex-col'>
+                              <div className='p-3 sm:p-4'>
+                                 <h3 className='font-bold text-text-dark mb-2 hover:underline text-sm sm:text-base line-clamp-2'>{product.title}</h3>
+                                 <p className='text-text-light text-xs sm:text-sm mb-2'>{product.category}</p>
+                                 <div className='flex items-center justify-between mb-3 sm:mb-4'>
+                                    <div className='flex flex-col min-w-0 flex-1'>
                                        {product.sizePricing && product.sizePricing.length > 0 ? (
                                           (() => {
                                              const { minPrice, maxPrice, minOriginalPrice, maxOriginalPrice } = getPriceRange(product)
                                              return (
                                                 <div className='flex flex-col'>
-                                                   <div className='flex items-center space-x-2'>
-                                                      <span className='text-lg font-bold text-primary-pink'>
+                                                   <div className='flex items-center space-x-1 sm:space-x-2'>
+                                                      <span className='text-sm sm:text-lg font-bold text-primary-pink'>
                                                          {minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`}
                                                       </span>
                                                       {(minOriginalPrice === 0 && maxOriginalPrice === 0) ? "" : (
                                                          <>
                                                          {((minOriginalPrice && minOriginalPrice > 0) || (maxOriginalPrice && maxOriginalPrice > 0)) && (
-                                                            <span className='text-sm text-text-light line-through'>
+                                                            <span className='text-xs sm:text-sm text-text-light line-through'>
                                                                {minOriginalPrice === maxOriginalPrice && minOriginalPrice && minOriginalPrice > 0
                                                                   ? `₹${minOriginalPrice}`
                                                                   : minOriginalPrice && maxOriginalPrice && minOriginalPrice > 0 && maxOriginalPrice > 0
@@ -1488,17 +1492,17 @@ Team Hezal Accessories 💜
                                                       )}
                                                    </div>
                                                    <span className='text-xs text-text-light'>
-                                                      {product.sizePricing.length} size{product.sizePricing.length > 1 ? 's' : ''} available
+                                                      {product.sizePricing.length} size{product.sizePricing.length > 1 ? 's' : ''}
                                                    </span>
                                                 </div>
                                              )
                                           })()
                                        ) : (
-                                          <span className='text-lg font-bold text-primary-pink'>₹{product.price}</span>
+                                          <span className='text-sm sm:text-lg font-bold text-primary-pink'>₹{product.price}</span>
                                        )}
                                     </div>
                                     <span
-                                       className={`px-2 py-1 rounded-full text-xs ${
+                                       className={`px-2 py-1 rounded-full text-xs shrink-0 ${
                                           product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                        }`}
                                     >
@@ -1515,16 +1519,16 @@ Team Hezal Accessories 💜
                                           })
                                           setShowEditModal(true)
                                        }}
-                                       className='flex-1 bg-primary-blue text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-1'
+                                       className='flex-1 bg-primary-blue text-white px-2 py-2 sm:px-3 sm:py-2 rounded-lg flex items-center justify-center space-x-1 text-xs sm:text-sm'
                                     >
-                                       <Edit className='w-4 h-4' />
+                                       <Edit className='hidden sm:inline w-3 h-3 sm:w-4 sm:h-4' />
                                        <span>Edit</span>
                                     </button>
                                     <button
                                        onClick={() => handleDeleteProduct(product.id)}
-                                       className='flex-1 bg-red-500 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-1'
+                                       className='flex-1 bg-red-500 text-white px-2 py-2 sm:px-3 sm:py-2 rounded-lg flex items-center justify-center space-x-1 text-xs sm:text-sm'
                                     >
-                                       <Trash2 className='w-4 h-4' />
+                                       <Trash2 className='hidden sm:inline w-3 h-3 sm:w-4 sm:h-4' />
                                        <span>Delete</span>
                                     </button>
                                  </div>
@@ -1542,13 +1546,13 @@ Team Hezal Accessories 💜
                      animate={{ opacity: 1, y: 0 }}
                      exit={{ opacity: 0, y: -20 }}
                   >
-                     <div className='bg-white rounded-lg shadow-lg p-6'>
-                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Add New Product</h2>
+                     <div className='bg-white rounded-lg shadow-lg p-4 sm:p-6'>
+                        <h2 className='text-xl sm:text-2xl font-bold text-text-dark mb-4 sm:mb-6'>Add New Product</h2>
                         <form
                            onSubmit={handleAddProduct}
-                           className='space-y-6'
+                           className='space-y-4 sm:space-y-6'
                         >
-                           <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+                           <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
                               <div>
                                  <label className='block text-sm font-medium text-text-dark mb-2'>
                                     Product Title *
@@ -1577,25 +1581,23 @@ Team Hezal Accessories 💜
                                           <option key={cat.id} value={cat.name}>{cat.name}</option>
                                        ))}
                                     </select>
-                                    <div className='flex gap-2 sm:flex-col md:flex-row'>
+                                    <div className='flex flex-col sm:flex-row gap-2'>
                                        <button
                                           type='button'
                                           onClick={() => setShowAddCategory(true)}
-                                          className='w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2'
+                                          className='flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1 text-sm'
                                        >
-                                          <Plus className='hidden sm:inline w-4 h-4' />
-                                          <span className=''>Add Category</span>
-                                          
+                                          <Plus className='w-4 h-4' />
+                                          <span>Add Category</span>
                                        </button>
                                        {categoriesList.length > 0 && (
                                           <button
                                              type='button'
                                              onClick={() => setShowManageCategories(!showManageCategories)}
-                                             className='w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2'
+                                             className='flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-1 text-sm'
                                           >
-                                             <Edit className='hidden sm:inline w-4 h-4' />
-                                             <span className=''>Manage Category</span>
-                                             
+                                             <Edit className='w-4 h-4' />
+                                             <span>Manage</span>
                                           </button>
                                        )}
                                     </div>
@@ -1909,13 +1911,13 @@ Team Hezal Accessories 💜
 
                            {/* Image Upload Section */}
                            <div className='space-y-4'>
-                              <div className='flex items-center justify-between'>
-                                 <label className='block text-sm font-medium text-text-dark mb-2'>Product Images</label>
+                              <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+                                 <label className='block text-sm font-medium text-text-dark'>Product Images</label>
                                  <div className='flex space-x-2'>
                                     <button
                                        type='button'
                                        onClick={showUploadWidget}
-                                       className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors'
+                                       className='flex-1 sm:flex-none px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm'
                                     >
                                        Upload Images
                                     </button>
@@ -1923,7 +1925,7 @@ Team Hezal Accessories 💜
                                        <button
                                           type='button'
                                           onClick={clearUploadedImages}
-                                          className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+                                          className='px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm'
                                        >
                                           Clear
                                        </button>
@@ -2395,11 +2397,11 @@ Team Hezal Accessories 💜
                               </p>
                            </div>
                            
-                           <div className='flex gap-3 pt-4'>
+                           <div className='flex flex-col sm:flex-row gap-3 pt-4'>
                               <button
                                  onClick={addSimpleBanner}
                                  disabled={!simpleBannerContent.trim()}
-                                 className='flex-1 bg-primary-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                                 className='flex-1 bg-primary-blue text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base'
                               >
                                  <Plus className='w-4 h-4' />
                                  Add Banner
@@ -2408,7 +2410,7 @@ Team Hezal Accessories 💜
                               <button
                                  onClick={saveSimpleBanners}
                                  disabled={loadingBanners}
-                                 className='flex-1 bg-primary-pink text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-pink/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                                 className='flex-1 bg-primary-pink text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-pink/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base'
                               >
                                  <Save className='w-4 h-4' />
                                  {loadingBanners ? 'Saving...' : 'Save Banners'}
@@ -2520,25 +2522,25 @@ Team Hezal Accessories 💜
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                      >
-                        <h2 className='text-2xl font-bold text-text-dark mb-6'>Orders Dashboard</h2>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-                           <div className='bg-white rounded-lg shadow-lg p-6'>
-                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Products</h3>
-                              <p className='text-3xl font-bold text-primary-blue'>{products.length}</p>
+                        <h2 className='text-xl sm:text-2xl font-bold text-text-dark mb-4 sm:mb-6'>Orders Dashboard</h2>
+                        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6'>
+                           <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6'>
+                              <h3 className='text-sm sm:text-base lg:text-lg font-semibold text-text-dark mb-1 sm:mb-2'>Total Products</h3>
+                              <p className='text-xl sm:text-2xl lg:text-3xl font-bold text-primary-blue'>{products.length}</p>
                            </div>
-                           <div className='bg-white rounded-lg shadow-lg p-6'>
-                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Total Orders</h3>
-                              <p className='text-3xl font-bold text-primary-pink'>{orders.length}</p>
+                           <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6'>
+                              <h3 className='text-sm sm:text-base lg:text-lg font-semibold text-text-dark mb-1 sm:mb-2'>Total Orders</h3>
+                              <p className='text-xl sm:text-2xl lg:text-3xl font-bold text-primary-pink'>{orders.length}</p>
                            </div>
-                           <div className='bg-white rounded-lg shadow-lg p-6'>
-                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Revenue</h3>
-                              <p className='text-3xl font-bold text-warm-orange'>
+                           <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6'>
+                              <h3 className='text-sm sm:text-base lg:text-lg font-semibold text-text-dark mb-1 sm:mb-2'>Revenue</h3>
+                              <p className='text-xl sm:text-2xl lg:text-3xl font-bold text-warm-orange'>
                                  ₹{orders.reduce((sum, order) => sum + order.orderSummary.total, 0)}
                               </p>
                            </div>
-                           <div className='bg-white rounded-lg shadow-lg p-6'>
-                              <h3 className='text-lg font-semibold text-text-dark mb-2'>Delivered Orders</h3>
-                              <p className='text-3xl font-bold text-light-purple'>
+                           <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-6'>
+                              <h3 className='text-sm sm:text-base lg:text-lg font-semibold text-text-dark mb-1 sm:mb-2'>Delivered Orders</h3>
+                              <p className='text-xl sm:text-2xl lg:text-3xl font-bold text-light-purple'>
                                  {orders.filter((order) => order.orderStatus === 'delivered').length}
                               </p>
                            </div>
@@ -2646,26 +2648,26 @@ Team Hezal Accessories 💜
                      exit={{ opacity: 0, y: -20 }}
                      className='space-y-6'
                   >
-                     <div className='flex justify-between items-center mb-6'>
-                        <h2 className='text-2xl font-bold text-text-dark'>Payments Management</h2>
+                     <div className='flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center mb-6'>
+                        <h2 className='text-xl sm:text-2xl font-bold text-text-dark'>Payments Management</h2>
                         
                         {/* Payment Status Summary */}
-                        <div className='flex space-x-4'>
-                           <div className='flex items-center space-x-2 bg-green-100 px-3 py-1 rounded-full'>
-                              <CheckCircle className='w-4 h-4 text-green-600' />
-                              <span className='text-sm font-medium text-green-800'>
+                        <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-4'>
+                           <div className='flex items-center space-x-2 bg-green-100 px-2 py-1 rounded-full'>
+                              <CheckCircle className='w-3 h-3 sm:w-4 sm:h-4 text-green-600' />
+                              <span className='text-xs sm:text-sm font-medium text-green-800'>
                                  Success: {payments.filter(p => p.paymentStatus === 'success').length}
                               </span>
                            </div>
-                           <div className='flex items-center space-x-2 bg-red-100 px-3 py-1 rounded-full'>
-                              <XCircle className='w-4 h-4 text-red-600' />
-                              <span className='text-sm font-medium text-red-800'>
+                           <div className='flex items-center space-x-2 bg-red-100 px-2 py-1 rounded-full'>
+                              <XCircle className='w-3 h-3 sm:w-4 sm:h-4 text-red-600' />
+                              <span className='text-xs sm:text-sm font-medium text-red-800'>
                                  Failed: {payments.filter(p => p.paymentStatus === 'failed').length}
                               </span>
                            </div>
-                           <div className='flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full'>
-                              <Clock className='w-4 h-4 text-yellow-600' />
-                              <span className='text-sm font-medium text-yellow-800'>
+                           <div className='flex items-center space-x-2 bg-yellow-100 px-2 py-1 rounded-full'>
+                              <Clock className='w-3 h-3 sm:w-4 sm:h-4 text-yellow-600' />
+                              <span className='text-xs sm:text-sm font-medium text-yellow-800'>
                                  Pending: {payments.filter(p => p.paymentStatus === 'pending').length}
                               </span>
                            </div>
@@ -2682,14 +2684,14 @@ Team Hezal Accessories 💜
                            {payments.map((payment) => (
                               <div
                                  key={payment.id}
-                                 className='bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow'
+                                 className='bg-white rounded-lg shadow-lg p-4 sm:p-6 hover:shadow-xl transition-shadow'
                               >
-                                 <div className='flex justify-between items-start mb-4'>
-                                    <div className='flex-1'>
-                                       <div className='flex items-center space-x-3 mb-2'>
-                                          <h3 className='font-bold text-text-dark'>#{payment.transactionId}</h3>
+                                 <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-3 sm:space-y-0 mb-4'>
+                                    <div className='flex-1 min-w-0'>
+                                       <div className='flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2'>
+                                          <h3 className='font-bold text-text-dark text-sm sm:text-base truncate'>#{payment.transactionId}</h3>
                                           <span
-                                             className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                             className={`inline-block px-2 py-1 rounded-full text-xs font-medium w-fit ${
                                                 payment.paymentStatus === 'success'
                                                    ? 'bg-green-100 text-green-800'
                                                    : payment.paymentStatus === 'failed'
@@ -2702,20 +2704,16 @@ Team Hezal Accessories 💜
                                              {payment.paymentStatus.toUpperCase()}
                                           </span>
                                        </div>
-                                       <p className='text-text-light text-sm'>
-                                          {payment.customerDetails.name} • {payment.customerDetails.email}
-                                       </p>
-                                       <p className='text-text-light text-sm'>
-                                          {new Date(payment.timestamps?.createdAt?.seconds * 1000).toLocaleString() || 'N/A'}
-                                       </p>
-                                       {payment.paymentMethod && (
-                                          <p className='text-text-light text-sm capitalize'>
-                                             Payment Method: {payment.paymentMethod}
-                                          </p>
-                                       )}
+                                       <div className='text-text-light text-xs sm:text-sm space-y-1'>
+                                          <p className='truncate'>{payment.customerDetails.name} • {payment.customerDetails.email}</p>
+                                          <p>{new Date(payment.timestamps?.createdAt?.seconds * 1000).toLocaleString() || 'N/A'}</p>
+                                          {payment.paymentMethod && (
+                                             <p className='capitalize'>Payment Method: {payment.paymentMethod}</p>
+                                          )}
+                                       </div>
                                     </div>
-                                    <div className='text-right'>
-                                       <div className='text-2xl font-bold text-primary-pink mb-2'>
+                                    <div className='flex flex-row sm:flex-col items-center sm:items-end sm:text-right space-x-3 sm:space-x-0 sm:space-y-2'>
+                                       <div className='text-xl sm:text-2xl font-bold text-primary-pink'>
                                           ₹{payment.amount}
                                        </div>
                                        <button
@@ -2723,7 +2721,7 @@ Team Hezal Accessories 💜
                                              setSelectedPayment(payment)
                                              setShowPaymentModal(true)
                                           }}
-                                          className='btn-secondary text-sm px-4 py-2'
+                                          className='btn-secondary text-xs sm:text-sm px-3 py-2 sm:px-4 whitespace-nowrap'
                                        >
                                           View Details
                                        </button>
@@ -2731,11 +2729,11 @@ Team Hezal Accessories 💜
                                  </div>
                                  
                                  {payment.errorDetails && (
-                                    <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
-                                       <p className='text-red-800 text-sm font-medium'>Error Details:</p>
-                                       <p className='text-red-700 text-sm'>{payment.errorDetails.errorDescription}</p>
+                                    <div className='mt-3 p-3 bg-red-50 border border-red-200 rounded-lg'>
+                                       <p className='text-red-800 text-xs sm:text-sm font-medium'>Error Details:</p>
+                                       <p className='text-red-700 text-xs sm:text-sm break-words'>{payment.errorDetails.errorDescription}</p>
                                        {payment.errorDetails.failureReason && (
-                                          <p className='text-red-700 text-sm'>Reason: {payment.errorDetails.failureReason}</p>
+                                          <p className='text-red-700 text-xs sm:text-sm break-words'>Reason: {payment.errorDetails.failureReason}</p>
                                        )}
                                     </div>
                                  )}
@@ -2754,13 +2752,13 @@ Team Hezal Accessories 💜
                      exit={{ opacity: 0, y: -20 }}
                      className='space-y-6'
                   >
-                     <div className='flex justify-between items-center'>
-                        <h1 className='text-3xl font-bold text-primary-blue'>Discount Coupons</h1>
+                     <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4'>
+                        <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-primary-blue'>Discount Coupons</h1>
                         <button
                            onClick={() => setShowAddCoupon(true)}
-                           className='flex items-center space-x-2 bg-primary-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors shadow-lg'
+                           className='flex items-center justify-center space-x-2 bg-primary-blue text-white px-4 py-3 sm:px-6 sm:py-3 rounded-lg font-medium hover:bg-primary-blue/90 transition-colors shadow-lg text-sm sm:text-base w-full sm:w-auto'
                         >
-                           <Plus className='w-5 h-5' />
+                           <Plus className='w-4 h-4 sm:w-5 sm:h-5' />
                            <span>Add Coupon</span>
                         </button>
                      </div>
