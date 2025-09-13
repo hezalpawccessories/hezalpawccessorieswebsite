@@ -854,16 +854,22 @@ export default function AdminDashboard() {
          price: 0, // Set to 0 since we're using size-based pricing only
          originalPrice: 0, // Set to 0 since we're using size-based pricing only
       }
-      setProducts([...products, product])
 
       //~ adding product to Firestore
       addProduct(product)
-         .then(() => {
+         .then(async () => {
             console.log('Product added successfully')
             toast.success('Product added successfully!', {
                description: `${product.title} has been added to your catalog`,
                duration: 4000,
             })
+            // Refresh products list from database to ensure consistency
+            try {
+               const refreshedProducts = await getProducts()
+               setProducts(refreshedProducts)
+            } catch (error) {
+               console.error('Error refreshing products:', error)
+            }
          })
          .catch((error) => {
             console.error('Error adding product:', error)
@@ -880,7 +886,7 @@ export default function AdminDashboard() {
          sizePricing: [{ size: 'XS', price: 0, originalPrice: 0 }],
          image: '',
          images: [''],
-         category: 'Collars',
+         category: categoriesList.length > 0 ? categoriesList[0].name : 'Collars',
          collection: '',
          description: '',
          details: [''],
@@ -914,9 +920,9 @@ export default function AdminDashboard() {
             price: 0, // Set to 0 since we're using size-based pricing only
             originalPrice: 0, // Set to 0 since we're using size-based pricing only
          }
-         const updatedProducts = products.map((p) => (p.id === selectedProduct.id ? updatedProduct : p))
+         
          updateProduct(selectedProduct.id, updatedProduct)
-            .then(() => {
+            .then(async () => {
                console.log('Product updated successfully')
                toast.success('Product updated successfully!', {
                   description: `${updatedProduct.title} has been updated`,
@@ -924,6 +930,13 @@ export default function AdminDashboard() {
                })
              // Clear any uploaded image previews after successful update
              setUploadedImages([])
+             // Refresh products list from database to ensure consistency
+             try {
+                const refreshedProducts = await getProducts()
+                setProducts(refreshedProducts)
+             } catch (error) {
+                console.error('Error refreshing products:', error)
+             }
             })
             .catch((error) => {
                console.error('Error updating product:', error)
@@ -932,7 +945,6 @@ export default function AdminDashboard() {
                   duration: 4000,
                })
             })
-         setProducts(updatedProducts)
           // close modal and clear selection; also clear any uploaded previews to reset the form
           setShowEditModal(false)
           setUploadedImages([])
@@ -2903,11 +2915,12 @@ Team Hezal Accessories 💜
                                  onChange={(e) => setSelectedProduct({ ...selectedProduct, category: e.target.value })}
                                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-dm-sans'
                               >
-                                 <option value='Bandana/neck scarf'>Bandana/neck scarf</option>
-                                 <option value='Bow ties'>Bow ties</option>
-                                 <option value='Collars'>Collars</option>
-                                 <option value='Collar-leash set'>Collar-leash set</option>
-                                 <option value='Treat Jars'>Treat Jars</option>
+                                 {categoriesList.length === 0 && (
+                                    <option value=''>{'-- no categories --'}</option>
+                                 )}
+                                 {categoriesList.map((cat) => (
+                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                 ))}
                               </select>
                            </div>
                         </div>
