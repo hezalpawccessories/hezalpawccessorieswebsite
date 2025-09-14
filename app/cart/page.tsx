@@ -34,8 +34,6 @@ interface CheckoutForm {
 export default function Cart() {
    const [cartItems, setCartItems] = useState<CartItem[]>([])
    const [showCheckout, setShowCheckout] = useState(false)
-   const [orderSuccess, setOrderSuccess] = useState(false)
-   const [orderDetails, setOrderDetails] = useState<any>(null)
    const [checkoutForm, setCheckoutForm] = useState<CheckoutForm>({
       name: '',
       email: '',
@@ -54,14 +52,26 @@ export default function Cart() {
    // Razorpay payment integration
    const { initiatePayment, loading: paymentLoading } = useRazorpay({
       onSuccess: (data) => {
-         setOrderDetails(data.orderDetails)
-         setOrderSuccess(true)
-         setShowCheckout(false)
-         // Clear cart after successful payment
+         // Clear cart and coupon state after successful payment
          localStorage.removeItem('cart')
          setCartItems([])
+         setAppliedCoupon(null)
+         setCouponCode('')
          window.dispatchEvent(new Event('cartUpdated'))
-         toast.success('Order placed successfully!')
+         
+         // Redirect to thank you page with order details
+         const params = new URLSearchParams({
+            orderId: data.orderDetails.orderId,
+            paymentId: data.orderDetails.paymentId,
+            amount: data.orderDetails.amount.toString(),
+            customerName: checkoutForm.name,
+            customerEmail: checkoutForm.email,
+            customerPhone: checkoutForm.phone,
+            customerAddress: checkoutForm.address,
+            customerPincode: checkoutForm.pincode
+         })
+         
+         window.location.href = `/thank-you?${params.toString()}`
       },
       onFailure: (error: Error) => {
          console.error('Payment failed:', error)
@@ -139,7 +149,7 @@ export default function Cart() {
 
    // Validate coupon when cart items change
    useEffect(() => {
-      if (appliedCoupon) {
+      if (appliedCoupon && cartItems.length > 0) {
          validateCouponForCurrentCart(appliedCoupon)
       }
    }, [cartItems, appliedCoupon, validateCouponForCurrentCart])
@@ -302,65 +312,6 @@ export default function Cart() {
          />
          <Navbar />
          <main className='gradient-bg min-h-screen'>
-            {/* Order Success Modal */}
-            <AnimatePresence>
-               {orderSuccess && (
-                  <motion.div
-                     initial={{ opacity: 0 }}
-                     animate={{ opacity: 1 }}
-                     exit={{ opacity: 0 }}
-                     className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
-                  >
-                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        className='bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center'
-                     >
-                        <div className='mb-6'>
-                           <CheckCircle className='w-16 h-16 text-green-500 mx-auto mb-4' />
-                           <h2 className='text-2xl font-heading font-bold text-text-dark mb-2'>Order Placed Successfully!</h2>
-                           <p className='font-body text-text-light'>
-                              Your payment has been processed and order has been placed. You will receive a confirmation email shortly.
-                           </p>
-                        </div>
-
-                        {orderDetails && (
-                           <div className='bg-gray-50 rounded-lg p-4 mb-6 text-left'>
-                              <h3 className='font-heading font-semibold text-text-dark mb-2'>Order Details:</h3>
-                              <p className='text-sm font-body text-text-light mb-1'>
-                                 <span className='font-medium'>Order ID:</span> {orderDetails.orderId}
-                              </p>
-                              <p className='text-sm font-body text-text-light mb-1'>
-                                 <span className='font-medium'>Payment ID:</span> {orderDetails.paymentId}
-                              </p>
-                              <p className='text-sm font-body text-text-light'>
-                                 <span className='font-medium'>Amount:</span> ₹{orderDetails.amount}
-                              </p>
-                           </div>
-                        )}
-
-                        <div className='space-y-3'>
-                           <button
-                              onClick={() => setOrderSuccess(false)}
-                              className='btn-primary w-full'
-                           >
-                              Continue Shopping
-                           </button>
-                           <button
-                              onClick={() => {
-                                 setOrderSuccess(false)
-                                 window.location.href = '/'
-                              }}
-                              className='w-full px-4 py-2 font-body text-primary-pink border border-primary-pink rounded-lg hover:bg-primary-pink hover:text-white transition-colors'
-                           >
-                              Go to Home
-                           </button>
-                        </div>
-                     </motion.div>
-                  </motion.div>
-               )}
-            </AnimatePresence>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                <motion.div
                   initial={{ opacity: 0, y: 50 }}
@@ -672,9 +623,7 @@ export default function Cart() {
 
                               <div className='bg-blue-50 p-4 rounded-lg'>
                                  <p className='text-sm font-body text-text-dark'>
-                                    <strong>Note:</strong> After payment is done, you will receive a receipt of payment.
-                                    When your product is dispatched, you will receive a mail from there you can track
-                                    your order. For any queries, contact{' '}
+                                    <strong>Note:</strong> You will receive a payment receipt after completing your purchase. Once your order is dispatched, a tracking email will be sent to you. For any queries, contact us at{' '}
                                     <a
                                        href='mailto:hezal.accessories@gmail.com'
                                        className='text-primary-blue font-heading font-semibold'
