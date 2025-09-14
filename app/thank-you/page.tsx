@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { CheckCircle, Heart, Mail, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react'
@@ -19,7 +19,7 @@ interface OrderDetails {
    customerPincode: string
 }
 
-export default function ThankYou() {
+function ThankYouContent() {
    const searchParams = useSearchParams()
    const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
 
@@ -201,7 +201,7 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
                            <p className='flex items-start'>
                               <span className='inline-block w-2 h-2 bg-primary-pink rounded-full mt-2 mr-3 flex-shrink-0'></span>
                               <span>
-                                 You'll receive tracking details via email & whatsapp once your order is shipped.
+                                 You&apos;ll receive tracking details via email & whatsapp once your order is shipped.
                               </span>
                            </p>
                         </div>
@@ -223,10 +223,10 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
                         <span>🐱</span>
                      </div>
                      <h3 className='text-2xl font-heading font-bold text-text-dark mb-4'>
-                        Your Pet's Style Journey Begins! 🌟
+                        Your Pet&apos;s Style Journey Begins! 🌟
                      </h3>
                      <p className='text-lg font-body text-text-body leading-relaxed'>
-                        We're thrilled to be part of your pet's fashion adventure! Every accessory is crafted with love 
+                        We&apos;re thrilled to be part of your pet&apos;s fashion adventure! Every accessory is crafted with love 
                         and care to make your furry baby look absolutely adorable. 
                         <br />
                         <span className='text-primary-pink font-semibold'>Keep Shopping, Stay Happy! 💜</span>
@@ -282,5 +282,17 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
          </main>
          <Footer />
       </>
+   )
+}
+
+export default function ThankYou() {
+   return (
+      <Suspense fallback={
+         <div className="min-h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-pink"></div>
+         </div>
+      }>
+         <ThankYouContent />
+      </Suspense>
    )
 }

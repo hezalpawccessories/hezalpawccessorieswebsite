@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
    }, [])
 
    // Load categories from Firestore
-   const loadCategories = async () => {
+   const loadCategories = useCallback(async () => {
       try {
             const { getCategories } = await import('@/integrations/firebase/firestoreCollections')
             const cats = await getCategories()
@@ -243,14 +243,14 @@ export default function AdminDashboard() {
             setCategoriesList(merged)
             // default selection if current newProduct.category is not in list
             if (!merged.find(c => c.name === newProduct.category) && merged.length > 0) {
-               setNewProduct({ ...newProduct, category: merged[0].name })
+               setNewProduct(prev => ({ ...prev, category: merged[0].name }))
             }
       } catch (err) {
          console.error('Failed to load categories', err)
       }
-   }
+   }, [newProduct.category])
 
-   useEffect(() => { loadCategories() }, [])
+   useEffect(() => { loadCategories() }, [loadCategories])
 
    const handleAddCategory = async () => {
       if (!newCategoryName.trim()) {
@@ -1371,7 +1371,7 @@ Team Hezal Accessories 💜
                               ) : (
                                  uploadedImages.map((url) => (
                                     <div key={url} className='w-40'>
-                                       <img src={url} alt='preview' className='rounded-md w-full h-24 object-cover' />
+                                       <Image src={url} alt='preview' className='rounded-md w-full h-24 object-cover' width={160} height={96} />
                                        <div className='flex mt-2 space-x-2'>
                                           <button onClick={() => copyToClipboard(url)} className='px-2 py-1 bg-gray-100 rounded'>Copy URL</button>
                                           <button onClick={() => setSelectedLandingUrl(url)} className='px-2 py-1 bg-primary-blue text-white rounded'>Use</button>
