@@ -16,6 +16,9 @@ interface OrderDetails {
    customerEmail: string
    customerPhone: string
    customerAddress: string
+   customerLandmark?: string
+   customerCity: string
+   customerState: string
    customerPincode: string
 }
 
@@ -32,6 +35,9 @@ function ThankYouContent() {
       const customerEmail = searchParams.get('customerEmail')
       const customerPhone = searchParams.get('customerPhone')
       const customerAddress = searchParams.get('customerAddress')
+      const customerLandmark = searchParams.get('customerLandmark')
+      const customerCity = searchParams.get('customerCity')
+      const customerState = searchParams.get('customerState')
       const customerPincode = searchParams.get('customerPincode')
 
       if (orderId && paymentId && amount) {
@@ -43,6 +49,9 @@ function ThankYouContent() {
             customerEmail: customerEmail || '',
             customerPhone: customerPhone || '',
             customerAddress: customerAddress || '',
+            customerLandmark: customerLandmark || '',
+            customerCity: customerCity || '',
+            customerState: customerState || '',
             customerPincode: customerPincode || ''
          })
       }
@@ -155,6 +164,22 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
                                  <div>
                                     <span className='text-text-light'>Address:</span>
                                     <p className='font-medium text-text-dark break-words'>{orderDetails.customerAddress}</p>
+                                 </div>
+                                 {orderDetails.customerLandmark && (
+                                    <div>
+                                       <span className='text-text-light'>Landmark:</span>
+                                       <p className='font-medium text-text-dark break-words'>{orderDetails.customerLandmark}</p>
+                                    </div>
+                                 )}
+                                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
+                                    <div>
+                                       <span className='text-text-light'>City:</span>
+                                       <p className='font-medium text-text-dark'>{orderDetails.customerCity}</p>
+                                    </div>
+                                    <div>
+                                       <span className='text-text-light'>State:</span>
+                                       <p className='font-medium text-text-dark'>{orderDetails.customerState}</p>
+                                    </div>
                                  </div>
                                  <div>
                                     <span className='text-text-light'>Pincode:</span>

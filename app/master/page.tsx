@@ -1133,6 +1133,7 @@ ${order.items.map(item => `• ${item.title} (Size: ${item.size}) - Qty: ${item.
 
 Shipping Address:
 ${order.customerDetails.address}
+${order.customerDetails.landmark ? order.customerDetails.landmark + '\n' : ''}${order.customerDetails.city}, ${order.customerDetails.state}
 ${order.customerDetails.pincode}
 
 Current Status: Processing
@@ -3341,6 +3342,11 @@ Team Hezal Accessories 💜
                               <p className='text-text-light'>Email: {selectedOrder.customerDetails.email}</p>
                               <p className='text-text-light'>Phone: {selectedOrder.customerDetails.phone}</p>
                               <p className='text-text-light'>Address: {selectedOrder.customerDetails.address}</p>
+                              {selectedOrder.customerDetails.landmark && (
+                                 <p className='text-text-light'>Landmark: {selectedOrder.customerDetails.landmark}</p>
+                              )}
+                              <p className='text-text-light'>City: {selectedOrder.customerDetails.city}</p>
+                              <p className='text-text-light'>State: {selectedOrder.customerDetails.state}</p>
                               <p className='text-text-light'>Pincode: {selectedOrder.customerDetails.pincode}</p>
                               {selectedOrder.customerDetails.alternatePhone && (
                                  <p className='text-text-light'>Alternate Phone: {selectedOrder.customerDetails.alternatePhone}</p>
@@ -4081,6 +4087,10 @@ Team Hezal Accessories 💜
                               <span className='font-medium text-text-dark'>Shipping Address:</span>
                               <p className='text-text-light text-sm mt-1'>
                                  {selectedOrderForEmail.customerDetails.address}<br/>
+                                 {selectedOrderForEmail.customerDetails.landmark && (
+                                    <>{selectedOrderForEmail.customerDetails.landmark}<br/></>
+                                 )}
+                                 {selectedOrderForEmail.customerDetails.city}, {selectedOrderForEmail.customerDetails.state}<br/>
                                  {selectedOrderForEmail.customerDetails.pincode}
                               </p>
                            </div>

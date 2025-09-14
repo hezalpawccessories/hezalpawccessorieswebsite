@@ -31,6 +31,9 @@ export interface CustomerDetails {
   email: string
   phone: string
   address: string
+  landmark?: string
+  city: string
+  state: string
   pincode: string
   alternatePhone?: string
 }

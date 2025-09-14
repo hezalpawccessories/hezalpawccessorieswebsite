@@ -8,6 +8,7 @@ import Footer from '@/components/Footer'
 import { Product } from '@/lib/products'
 import Image from 'next/image'
 import { useRazorpay } from '@/hooks/useRazorpay'
+import { indianStates, getCitiesForState, searchCities } from '@/lib/indianLocations'
 import { CheckoutDetails } from '@/lib/razorpay-config'
 import { toast } from 'sonner'
 import Script from 'next/script'
@@ -27,6 +28,9 @@ interface CheckoutForm {
    email: string
    phone: string
    address: string
+   landmark: string
+   city: string
+   state: string
    pincode: string
    alternatePhone: string
 }
@@ -39,6 +43,9 @@ export default function Cart() {
       email: '',
       phone: '',
       address: '',
+      landmark: '',
+      city: '',
+      state: '',
       pincode: '',
       alternatePhone: '',
    })
@@ -48,6 +55,10 @@ export default function Cart() {
    const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null)
    const [couponValidating, setCouponValidating] = useState(false)
    const [coupons, setCoupons] = useState<Coupon[]>([])
+
+   // Location autocomplete state
+   const [citySuggestions, setCitySuggestions] = useState<string[]>([])
+   const [showCitySuggestions, setShowCitySuggestions] = useState(false)
 
    // Razorpay payment integration
    const { initiatePayment, loading: paymentLoading } = useRazorpay({
@@ -68,6 +79,9 @@ export default function Cart() {
             customerEmail: checkoutForm.email,
             customerPhone: checkoutForm.phone,
             customerAddress: checkoutForm.address,
+            customerLandmark: checkoutForm.landmark,
+            customerCity: checkoutForm.city,
+            customerState: checkoutForm.state,
             customerPincode: checkoutForm.pincode
          })
          
@@ -78,6 +92,47 @@ export default function Cart() {
          toast.error('Payment failed. Please try again.')
       },
    })
+
+   // Handle state change and update city suggestions
+   const handleStateChange = (selectedState: string) => {
+      setCheckoutForm({ ...checkoutForm, state: selectedState, city: '' })
+      const cities = getCitiesForState(selectedState)
+      setCitySuggestions(cities)
+      setShowCitySuggestions(false)
+   }
+
+   // Handle city input change
+   const handleCityChange = (value: string) => {
+      setCheckoutForm({ ...checkoutForm, city: value })
+      
+      if (value.length >= 2) {
+         let suggestions: string[] = []
+         
+         // First, get cities from selected state
+         if (checkoutForm.state) {
+            const stateCities = getCitiesForState(checkoutForm.state)
+            suggestions = stateCities.filter(city => 
+               city.toLowerCase().includes(value.toLowerCase())
+            )
+         }
+         
+         // If no matches in state or no state selected, search all cities
+         if (suggestions.length === 0) {
+            suggestions = searchCities(value)
+         }
+         
+         setCitySuggestions(suggestions)
+         setShowCitySuggestions(suggestions.length > 0)
+      } else {
+         setShowCitySuggestions(false)
+      }
+   }
+
+   // Handle city selection from suggestions
+   const handleCitySelect = (city: string) => {
+      setCheckoutForm({ ...checkoutForm, city })
+      setShowCitySuggestions(false)
+   }
 
    useEffect(() => {
       const loadCart = () => {
@@ -254,7 +309,7 @@ export default function Cart() {
       e.preventDefault()
       
       // Validate form
-      if (!checkoutForm.name || !checkoutForm.email || !checkoutForm.phone || !checkoutForm.address || !checkoutForm.pincode) {
+      if (!checkoutForm.name || !checkoutForm.email || !checkoutForm.phone || !checkoutForm.address || !checkoutForm.city || !checkoutForm.state || !checkoutForm.pincode) {
          toast.error('Please fill in all required fields')
          return
       }
@@ -607,7 +662,66 @@ export default function Cart() {
                                     value={checkoutForm.address}
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
                                     className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    placeholder='Enter your complete address (e.g., Building name, Street, Area)'
                                  />
+                              </div>
+
+                              <div>
+                                 <label className='block text-sm font-heading font-medium text-text-dark mb-1'>Landmark</label>
+                                 <input
+                                    type='text'
+                                    value={checkoutForm.landmark}
+                                    onChange={(e) => setCheckoutForm({ ...checkoutForm, landmark: e.target.value })}
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    placeholder='Near landmark (e.g., Metro station, Mall, Hospital)'
+                                 />
+                              </div>
+
+                              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                 <div className='relative'>
+                                    <label className='block text-sm font-heading font-medium text-text-dark mb-1'>City *</label>
+                                    <input
+                                       type='text'
+                                       required
+                                       value={checkoutForm.city}
+                                       onChange={(e) => handleCityChange(e.target.value)}
+                                       onFocus={() => {
+                                          if (checkoutForm.state && citySuggestions.length > 0) {
+                                             setShowCitySuggestions(true)
+                                          }
+                                       }}
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       placeholder='Enter your city'
+                                       autoComplete='off'
+                                    />
+                                    {showCitySuggestions && citySuggestions.length > 0 && (
+                                       <div className='absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto'>
+                                          {citySuggestions.map((city, index) => (
+                                             <div
+                                                key={index}
+                                                onClick={() => handleCitySelect(city)}
+                                                className='px-3 py-2 hover:bg-gray-100 cursor-pointer font-body text-sm'
+                                             >
+                                                {city}
+                                             </div>
+                                          ))}
+                                       </div>
+                                    )}
+                                 </div>
+                                 <div>
+                                    <label className='block text-sm font-heading font-medium text-text-dark mb-1'>State *</label>
+                                    <select
+                                       required
+                                       value={checkoutForm.state}
+                                       onChange={(e) => handleStateChange(e.target.value)}
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    >
+                                       <option value=''>Select your state</option>
+                                       {indianStates.map((state, index) => (
+                                          <option key={index} value={state}>{state}</option>
+                                       ))}
+                                    </select>
+                                 </div>
                               </div>
 
                               <div>
@@ -618,6 +732,7 @@ export default function Cart() {
                                     value={checkoutForm.pincode}
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, pincode: e.target.value })}
                                     className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    placeholder='Enter your pincode'
                                  />
                               </div>
 
