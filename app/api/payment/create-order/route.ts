@@ -27,8 +27,11 @@ interface CustomerDetails {
   email: string
   phone: string
   address: string
+  landmark?: string
+  city: string
+  state: string
   pincode: string
-  alternatePhone: string
+  alternatePhone?: string
 }
 
 // Initialize Razorpay instance (conditionally to avoid build errors)
@@ -126,8 +129,11 @@ export async function POST(request: NextRequest) {
           email: customerDetails.email,
           phone: customerDetails.phone,
           address: customerDetails.address,
-      pincode: customerDetails.pincode,
-      alternatePhone: customerDetails.alternatePhone
+          landmark: customerDetails.landmark,
+          city: customerDetails.city,
+          state: customerDetails.state,
+          pincode: customerDetails.pincode,
+          alternatePhone: customerDetails.alternatePhone
         },
         items: cartItems.map((item: CartItem) => ({
           id: item.id,
