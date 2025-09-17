@@ -1152,7 +1152,7 @@ Team Hezal Accessories 💜
 
 ━━━━━━━━━━━━━━━━━━━━
 📞 Contact: +91-7060266900
-📧 Email: hezalaccessories@gmail.com
+📧 Email: hezal.accessories@gmail.com
 🌐 Instagram: @hezal_accessories
 ━━━━━━━━━━━━━━━━━━━━`
    }

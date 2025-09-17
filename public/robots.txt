@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+
+# Allow all bots to crawl the site
+Allow: /products/
+Allow: /about
+Allow: /contact
+Allow: /cart
+Allow: /terms
+Allow: /privacy-policy
+Allow: /shipping-policy
+Allow: /return-policy
+
+# Block admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /owner/
+Disallow: /master/
+
+# Block temporary or test pages
+Disallow: /sentry-example-page/
+
+# Allow CSS and JS files for proper rendering
+Allow: /_next/static/
+
+# Sitemap location
+Sitemap: https://www.hezalaccessories.com/sitemap.xml

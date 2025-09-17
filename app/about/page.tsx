@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { Heart, Award, Users, Truck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEOHead from '@/components/SEO/SEOHead';
+import Breadcrumb from '@/components/SEO/Breadcrumb';
 
 export default function About() {
   const stats = [
@@ -16,10 +18,38 @@ export default function About() {
 
   return (
     <>
+      <SEOHead 
+        title="About Us - Hezal Accessories | Premium Pet Accessories"
+        description="Learn about Hezal Accessories, a passionate team dedicated to creating premium pet accessories. Discover our story, mission, and commitment to quality."
+        keywords={['about hezal accessories', 'pet accessories company', 'handcrafted pet products', 'premium pet gear seller', 'pet fashion brand story']}
+        canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/about`}
+        breadcrumbs={[
+          { name: 'About Us', url: '/about' }
+        ]}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Hezal Accessories",
+          "description": "Learn about our passion for creating premium pet accessories that bring joy, comfort, and style to your beloved companions.",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Hezal Accessories",
+            "description": "Premium pet accessories seller specializing in custom dog collars, leashes, and stylish pet gear. Your pet deserves only the best!"
+          }
+        }}
+      />
       <Navbar />
       <main className="gradient-bg">
+        {/* Breadcrumb Navigation */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <Breadcrumb 
+            items={[{ name: 'About Us', href: '/about', current: true }]}
+            className="mb-4"
+          />
+        </div>
+        
         {/* Hero Section */}
-        <section className="py-20">
+        <section className="py-12 lg:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 50 }}

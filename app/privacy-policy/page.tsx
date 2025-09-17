@@ -2,13 +2,25 @@
 
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SEOHead from '@/components/SEO/SEOHead'
+import Breadcrumb from '@/components/SEO/Breadcrumb'
 
 export default function PrivacyPolicy() {
   return (
     <>
+      <SEOHead 
+        title="Privacy Policy - Hezal Accessories"
+        description="Read our privacy policy to understand how Hezal Accessories collects, uses, and protects your personal information when you shop for premium pet accessories."
+        canonicalUrl="/privacy-policy"
+        noIndex={false}
+      />
       <Navbar />
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+          <Breadcrumb 
+            items={[{ name: 'Privacy Policy', href: '/privacy-policy', current: true }]}
+            className="mb-6"
+          />
           <div className='bg-white rounded-lg shadow-sm border border-gray-100 p-8'>
             <h1 className='text-3xl font-heading font-bold text-gray-800 mb-8 text-center'>
               Privacy Policy
@@ -75,8 +87,8 @@ export default function PrivacyPolicy() {
                 <p className='text-gray-700 font-medium text-sm sm:text-base break-words'>
                   <span className='block sm:inline'>For privacy queries, contact:</span>
                   <span className='block sm:inline mt-2 sm:mt-0'>
-                    <a href='mailto:hezalaccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
-                      hezalaccessories@gmail.com
+                    <a href='mailto:hezal.accessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
+                      hezal.accessories@gmail.com
                     </a>
                   </span>
                   <span className='block sm:inline mt-2 sm:mt-0'>

@@ -88,8 +88,8 @@ export default function TermsAndConditions() {
                 <p className='text-gray-700 font-medium text-sm sm:text-base break-words'>
                   <span className='block sm:inline'>For any questions, contact:</span>
                   <span className='block sm:inline mt-2 sm:mt-0'>
-                    <a href='mailto:hezalaccessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
-                      hezalaccessories@gmail.com
+                    <a href='mailto:hezal.accessories@gmail.com' className='text-pink-600 hover:text-pink-700 ml-0 sm:ml-2 break-all'>
+                      hezal.accessories@gmail.com
                     </a>
                   </span>
                   <span className='block sm:inline mt-2 sm:mt-0'>

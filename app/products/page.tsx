@@ -12,6 +12,34 @@ import Select from 'react-select'
 import { select } from 'framer-motion/client'
 import { toast } from 'sonner'
 import { getProducts, getBanners, Banner, getCollections, Collection } from '@/integrations/firebase/firestoreCollections'
+import SEOHead from '@/components/SEO/SEOHead'
+import Breadcrumb from '@/components/SEO/Breadcrumb'
+import { trackAddToCart, trackViewItem, trackSearch } from '@/components/Analytics/GoogleAnalytics'
+
+// GTM event helpers
+const pushViewItemEvent = (data: any) => {
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: 'view_item',
+      ...data
+    })
+  }
+}
+
+const pushAddToCartEvent = (data: any) => {
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: 'add_to_cart',
+      ...data
+    })
+  }
+}
+
+declare global {
+  interface Window {
+    dataLayer: any[]
+  }
+}
 
 const sortOptions = [
    { value: 'name', label: 'Sort by Name' },
@@ -322,6 +350,28 @@ function ProductsContent() {
       return cartItems.some((item) => item.id === productId)
    }
 
+   const handleProductView = (product: Product) => {
+      setSelectedProduct(product)
+      
+      // Track product view analytics
+      const itemData = {
+         currency: 'INR',
+         value: product.price,
+         items: [{
+            item_id: product.id,
+            item_name: product.title,
+            category: product.category,
+            price: product.price,
+         }]
+      }
+      
+      // Track with Google Analytics
+      trackViewItem('INR', product.price, itemData.items)
+      
+      // Track with Google Tag Manager  
+      pushViewItemEvent(itemData)
+   }
+
    const addToCart = (product: Product, size?: string, quantity: number = 1) => {
       const sizeToUse = size || selectedSizes[product.id] || selectedSize
 
@@ -393,6 +443,26 @@ function ProductsContent() {
          localStorage.setItem('cart', JSON.stringify(cart))
          window.dispatchEvent(new Event('cartUpdated'))
          setCartItems(cart)
+
+         // Track analytics for add to cart
+         const itemData = {
+            currency: 'INR',
+            value: sizePrice,
+            items: [{
+               item_id: product.id,
+               item_name: product.title,
+               category: product.category,
+               quantity: quantity,
+               price: sizePrice,
+               item_variant: sizeToUse,
+            }]
+         }
+         
+         // Track with Google Analytics
+         trackAddToCart('INR', sizePrice, itemData.items)
+         
+         // Track with Google Tag Manager
+         pushAddToCartEvent(itemData)
 
          const customNameText = product.category === 'Treat Jars' && customNames[product.id] 
             ? ` with custom name "${customNames[product.id]}"` 
@@ -600,9 +670,24 @@ function ProductsContent() {
 
    return (
       <>
+         <SEOHead 
+            title="Premium Pet Accessories & Custom Dog Collars | Hezal Accessories"
+            description="Shop our extensive collection of premium pet accessories including custom dog collars, leashes, bow ties, bandanas, and treat jars. Handcrafted with love, designed for comfort and style."
+            keywords={['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'treat jars', 'premium pet gear', 'handcrafted pet accessories', 'pet fashion']}
+            canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products`}
+            breadcrumbs={[
+               { name: 'Products', url: '/products' }
+            ]}
+         />
          <Navbar />
          <main className='gradient-bg min-h-screen'>
             <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+               {/* Breadcrumb Navigation */}
+               <Breadcrumb 
+                  items={[{ name: 'Products', href: '/products', current: true }]}
+                  className="mb-6"
+               />
+               
                {/* Header */}
                <motion.div
                   initial={{ opacity: 0, y: 50 }}
@@ -611,10 +696,10 @@ function ProductsContent() {
                   className='text-center mb-12'
                >
                   <h1 className='text-4xl md:text-5xl font-heading font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
-                     Our <span className='text-primary-pink'>Products</span>
+                     Premium <span className='text-primary-pink'>Pet Accessories</span>
                   </h1>
                   <p className='text-xl font-body text-text-body max-w-2xl mx-auto'>
-                     Discover our carefully curated collection of premium pet accessories
+                     Discover our carefully curated collection of premium pet accessories designed with love for your furry friends
                   </p>
                </motion.div>
 
@@ -810,6 +895,16 @@ function ProductsContent() {
 
                {/* Filters */}
                <div className='mb-8 space-y-4'>
+                  {/* Categories Section */}
+                  <div className="text-center mb-6">
+                     <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-dark mb-2">
+                        Shop by Category
+                     </h2>
+                     <p className="text-lg text-text-body">
+                        Find the perfect accessories for your furry friend
+                     </p>
+                  </div>
+                  
                   {/* Category Pills */}
                            <div className='flex flex-wrap gap-3 justify-center'>
                                {categoriesList.map((category) => (
@@ -985,7 +1080,7 @@ function ProductsContent() {
                            {/* Hover overlay with eye icon */}
                            <div
                               className='absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center'
-                              onClick={() => setSelectedProduct(product)}
+                              onClick={() => handleProductView(product)}
                            >
                               <div className='bg-white rounded-full p-3 shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300 cursor-pointer mb-2'>
                                  <Eye className='w-6 h-6 text-pink-500' />
@@ -1031,7 +1126,7 @@ function ProductsContent() {
                         <div className='p-4 w-3/5 sm:w-full'>
                            <div
                               className='group cursor-pointer mb-3 p-2 -m-2 rounded-lg hover:bg-pink-50 transition-colors duration-200'
-                              onClick={() => setSelectedProduct(product)}
+                              onClick={() => handleProductView(product)}
                            >
                               <h3 className='text-lg sm:text-xl font-heading font-bold text-text-dark line-clamp-2 group-hover:underline transition-all duration-400 flex items-start gap-2 mb-1'>
                                  <span className='flex-1'>{product.title}</span>

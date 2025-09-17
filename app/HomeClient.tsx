@@ -12,6 +12,7 @@ import AnimatedSlideshow from '@/components/ui/animated-slideshow'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 import ScrollBaseAnimation from '@/components/ui/text-marquee'
+import SEOHead from '@/components/SEO/SEOHead'
 
 interface Props {
   landingImageUrl: string | null
@@ -26,6 +27,28 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
     setLandingImageUrl(initialLandingUrl)
     setLandingImageLoaded(!!initialLandingUrl)
   }, [initialLandingUrl])
+
+  // Structured data for organization
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Hezal Accessories",
+    "url": "https://www.hezalaccessories.com",
+    "logo": "https://www.hezalaccessories.com/logom.png",
+    "description": "Premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "availableLanguage": ["English", "Hindi"]
+    },
+    "sameAs": [
+      "https://www.instagram.com/hezal_accessories/"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN"
+    }
+  }
 
   const features = [
     { icon: <Shield className='w-8 h-8' />, title: 'Premium Quality', description: 'Only the finest materials for your beloved pets' },
@@ -88,6 +111,27 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
 
   return (
     <>
+      <SEOHead
+        title="Hezal Accessories - Premium Pet Accessories & Custom Dog Collars"
+        description="Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends. Free shipping on orders over ₹999."
+        keywords={['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories', 'pet fashion', 'dog fashion']}
+        ogType="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Hezal Accessories",
+          "description": "Premium pet accessories seller specializing in custom dog collars, leashes, and stylish pet gear. Your pet deserves only the best!",
+          "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.hezalaccessories.com",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.hezalaccessories.com"}/products?search={search_term_string}`
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }}
+      />
       <Navbar />
       <main className='pet-pattern-bg'>
         <section className='relative overflow-hidden hero-bg'>

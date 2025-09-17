@@ -6,6 +6,8 @@ import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
+import SEOHead from '@/components/SEO/SEOHead'
+import Breadcrumb from '@/components/SEO/Breadcrumb'
 
 export default function Contact() {
    const [formData, setFormData] = useState({
@@ -46,7 +48,7 @@ export default function Contact() {
       {
          icon: <Mail className='w-6 h-6' />,
          title: 'Email Us',
-         details: 'hezalaccessories@gmail.com',
+         details: 'hezal.accessories@gmail.com',
          description: 'Send us an email anytime!',
       },
       {
@@ -71,8 +73,38 @@ export default function Contact() {
 
    return (
       <>
+         <SEOHead 
+            title="Contact Us - Hezal Accessories | Get in Touch"
+            description="Contact Hezal Accessories for inquiries about our premium pet accessories. Get support, ask questions, or provide feedback. We're here to help you and your furry friends."
+            keywords={['contact hezal accessories', 'pet accessories support', 'customer service', 'pet product inquiries', 'dog collar questions']}
+            canonicalUrl="/contact"
+            structuredData={{
+               "@context": "https://schema.org",
+               "@type": "ContactPage",
+               "name": "Contact Hezal Accessories",
+               "description": "Get in touch with our team for any questions about our premium pet accessories.",
+               "mainEntity": {
+                  "@type": "Organization",
+                  "name": "Hezal Accessories",
+                  "contactPoint": {
+                     "@type": "ContactPoint",
+                     "telephone": "+91-7060266900",
+                     "contactType": "Customer Service",
+                     "availableLanguage": ["English", "Hindi"]
+                  }
+               }
+            }}
+         />
          <Navbar />
          <main className='gradient-bg'>
+            {/* Breadcrumb Navigation */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+               <Breadcrumb 
+                  items={[{ name: 'Contact Us', href: '/contact', current: true }]}
+                  className="mb-4"
+               />
+            </div>
+            
             {/* Hero Section */}
             <section className='py-20'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
