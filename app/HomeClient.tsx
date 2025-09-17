@@ -133,6 +133,32 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
         }}
       />
       <Navbar />
+      {!loadingBanners && banners.length > 0 && (
+   <div className='w-full bg-gradient-to-l from-transparent via-pink-500/20 to-transparent overflow-hidden'>
+      {/* Horizontal inline marquee: all banners shown one after another */}
+      <div className='h-12 md:h-12 flex items-center'>
+         <ScrollBaseAnimation
+            delay={0}
+            baseVelocity={-1}
+            className='font-bold tracking-[-0.02em]'
+         >
+            <div className='flex items-center space-x-12'>
+                      {Array.from({ length: 3 }, (_, repeatIndex) =>
+                           banners.map((banner, bannerIndex) => (
+                               <React.Fragment key={`${repeatIndex}-${bannerIndex}`}>
+                                  <span className='inline-block text-base md:text-lg font-bold'>
+                                     {banner.title}
+                                     {banner.subtitle ? <span className='mx-2 text-base md:text-lg font-normal'>• {banner.subtitle}</span> : null}
+                                  </span>
+                                  <span className='text-xl'>🐾</span>
+                               </React.Fragment>
+                           ))
+                      )}
+            </div>
+         </ScrollBaseAnimation>
+      </div>
+   </div>
+)}
       <main className='pet-pattern-bg'>
         <section className='relative overflow-hidden hero-bg'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>

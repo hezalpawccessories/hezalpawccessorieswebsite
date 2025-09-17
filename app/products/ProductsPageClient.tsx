@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Search, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { Product } from '@/lib/products'
+import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -47,6 +49,30 @@ export default function ProductsPageClient({
   const urlSearchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState(searchParams.search || '')
   const [showFilters, setShowFilters] = useState(false)
+  
+  // Banner state
+  const [banners, setBanners] = useState<Banner[]>([])
+  const [loadingBanners, setLoadingBanners] = useState(true)
+
+  // Load banners from Firebase
+  useEffect(() => {
+    const loadBanners = async () => {
+      try {
+        setLoadingBanners(true)
+        const fetchedBanners = await getBanners()
+        const allBanners = fetchedBanners.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        console.log('Loaded all banners:', allBanners) // Debug log
+        setBanners(allBanners)
+      } catch (error) {
+        console.error('Error loading banners:', error)
+        setBanners([])
+      } finally {
+        setLoadingBanners(false)
+      }
+    }
+
+    loadBanners()
+  }, [])
 
   // Update URL and trigger server-side filtering
   const updateURL = (newParams: Record<string, string | undefined>) => {
@@ -190,14 +216,91 @@ export default function ProductsPageClient({
       <main className="gradient-bg min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-heading font-bold text-text-dark mb-4">
-              Premium Pet Accessories
+          <div className="text-center mb-8 ">
+            <div className="mb-4 flex sm:flex-row mx-auto items-center justify-center gap-2">
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-text-dark ">
+              Premium 
             </h1>
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-primary-pink">Pet Accessories</h1>
+            </div>
             <p className="text-xl text-text-light">
               Stylish and comfortable accessories for your furry friends
             </p>
           </div>
+
+          {/* Banner Section */}
+          {!loadingBanners && banners.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-8 bg-gradient-to-r from-teal-400/90 via-blue-400/90 to-pink-300/90 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm"
+            >
+              <div className="relative h-12 flex items-center bg-white/10">
+                <div className="flex-1 overflow-hidden whitespace-nowrap">
+                  {/* Debug info - remove in production */}
+                  {/* {process.env.NODE_ENV === 'development' && (
+                    <div className="absolute top-0 right-0 bg-black/20 text-white text-xs px-2 py-1 rounded-bl">
+                      {banners.length} banner{banners.length !== 1 ? 's' : ''}
+                    </div>
+                  )} */}
+                  <div className="hidden sm:flex animate-marquee-continuous space-x-8">
+                    {/* Repeat banners multiple times for seamless scrolling */}
+                    {Array.from({ length: 3 }, (_, repeatIndex) => 
+                      banners.map((banner, bannerIndex) => (
+                        <div key={`${repeatIndex}-${bannerIndex}`} className="flex items-center space-x-4 px-6">
+                          <span className="text-xl">🐾</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-800 font-bold text-base">
+                              {banner.title}
+                            </span>
+                            {banner.subtitle && (
+                              <>
+                                <span className="text-gray-700">•</span>
+                                <span className="text-gray-700 font-medium text-sm">
+                                  {banner.subtitle}
+                                </span>
+                              </>
+                            )}
+                            {/* {banner.description && (
+                              <>
+                                <span className="text-gray-700">•</span>
+                                <span className="text-gray-600 text-sm">
+                                  {banner.description}
+                                </span>
+                              </>
+                            )} */}
+                          </div>
+                          <span className="text-xl">🐾</span>
+                        </div>
+                      ))
+                    ).flat()}
+                  </div>
+                  <div className="flex sm:hidden animate-marquee-continuous-smalls space-x-6">
+                    {/* Repeat banners multiple times for seamless scrolling on mobile */}
+                    {Array.from({ length: 3 }, (_, repeatIndex) => 
+                      banners.map((banner, bannerIndex) => (
+                        <div key={`${repeatIndex}-${bannerIndex}`} className="flex items-center space-x-3 px-4">
+                          <span className="text-lg">🐾</span>
+                          <div className="flex flex-col">
+                            <span className="text-gray-800 font-bold text-sm">
+                              {banner.title}
+                            </span>
+                            {/* {banner.subtitle && (
+                              <span className="text-gray-700 font-medium text-xs">
+                                {banner.subtitle}
+                              </span>
+                            )} */}
+                          </div>
+                          <span className="text-lg">🐾</span>
+                        </div>
+                      ))
+                    ).flat()}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Search and Filters Row */}
           <div className="mb-6">
@@ -239,11 +342,11 @@ export default function ProductsPageClient({
                 </form>
               </div>
 
-              {/* Filters Row */}
+              {/* Filters Row - Hide Collections on small screens */}
               <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                {/* Collections with Clear Filter */}
+                {/* Collections with Clear Filter - Hidden on small screens */}
                 {collections.length > 0 && (
-                  <div className="flex items-center gap-2">
+                  <div className="hidden sm:flex items-center gap-2">
                     <select
                       value={searchParams.collection || ''}
                       onChange={(e) => handleCollectionChange(e.target.value)}
@@ -303,13 +406,13 @@ export default function ProductsPageClient({
           </div>
 
           {/* Categories Row */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`px-3 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                  className={`px-3 sm:px-5 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                     (searchParams.category || 'All') === category
                       ? 'bg-primary-pink text-white shadow-lg'
                       : 'bg-white text-text-dark hover:bg-gray-100 border border-gray-300 hover:shadow-md'
@@ -321,8 +424,39 @@ export default function ProductsPageClient({
             </div>
           </div>
 
+          {/* Collections Row - Show only on small screens, below categories */}
+          {collections.length > 0 && (
+            <div className="mb-8 sm:hidden">
+              <div className="flex items-center justify-center gap-2">
+                <select
+                  value={searchParams.collection || ''}
+                  onChange={(e) => handleCollectionChange(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink text-sm flex-1 max-w-xs"
+                >
+                  <option value="">All Collections</option>
+                  {collections.map((collection) => (
+                    <option key={collection.id} value={collection.name}>
+                      {collection.name}
+                    </option>
+                  ))}
+                </select>
+                
+                {/* Clear Collection Filter - only show when collection is selected */}
+                {searchParams.collection && (
+                  <button
+                    onClick={() => handleCollectionChange('')}
+                    className="px-3 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 whitespace-nowrap shadow-sm"
+                    title="Clear collection filter"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Results Count */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <p className="text-text-light">
               Showing {initialProducts.length} of {totalProducts} products
               {searchParams.category && searchParams.category !== 'All' && (
@@ -335,68 +469,94 @@ export default function ProductsPageClient({
                 <span> on sale</span>
               )}
             </p>
-          </div>
+          </div> */}
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-12">
             {initialProducts.map((product) => {
               const discount = getDiscountPercentage(product)
               const displayPrice = getDisplayPrice(product)
 
               return (
-                <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-                  {/* Image Container - Fixed Height */}
-                  <div className="relative h-64 bg-gray-100">
+                <div key={product.id} className="group bg-white rounded-lg sm:rounded-xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl hover:border-primary-pink/30 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
+                  {/* Image Container - Responsive Height */}
+                  <div className="relative h-40 sm:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                     {product.saleQuantity && product.saleQuantity > 0 ? (
-                      <div className="absolute top-3 left-3 z-10">
-                        <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+                        <span className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           SALE
                         </span>
                       </div>
                     ): <> </>}
                     {discount > 0 && (
-                      <div className="absolute top-3 right-3 z-10">
-                        <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
+                        <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           {discount}% OFF
                         </span>
                       </div>
                     )}
+                    {/* Image Overlay for Better Contrast */}
+                    <div className="absolute inset-0 bg-white/80 group-hover:bg-white/60 transition-colors duration-300"></div>
                     <Image
                       src={product.image}
                       alt={product.title}
                       fill
-                      className="object-contain hover:scale-105 transition-transform duration-300"
+                      className="object-contain group-hover:scale-110 transition-transform duration-500 relative z-10"
                     />
+                    {/* Decorative Corners - Hidden on mobile */}
+                    <div className="hidden sm:block absolute bottom-0 right-0 w-8 h-8 bg-primary-pink/10 rounded-tl-full"></div>
+                    <div className="hidden sm:block absolute top-0 left-0 w-8 h-8 bg-primary-pink/10 rounded-br-full"></div>
                   </div>
 
-                  {/* Content Container - Fixed Layout */}
-                  <div className="p-4 flex flex-col flex-grow">
-                    {/* Product Name - Single Line with Ellipsis */}
-                    <h3 className="font-heading font-medium text-text-dark mb-3 truncate text-lg leading-tight" title={product.title}>
+                  {/* Content Container - Mobile Optimized Layout */}
+                  <div className="p-3 sm:p-5 flex flex-col flex-grow bg-gradient-to-b from-white to-gray-50/30">
+                    {/* Product Name - Mobile Optimized Typography */}
+                    <h3 className="font-heading font-semibold text-text-dark mb-2 sm:mb-4 truncate text-sm sm:text-lg leading-tight group-hover:text-primary-pink transition-colors duration-300" title={product.title}>
                       {product.title}
                     </h3>
 
-                    {/* Price and Button Container - Fixed at Bottom */}
-                    <div className="mt-auto flex items-center justify-between">
-                      {/* Price */}
-                      <div className="flex flex-col">
-                        <span className="font-bold text-primary-pink text-lg">
-                          {displayPrice}
-                        </span>
-                        {/* {product.originalPrice && product.originalPrice > product.price && !product.sizePricing && (
-                          <span className="text-sm text-text-light line-through">
-                            ₹{product.originalPrice}
+                    {/* Mobile-First Price and Button Layout */}
+                    <div className="mt-auto">
+                      {/* Mobile Layout - Stacked */}
+                      <div className="sm:hidden space-y-2">
+                        {/* Price */}
+                        <div className="text-center">
+                          <span className="font-bold text-primary-pink text-sm tracking-tight">
+                            {displayPrice}
                           </span>
-                        )} */}
+                        </div>
+                        {/* Button */}
+                        <Link
+                          href={`/products/${product.id}`}
+                          className="w-full bg-gradient-to-r from-primary-pink to-pink-600 text-white py-2 rounded-lg text-xs font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-1"
+                        >
+                          <span>View</span>
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
                       </div>
 
-                      {/* View Button */}
-                      <Link
-                        href={`/products/${product.id}`}
-                        className="bg-primary-pink text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-primary-pink/90 transition-colors shadow-sm"
-                      >
-                        View
-                      </Link>
+                      {/* Desktop Layout - Side by Side */}
+                      <div className="hidden sm:flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-lg p-3 border border-gray-100">
+                        {/* Price */}
+                        <div className="flex flex-col">
+                          <span className="font-bold text-primary-pink text-lg tracking-tight">
+                            {displayPrice}
+                          </span>
+                        </div>
+
+                        {/* Enhanced View Button */}
+                        <Link
+                          href={`/products/${product.id}`}
+                          className="bg-gradient-to-r from-primary-pink to-pink-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
+                        >
+                          <span>View</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
