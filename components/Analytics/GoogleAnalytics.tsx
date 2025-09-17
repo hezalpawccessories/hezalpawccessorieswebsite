@@ -10,15 +10,15 @@ declare global {
   }
 }
 
-// Replace with your actual Google Analytics 4 measurement ID
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX'
+// Your actual Google Analytics 4 measurement ID
+const GA_MEASUREMENT_ID = 'G-0YQJMZVQ3G'
 
 export const GoogleAnalytics = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
+    if (!GA_MEASUREMENT_ID) {
       return
     }
 
@@ -47,7 +47,7 @@ export const GoogleAnalytics = () => {
   }, [])
 
   useEffect(() => {
-    if (!window.gtag || !GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
+    if (!window.gtag || !GA_MEASUREMENT_ID) {
       return
     }
 
@@ -65,7 +65,7 @@ export const GoogleAnalytics = () => {
 
 // Utility functions for tracking events
 export const trackEvent = (eventName: string, parameters?: Record<string, any>) => {
-  if (!window.gtag || !GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
+  if (!window.gtag || !GA_MEASUREMENT_ID) {
     return
   }
 

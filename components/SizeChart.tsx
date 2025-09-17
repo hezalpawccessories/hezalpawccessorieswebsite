@@ -54,14 +54,16 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
                      onClick={() => setIsOpen(false)}
                   />
 
-                  {/* Modal */}
-                  <motion.div
-                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                     exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                     className="fixed inset-4 z-[9999] w-auto h-fit max-w-[320px] sm:max-w-sm bg-white rounded-lg sm:rounded-xl shadow-xl overflow-hidden m-auto"
-                  >
+                  {/* Modal Container with Flexbox Centering */}
+                  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                     <motion.div
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        className="w-full max-w-[300px] sm:max-w-md lg:max-w-lg bg-white rounded-lg sm:rounded-xl shadow-xl overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                     >
                      {/* Header */}
                      <div className="flex items-center justify-between p-2 sm:p-3 border-b bg-gradient-to-r from-pink-50 to-blue-50">
                         <div className="flex items-center gap-1 sm:gap-2">
@@ -70,7 +72,7 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
                         </div>
                         <button
                            onClick={() => setIsOpen(false)}
-                           className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                           className="p-1 hover:bg-gray-400 rounded-full transition-colors"
                         >
                            <X className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                         </button>
@@ -102,7 +104,8 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
                            </p>
                         </div>
                      </div>
-                  </motion.div>
+                     </motion.div>
+                  </div>
                </>
             )}
          </AnimatePresence>

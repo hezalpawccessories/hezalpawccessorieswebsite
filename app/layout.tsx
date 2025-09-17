@@ -86,7 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
          </head>
-         <body className={inter.className}>
+         <body className={inter.className} suppressHydrationWarning={true}>
             <GoogleTagManager />
             <Suspense fallback={null}>
                <GoogleAnalytics />

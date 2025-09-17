@@ -60,6 +60,11 @@ export const products: Product[] = [
     price: 299,
     originalPrice: 449,
     image: 'https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=600',
+    images: [
+      'https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=600',
+      'https://images.pexels.com/photos/7210754/pexels-photo-7210754.jpeg?auto=compress&cs=tinysrgb&w=600',
+      'https://images.pexels.com/photos/7210758/pexels-photo-7210758.jpeg?auto=compress&cs=tinysrgb&w=600'
+    ],
     category: 'Bandana/neck scarf',
     description: 'Soft cotton bandana perfect for any occasion. Machine washable and comfortable.',
     details: [
