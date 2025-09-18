@@ -35,7 +35,7 @@ export default function Owner() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className='relative'
                      >
-                        <div className='bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl'>
+                        <div className='bg-gradient-to-tr from-primary-pink via-primary-pink/10 to-primary-pink p-2 rounded-3xl'>
                            <Image
                               src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755749160/zzjqry7w9fxtmuugxuyr.jpg'
                               alt='Owner with pets'
@@ -56,7 +56,7 @@ export default function Owner() {
                      <motion.div
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                         className='space-y-6'
                      >
                         {/* <div>
@@ -81,19 +81,19 @@ export default function Owner() {
 
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                            <div className='flex items-center space-x-3'>
-                              <Calendar className='w-5 h-5 text-primary-blue' />
+                              <Calendar className='w-5 h-5 text-primary-pink' />
                               <span className='text-text-light'>Founded in 2022</span>
                            </div>
                            {/* <div className='flex items-center space-x-3'>
-                              <Award className='w-5 h-5 text-primary-blue' />
+                              <Award className='w-5 h-5 text-primary-pink' />
                               <span className='text-text-light'>Pet Care Expert</span>
                            </div> */}
                            {/* <div className='flex items-center space-x-3'>
-                              <Heart className='w-5 h-5 text-primary-blue' />
+                              <Heart className='w-5 h-5 text-primary-pink' />
                               <span className='text-text-light'>Animal Welfare Advocate</span>
                            </div> */}
                            <div className='flex items-center space-x-3'>
-                              <MapPin className='w-5 h-5 text-primary-blue' />
+                              <MapPin className='w-5 h-5 text-primary-pink' />
                               <span className='text-text-light'>Meerut, India</span>
                            </div>
                         </div>
@@ -195,8 +195,8 @@ export default function Owner() {
                            stopping by my little corner of the internet. I hope my collection adds a little extra wag to
                            your day. After all, life’s better with style, treats, and a wagging tail!
                         </p>
-                        <div className='bg-primary-blue/10 p-6 rounded-2xl'>
-                           <p className='text-primary-blue font-semibold italic'>
+                        <div className='bg-primary-pink/10 p-6 rounded-2xl'>
+                           <p className='text-primary-pink font-semibold italic'>
                               &quot;Every pet deserves to feel loved, comfortable, and special. That&apos;s not just our
                               tagline &ndash; it&apos;s my personal promise to every customer.&quot;
                            </p>
@@ -207,7 +207,7 @@ export default function Owner() {
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className='bg-gradient-to-br from-primary-pink to-warm-orange p-2 rounded-3xl'
+                        className='bg-gradient-to-br from-primary-pink/20 via-primary-pink to-primary-pink/20 p-2 rounded-3xl'
                      >
                         <Image
                            src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786881/b0ooa9t3n39xyxt0ypt1.jpg'
@@ -224,7 +224,7 @@ export default function Owner() {
             </section>
 
             {/* Contact Section */}
-            <section className='py-20 bg-gradient-to-r from-primary-pink to-warm-orange'>
+            <section className='py-20 bg-gradient-to-r from-primary-blue to-light-purple'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
                   <motion.div
                      initial={{ opacity: 0, y: 50 }}

@@ -118,7 +118,7 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
                      className='bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 mb-8'
                   >
                      <div className='flex items-center mb-4 sm:mb-6'>
-                        <ShoppingBag className='w-5 h-5 sm:w-6 sm:h-6 text-primary-blue mr-2 sm:mr-3' />
+                        <ShoppingBag className='w-5 h-5 sm:w-6 sm:h-6 text-primary-pink mr-2 sm:mr-3' />
                         <h2 className='text-xl sm:text-2xl font-heading font-bold text-text-dark'>Order Details</h2>
                      </div>
 
@@ -201,7 +201,7 @@ Thanks for choosing us, and we&apos;re so grateful to be part of your pet&apos;s
                >
                   <div className='flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-4'>
                      <div className='flex-shrink-0 mx-auto sm:mx-0'>
-                        <Mail className='w-6 h-6 sm:w-8 sm:h-8 text-primary-blue' />
+                        <Mail className='w-6 h-6 sm:w-8 sm:h-8 text-primary-pink' />
                      </div>
                      <div className='flex-1'>
                         <h3 className='text-lg sm:text-xl font-heading font-bold text-text-dark mb-3 flex items-center justify-center sm:justify-start'>

@@ -198,7 +198,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
         {/* Rest of the page: features, slideshow, products preview, testimonials, etc. */}
         <section className='py-16 lg:py-20 bg-white relative'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-            <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className='text-center mb-12'>
+            <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className='text-center mb-0'>
               <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-2 leading-tight'>Pet Accessories</h2>
               <p className='text-lg font-body text-gray-600'>Adorable Finds, One Category at a Time</p>
             </motion.div>
@@ -261,11 +261,12 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
             </section>
 
             {/* Our Happy Pets Auto Slider */}
-            <section id='happy-pets' className='py-8 lg:py-12 bg-white'>
+            <section id='happy-pets' className='py-16 lg:py-20 bg-white'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                   <div className='text-center mb-6'>
-                     <h3 className='text-2xl font-semibold'>Our Happy Pets 🐾</h3>
-                     <p className='text-sm text-gray-500'>A few snaps from our lovely customers</p>
+                     <h3 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>Our Happy Pets 🐾</h3>
+                     <p className='text-lg font-body text-gray-600'>A few snaps from our lovely customers</p>
+                     
                   </div>
                   <ImageAutoSlider />
                </div>
@@ -302,7 +303,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                         Join thousands of happy pet parents who trust Hezal Accessories for their four legged babies.
                      </p>
                      <ProgressLink href='/products'>
-                        <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-50 transition-colors'>
+                        <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-200 transition-colors'>
                            Start Shopping Now
                         </button>
                      </ProgressLink>

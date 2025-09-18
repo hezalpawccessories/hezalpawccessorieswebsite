@@ -65,7 +65,7 @@ export default function SizeChart({ trigger, className = '' }: SizeChartProps) {
                         onClick={(e) => e.stopPropagation()}
                      >
                      {/* Header */}
-                     <div className="flex items-center justify-between p-2 sm:p-3 border-b bg-gradient-to-r from-pink-50 to-blue-50">
+                     <div className="flex items-center justify-between p-2 sm:p-3 border-b bg-gradient-to-r from-pink-50 to-pink-100/50">
                         <div className="flex items-center gap-1 sm:gap-2">
                            <Ruler className="w-3 h-3 sm:w-4 sm:h-4 text-pink-500" />
                            <h3 className="text-xs sm:text-sm font-bold text-gray-800">Size Chart</h3>

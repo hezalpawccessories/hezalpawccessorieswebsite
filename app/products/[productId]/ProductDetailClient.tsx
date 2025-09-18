@@ -346,15 +346,15 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm mb-8">
-            <Link href="/" className="text-text-light hover:text-primary-blue">
+            <Link href="/" className="text-text-light hover:text-primary-pink">
               Home
             </Link>
             <span className="text-text-light">/</span>
-            <Link href="/products" className="text-text-light hover:text-primary-blue">
+            <Link href="/products" className="text-text-light hover:text-primary-pink">
               Products
             </Link>
             <span className="text-text-light">/</span>
-            <Link href={`/products?category=${product.category}`} className="text-text-light hover:text-primary-blue">
+            <Link href={`/products?category=${product.category}`} className="text-text-light hover:text-primary-pink">
               {product.category}
             </Link>
             <span className="text-text-light">/</span>
@@ -364,7 +364,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
           {/* Back Button */}
           <Link 
             href="/products"
-            className="inline-flex items-center space-x-2 text-text-light hover:text-primary-blue mb-8 transition-colors"
+            className="inline-flex items-center space-x-2 text-text-light hover:text-primary-pink mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Products</span>
@@ -492,8 +492,8 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                       onClick={() => setSelectedSize(size)}
                       className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
                         selectedSize === size
-                          ? 'border-primary-blue bg-primary-blue text-white'
-                          : 'border-gray-300 hover:border-primary-blue'
+                          ? 'border-primary-pink bg-primary-pink text-white'
+                          : 'border-gray-300 hover:border-primary-pink'
                       }`}
                     >
                       {size}
@@ -512,7 +512,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         key={style.id}
                         className={`border rounded-lg p-3 cursor-pointer transition-colors ${
                           selectedBowStyle === style.id
-                            ? 'border-primary-blue bg-primary-blue/5'
+                            ? 'border-primary-pink bg-primary-pink/5'
                             : 'border-gray-300 hover:border-gray-400'
                         }`}
                         onClick={() => setSelectedBowStyle(style.id)}
@@ -520,7 +520,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                         <div className="flex items-center space-x-3">
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                             selectedBowStyle === style.id
-                              ? 'border-primary-blue bg-primary-blue'
+                              ? 'border-primary-pink bg-primary-pink'
                               : 'border-gray-300'
                           }`}>
                             {selectedBowStyle === style.id && (
@@ -546,7 +546,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                       type="checkbox"
                       checked={hasMatchingBowTie}
                       onChange={(e) => setHasMatchingBowTie(e.target.checked)}
-                      className="w-4 h-4 text-primary-blue border-gray-300 rounded focus:ring-primary-blue"
+                      className="w-4 h-4 text-primary-pink border-gray-300 rounded focus:ring-primary-pink"
                     />
                     <span className="text-text-dark">
                       Add Matching Bow Tie (+₹100)
@@ -566,7 +566,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Enter pet's name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink"
                   />
                 </div>
               )}
@@ -629,7 +629,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                   <ul className="space-y-2">
                     {product.details.map((detail, index) => (
                       <li key={index} className="flex items-start space-x-2">
-                        <span className="w-2 h-2 bg-primary-blue rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-primary-pink rounded-full mt-2 flex-shrink-0"></span>
                         <span className="text-text-light">{detail}</span>
                       </li>
                     ))}
@@ -638,14 +638,14 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
               )}
 
               {/* Express Delivery Notice */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
                 <div className="flex items-center space-x-2">
-                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                  <p className="text-blue-800 font-medium">
+                  <Info className="w-5 h-5 text-pink-600 flex-shrink-0" />
+                  <p className="text-pink-800 font-medium">
                     For Express Delivery Contact Us
                   </p>
                 </div>
-                <p className="text-blue-700 text-sm mt-1 ml-7">
+                <p className="text-pink-700 text-sm mt-1 ml-7">
                   Need your order faster? Get in touch with us for express delivery options.
                 </p>
               </div>
@@ -677,13 +677,13 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     >
                       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div className="relative aspect-square">
-                          {relatedProduct.saleQuantity && relatedProduct.saleQuantity > 0 && (
+                          {relatedProduct.saleQuantity && relatedProduct.saleQuantity > 0 ? (
                             <div className="absolute top-2 left-2 z-10">
                               <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                                 SALE
                               </span>
                             </div>
-                          )}
+                          ): null}
                           {relatedDiscount > 0 && (
                             <div className="absolute top-2 right-2 z-10">
                               <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
@@ -695,11 +695,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             src={relatedProduct.image}
                             alt={relatedProduct.title}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="object-contain group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-heading font-medium text-text-dark mb-2 group-hover:text-primary-blue transition-colors">
+                          <h3 className="font-heading font-medium text-text-dark mb-2 group-hover:text-primary-pink transition-colors">
                             {relatedProduct.title}
                           </h3>
                           <div className="flex items-center space-x-2">

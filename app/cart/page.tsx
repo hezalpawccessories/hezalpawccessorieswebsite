@@ -546,7 +546,7 @@ export default function Cart() {
                               <span className='font-heading font-semibold'>{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
                            </div>
                            {shipping === 0 && (
-                              <p className='text-sm font-body text-primary-blue'>🎉 Free shipping on orders over ₹799!</p>
+                              <p className='text-sm font-body text-primary-pink'>🎉 Free shipping on orders over ₹799!</p>
                            )}
                            <hr />
                            <div className='flex justify-between text-lg font-heading font-bold'>
@@ -611,7 +611,7 @@ export default function Cart() {
                                        required
                                        value={checkoutForm.name}
                                        onChange={(e) => setCheckoutForm({ ...checkoutForm, name: e.target.value })}
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     />
                                  </div>
                                  <div>
@@ -621,7 +621,7 @@ export default function Cart() {
                                        required
                                        value={checkoutForm.email}
                                        onChange={(e) => setCheckoutForm({ ...checkoutForm, email: e.target.value })}
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     />
                                  </div>
                               </div>
@@ -636,7 +636,7 @@ export default function Cart() {
                                        required
                                        value={checkoutForm.phone}
                                        onChange={(e) => setCheckoutForm({ ...checkoutForm, phone: e.target.value })}
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     />
                                  </div>
                                  <div>
@@ -649,7 +649,7 @@ export default function Cart() {
                                        onChange={(e) =>
                                           setCheckoutForm({ ...checkoutForm, alternatePhone: e.target.value })
                                        }
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     />
                                  </div>
                               </div>
@@ -661,7 +661,7 @@ export default function Cart() {
                                     rows={3}
                                     value={checkoutForm.address}
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, address: e.target.value })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     placeholder='Enter your complete address (e.g., Building name, Street, Area)'
                                  />
                               </div>
@@ -672,7 +672,7 @@ export default function Cart() {
                                     type='text'
                                     value={checkoutForm.landmark}
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, landmark: e.target.value })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     placeholder='Near landmark (e.g., Metro station, Mall, Hospital)'
                                  />
                               </div>
@@ -690,7 +690,7 @@ export default function Cart() {
                                              setShowCitySuggestions(true)
                                           }
                                        }}
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                        placeholder='Enter your city'
                                        autoComplete='off'
                                     />
@@ -714,7 +714,7 @@ export default function Cart() {
                                        required
                                        value={checkoutForm.state}
                                        onChange={(e) => handleStateChange(e.target.value)}
-                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                       className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     >
                                        <option value=''>Select your state</option>
                                        {indianStates.map((state, index) => (
@@ -731,17 +731,17 @@ export default function Cart() {
                                     required
                                     value={checkoutForm.pincode}
                                     onChange={(e) => setCheckoutForm({ ...checkoutForm, pincode: e.target.value })}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-body'
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink font-body'
                                     placeholder='Enter your pincode'
                                  />
                               </div>
 
-                              <div className='bg-blue-50 p-4 rounded-lg'>
+                              <div className='bg-pink-50 p-4 rounded-lg'>
                                  <p className='text-sm font-body text-text-dark'>
                                     <strong>Note:</strong> You will receive a payment receipt after completing your purchase. Once your order is dispatched, a tracking email will be sent to you. For any queries, contact us at{' '}
                                     <a
                                        href='mailto:hezal.accessories@gmail.com'
-                                       className='text-primary-blue font-heading font-semibold'
+                                       className='text-primary-pink font-heading font-semibold'
                                     >
                                        hezal.accessories@gmail.com
                                     </a>
