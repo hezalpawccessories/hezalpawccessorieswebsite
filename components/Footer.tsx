@@ -1,4 +1,4 @@
-import ProgressLink from './ProgressLink'
+import NavigationLink from './NavigationLink'
 import { Heart, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 
@@ -42,36 +42,36 @@ export default function Footer() {
                   <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Quick Links</h4>
                   <ul className='space-y-2'>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Home
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/about'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            About
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/owner'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Owner
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/contact'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Contact Us
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                   </ul>
                </div>
@@ -81,36 +81,36 @@ export default function Footer() {
                   <h4 className='text-lg font-dm-sans font-semibold mb-4 text-pink-500'>Policies</h4>
                   <ul className='space-y-2'>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/privacy-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Privacy Policy
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/terms'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Terms & Conditions
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/return-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Return & Cancellation
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                      <li>
-                        <ProgressLink
+                        <NavigationLink
                            href='/shipping-policy'
                            className='text-gray-300 hover:text-primary-pink transition-colors'
                         >
                            Shipping Policy
-                        </ProgressLink>
+                        </NavigationLink>
                      </li>
                   </ul>
                </div>

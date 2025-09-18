@@ -1,6 +1,6 @@
 'use client'
 
-import ProgressLink from './ProgressLink'
+import NavigationLink from './NavigationLink'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
@@ -44,7 +44,7 @@ export default function Navbar() {
          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='flex justify-between items-center h-16 sm:h-20'>
                {/* Logo */}
-               <ProgressLink
+               <NavigationLink
                   href='/'
                   className='flex items-center space-x-2 sm:space-x-3'
                >
@@ -66,13 +66,13 @@ export default function Navbar() {
                         Your pet deserves only the BEST
                      </p>
                   </div>
-               </ProgressLink>
+               </NavigationLink>
 
                {/* Navigation Actions */}
                <div className='flex items-center space-x-3'>
                   {/* Cart Button - Only show when not on landing or master page */}
                   {showCartButton && (
-                     <ProgressLink href='/cart'>
+                     <NavigationLink href='/cart'>
                         <button 
                            className='relative p-2 sm:p-3 text-gray-600 hover:text-pink-500 transition-colors duration-200 rounded-full hover:bg-pink-50'
                            title={`Cart (${cartItemsCount} items)`}
@@ -85,25 +85,25 @@ export default function Navbar() {
                               </span>
                            )}
                         </button>
-                     </ProgressLink>
+                     </NavigationLink>
                   )}
 
                   {/* Shop Now Button */}
-                  {showShopButton && <ProgressLink href='/products'>
+                  {showShopButton && <NavigationLink href='/products'>
                      <button className='bg-pink-500 text-white hover:bg-pink-600 font-body font-medium transition-colors duration-200 px-4 sm:px-6 py-2 rounded-md text-sm sm:text-base'>
                         Shop Now
                      </button>
-                  </ProgressLink>
+                  </NavigationLink>
                   }
                   
                   {/* Admin Button */}
                   {isAuthenticated && (
-                     <ProgressLink
+                     <NavigationLink
                         href='/master'
                         className='font-body font-medium transition-colors duration-200 bg-gray-800 text-white hover:bg-gray-700 py-2 px-3 sm:px-4 rounded-md text-sm sm:text-base'
                      >
                         Admin
-                     </ProgressLink>
+                     </NavigationLink>
                   )}
                </div>
             </div>

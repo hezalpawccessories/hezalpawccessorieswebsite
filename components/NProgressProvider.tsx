@@ -21,7 +21,7 @@ export default function NProgressProvider() {
   useEffect(() => {
     // Real progress tracking based on page readiness
     const handlePageLoadComplete = () => {
-      // Clean up any ongoing progress intervals from ProgressLink
+      // Clean up any ongoing progress intervals from NavigationLink
       if ((window as any).__progressCleanup) {
         (window as any).__progressCleanup()
         delete (window as any).__progressCleanup

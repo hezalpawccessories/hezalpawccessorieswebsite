@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import Link from 'next/link'
+import NavigationLink from '@/components/NavigationLink'
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -346,29 +346,29 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center space-x-2 text-sm mb-8">
-            <Link href="/" className="text-text-light hover:text-primary-pink">
+            <NavigationLink href="/" className="text-text-light hover:text-primary-pink">
               Home
-            </Link>
+            </NavigationLink>
             <span className="text-text-light">/</span>
-            <Link href="/products" className="text-text-light hover:text-primary-pink">
+            <NavigationLink href="/products" className="text-text-light hover:text-primary-pink">
               Products
-            </Link>
+            </NavigationLink>
             <span className="text-text-light">/</span>
-            <Link href={`/products?category=${product.category}`} className="text-text-light hover:text-primary-pink">
+            <NavigationLink href={`/products?category=${product.category}`} className="text-text-light hover:text-primary-pink">
               {product.category}
-            </Link>
+            </NavigationLink>
             <span className="text-text-light">/</span>
             <span className="text-text-dark font-medium">{product.title}</span>
           </nav>
 
           {/* Back Button */}
-          <Link 
+          <NavigationLink 
             href="/products"
             className="inline-flex items-center space-x-2 text-text-light hover:text-primary-pink mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Products</span>
-          </Link>
+          </NavigationLink>
 
           {/* Product Details */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -670,7 +670,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     : 0
 
                   return (
-                    <Link 
+                    <NavigationLink 
                       key={relatedProduct.id}
                       href={`/products/${relatedProduct.id}`}
                       className="group"
@@ -710,7 +710,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                           </div>
                         </div>
                       </div>
-                    </Link>
+                    </NavigationLink>
                   )
                 })}
               </div>

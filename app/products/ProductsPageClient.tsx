@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
+import NavigationLink from '@/components/NavigationLink'
 import Image from 'next/image'
 import { Search, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -10,6 +10,7 @@ import { Product } from '@/lib/products'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Loader from '@/components/Loader'
 
 interface Collection {
   id: string
@@ -74,8 +75,18 @@ export default function ProductsPageClient({
     loadBanners()
   }, [])
 
-  // Update URL and trigger server-side filtering
+  // Show loading state for filters
+  const [isFilterLoading, setIsFilterLoading] = useState(false)
+
+  // Hide filter loader when component updates (new products loaded)
+  useEffect(() => {
+    setIsFilterLoading(false)
+  }, [initialProducts, searchParams])
+
+  // Update URL and trigger server-side filtering with loader
   const updateURL = (newParams: Record<string, string | undefined>) => {
+    setIsFilterLoading(true)
+    
     const current = new URLSearchParams(urlSearchParams.toString())
     
     // Update or remove parameters
@@ -94,7 +105,11 @@ export default function ProductsPageClient({
 
     const search = current.toString()
     const query = search ? `?${search}` : ''
-    router.push(`/products${query}`)
+    
+    // Use timeout to show loader briefly before navigation
+    setTimeout(() => {
+      router.push(`/products${query}`)
+    }, 100)
   }
 
   // Handle category selection - preserve other filters
@@ -212,6 +227,9 @@ export default function ProductsPageClient({
   return (
     <>
       <Navbar />
+      
+      {/* Filter Loading Overlay */}
+      {isFilterLoading && <Loader />}
       
       <main className="gradient-bg min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -480,7 +498,7 @@ export default function ProductsPageClient({
               return (
                 <div key={product.id} className="group bg-white rounded-lg sm:rounded-xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl hover:border-primary-pink/30 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
                   {/* Image Container - Responsive Height */}
-                  <div className="relative h-40 sm:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+                  <div className="relative h-64 sm:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                     {product.saleQuantity && product.saleQuantity > 0 ? (
                       <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
                         <span className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
@@ -496,7 +514,7 @@ export default function ProductsPageClient({
                       </div>
                     )}
                     {/* Image Overlay for Better Contrast */}
-                    <div className="absolute inset-0 bg-white/80 group-hover:bg-white/60 transition-colors duration-300"></div>
+                    <div className="absolute inset-0 bg-white group-hover:bg-white/60 transition-colors duration-300"></div>
                     <Image
                       src={product.image}
                       alt={product.title}
@@ -526,7 +544,7 @@ export default function ProductsPageClient({
                           </span>
                         </div>
                         {/* Button */}
-                        <Link
+                        <NavigationLink
                           href={`/products/${product.id}`}
                           className="w-full bg-gradient-to-r from-primary-pink to-pink-600 text-white py-2 rounded-lg text-xs font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-1"
                         >
@@ -534,7 +552,7 @@ export default function ProductsPageClient({
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                        </Link>
+                        </NavigationLink>
                       </div>
 
                       {/* Desktop Layout - Side by Side */}
@@ -547,7 +565,7 @@ export default function ProductsPageClient({
                         </div>
 
                         {/* Enhanced View Button */}
-                        <Link
+                        <NavigationLink
                           href={`/products/${product.id}`}
                           className="bg-gradient-to-r from-primary-pink to-pink-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
                         >
@@ -555,7 +573,7 @@ export default function ProductsPageClient({
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                        </Link>
+                        </NavigationLink>
                       </div>
                     </div>
                   </div>
@@ -576,12 +594,12 @@ export default function ProductsPageClient({
               <p className="text-text-light mb-6">
                 Try adjusting your filters or search terms
               </p>
-              <Link
+              <NavigationLink
                 href="/products"
                 className="inline-flex items-center px-4 py-2 bg-primary-pink text-white rounded-lg hover:bg-primary-pink/90 transition-colors"
               >
                 View All Products
-              </Link>
+              </NavigationLink>
             </div>
           )}
 

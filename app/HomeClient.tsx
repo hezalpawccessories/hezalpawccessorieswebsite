@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import ProgressLink from '@/components/ProgressLink'
+import NavigationLink from '@/components/NavigationLink'
 import { ArrowRight, Star, Shield, Truck, Heart, Gift } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
@@ -167,8 +167,8 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                 <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
                 <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
                 <div className='flex flex-col sm:flex-row gap-4'>
-                  <ProgressLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></ProgressLink>
-                  <ProgressLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></ProgressLink>
+                  <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
+                  <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
                 </div>
               </motion.div>
 
@@ -212,7 +212,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
             ]} />
 
             <div className='text-center mt-12'>
-              <ProgressLink href='/products'><button className='btn-primary font-body font-medium'>View All Products</button></ProgressLink>
+              <NavigationLink href='/products'><button className='btn-primary font-body font-medium'>View All Products</button></NavigationLink>
             </div>
           </div>
         </section>
@@ -302,11 +302,11 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                      <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
                         Join thousands of happy pet parents who trust Hezal Accessories for their four legged babies.
                      </p>
-                     <ProgressLink href='/products'>
+                     <NavigationLink href='/products'>
                         <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-200 transition-colors'>
                            Start Shopping Now
                         </button>
-                     </ProgressLink>
+                     </NavigationLink>
                   </motion.div>
                </div>
             </section>
