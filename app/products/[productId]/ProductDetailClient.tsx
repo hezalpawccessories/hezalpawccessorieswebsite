@@ -376,13 +376,13 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
             <div className="space-y-4">
               {/* Main Image */}
               <div className="relative aspect-square bg-white rounded-lg overflow-hidden">
-                {product.saleQuantity && product.saleQuantity > 0 && (
+                {product.saleQuantity && product.saleQuantity > 0 ? (
                   <div className="absolute top-4 left-4 z-10">
                     <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                       SALE
                     </span>
                   </div>
-                )}
+                ): null}
                 {discount > 0 && selectedSize && (
                   <div className="absolute top-4 right-4 z-10">
                     <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
@@ -394,7 +394,8 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                   src={images[selectedImageIndex]}
                   alt={product.title}
                   fill
-                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 50vw"
+                  className="object-contain"
                   priority
                 />
               </div>
@@ -418,6 +419,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                           src={image}
                           alt={`${product.title} image ${index + 1}`}
                           fill
+                          sizes="80px"
                           className="object-cover"
                         />
                         {/* Active indicator */}
@@ -695,6 +697,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                             src={relatedProduct.image}
                             alt={relatedProduct.title}
                             fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                             className="object-contain group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>

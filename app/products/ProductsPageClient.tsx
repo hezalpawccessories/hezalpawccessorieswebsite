@@ -360,11 +360,11 @@ export default function ProductsPageClient({
                 </form>
               </div>
 
-              {/* Filters Row - Hide Collections on small screens */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                {/* Collections with Clear Filter - Hidden on small screens */}
+              {/* Desktop Filters Row - Collections, Sale, and Sort */}
+              <div className="hidden sm:flex sm:flex-row gap-3 w-full lg:w-auto">
+                {/* Collections with Clear Filter - Desktop only */}
                 {collections.length > 0 && (
-                  <div className="hidden sm:flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <select
                       value={searchParams.collection || ''}
                       onChange={(e) => handleCollectionChange(e.target.value)}
@@ -391,7 +391,7 @@ export default function ProductsPageClient({
                   </div>
                 )}
 
-                {/* Sale Filter and Sort on same line */}
+                {/* Sale Filter and Sort on same line - Desktop */}
                 <div className="flex items-center gap-3">
                   {/* Sale Filter */}
                   {hasProductsOnSale && (
@@ -420,11 +420,25 @@ export default function ProductsPageClient({
                   </select>
                 </div>
               </div>
+
+              {/* Mobile Sort Only Row */}
+              <div className="sm:hidden">
+                <select
+                  value={searchParams.sort || 'name'}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink text-sm"
+                >
+                  <option value="name">Sort by Name</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
             </div>
           </div>
 
           {/* Categories Row */}
-          <div className="mb-6">
+          <div className="mb-4">
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               {categories.map((category) => (
                 <button
@@ -442,36 +456,58 @@ export default function ProductsPageClient({
             </div>
           </div>
 
-          {/* Collections Row - Show only on small screens, below categories */}
-          {collections.length > 0 && (
-            <div className="mb-8 sm:hidden">
-              <div className="flex items-center justify-center gap-2">
-                <select
-                  value={searchParams.collection || ''}
-                  onChange={(e) => handleCollectionChange(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink text-sm flex-1 max-w-xs"
-                >
-                  <option value="">All Collections</option>
-                  {collections.map((collection) => (
-                    <option key={collection.id} value={collection.name}>
-                      {collection.name}
-                    </option>
-                  ))}
-                </select>
-                
-                {/* Clear Collection Filter - only show when collection is selected */}
-                {searchParams.collection && (
-                  <button
-                    onClick={() => handleCollectionChange('')}
-                    className="px-3 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 whitespace-nowrap shadow-sm"
-                    title="Clear collection filter"
+          {/* Mobile Collections and Sale Row - Show only on small screens, below categories */}
+          <div className="mb-8 sm:hidden">
+            {/* Subtle separator line */}
+            <div className="w-16 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-4"></div>
+            
+            <div className="flex flex-col gap-3">
+              {/* Collections Row - Mobile */}
+              {collections.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <select
+                    value={searchParams.collection || ''}
+                    onChange={(e) => handleCollectionChange(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink text-sm flex-1"
                   >
-                    Clear
+                    <option value="">All Collections</option>
+                    {collections.map((collection) => (
+                      <option key={collection.id} value={collection.name}>
+                        {collection.name}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {/* Clear Collection Filter - only show when collection is selected */}
+                  {searchParams.collection && (
+                    <button
+                      onClick={() => handleCollectionChange('')}
+                      className="px-3 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 whitespace-nowrap shadow-sm"
+                      title="Clear collection filter"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Sale Filter Row - Mobile, less prominent */}
+              {hasProductsOnSale && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleSaleToggle}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      searchParams.sale === 'true'
+                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md transform scale-105'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {searchParams.sale === 'true' ? '✓ On Sale' : 'View Sale Items'}
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Results Count */}
           {/* <div className="mb-6">
@@ -519,6 +555,7 @@ export default function ProductsPageClient({
                       src={product.image}
                       alt={product.title}
                       fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                       className="object-contain group-hover:scale-110 transition-transform duration-500 relative z-10"
                     />
                     {/* Decorative Corners - Hidden on mobile */}

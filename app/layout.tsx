@@ -1,8 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, DM_Sans } from 'next/font/google'
+import { Inter, DM_Sans, Nunito, Quicksand, Baloo_2 } from 'next/font/google'
 import { Suspense } from 'react'
-import NProgressProvider from '@/components/NProgressProvider'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'sonner'
@@ -19,6 +18,31 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-dm-sans'
+})
+
+// Optimized font loading for performance
+const nunito = Nunito({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-nunito',
+  preload: true,
+})
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-quicksand',
+  preload: true,
+})
+
+const baloo2 = Baloo_2({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-baloo2',
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -76,26 +100,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html
          lang='en'
          suppressHydrationWarning
-         className={`${inter.variable} ${dmSans.variable}`}
+         className={`${inter.variable} ${dmSans.variable} ${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
       >
          <head>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
             <link rel="icon" href="/favicon.ico" />
             <link rel="apple-touch-icon" href="/logom.png" />
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
          </head>
-         <body className={inter.className} suppressHydrationWarning={true}>
+         <body className={`${nunito.className} ${inter.variable} ${dmSans.variable} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <GoogleTagManager />
             <Suspense fallback={null}>
                <GoogleAnalytics />
             </Suspense>
             <SpeedInsights />
             <Analytics />
-            <Suspense fallback={null}>
-               <NProgressProvider />
-            </Suspense>
             <Toaster
                position="top-right"
                expand={true}

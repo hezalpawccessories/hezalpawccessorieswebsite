@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
-@import 'nprogress/nprogress.css';
+/* Optimized CSS - Google Fonts now loaded via Next.js font optimization */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,24 +23,24 @@
 }
 
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-nunito), 'Nunito', sans-serif;
   color: var(--text-body);
   background: var(--cream);
   line-height: 1.6;
   font-size: 16px;
 }
 
-/* Font Classes */
+/* Font Classes - Using CSS Variables for Performance */
 .font-heading {
-  font-family: 'Baloo 2', cursive;
+  font-family: var(--font-baloo2), 'Baloo 2', cursive;
 }
 
 .font-body {
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-nunito), 'Nunito', sans-serif;
 }
 
 .font-accent {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-quicksand), 'Quicksand', sans-serif;
 }
 
 .minimal-bg {
