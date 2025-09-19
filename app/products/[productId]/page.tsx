@@ -5,6 +5,9 @@ import ProductDetailClient from './ProductDetailClient'
 import { getProducts } from '@/integrations/firebase/firestoreCollections'
 import { Product } from '@/lib/products'
 
+// Enable ISR - revalidate every 2 minutes for fresh product data
+export const revalidate = 120
+
 // Generate metadata for SEO
 export async function generateMetadata({ 
   params 

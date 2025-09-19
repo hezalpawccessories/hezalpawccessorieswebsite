@@ -12,7 +12,7 @@ import { indianStates, getCitiesForState, searchCities } from '@/lib/indianLocat
 import { CheckoutDetails } from '@/lib/razorpay-config'
 import { toast } from 'sonner'
 import Script from 'next/script'
-import { getCoupons, Coupon } from '@/integrations/firebase/firestoreCollections'
+import { getCoupons, Coupon, getProducts } from '@/integrations/firebase/firestoreCollections'
 
 interface CartItem extends Product {
    quantity: number
@@ -55,6 +55,10 @@ export default function Cart() {
    const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null)
    const [couponValidating, setCouponValidating] = useState(false)
    const [coupons, setCoupons] = useState<Coupon[]>([])
+
+   // Cart sync state
+   const [isCartSyncing, setIsCartSyncing] = useState(false)
+   const [cartSyncComplete, setCartSyncComplete] = useState(false)
 
    // Location autocomplete state
    const [citySuggestions, setCitySuggestions] = useState<string[]>([])
@@ -135,34 +139,207 @@ export default function Cart() {
    }
 
    useEffect(() => {
-      const loadCart = () => {
+      const loadCart = async () => {
          if (typeof window !== 'undefined') {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+            console.log('Loading cart from localStorage:', cart)
+            
+            if (cart.length > 0 && !cartSyncComplete) {
+               // Sync cart with latest Firestore data
+               const syncedCart = await syncCartWithFirestore(cart)
+               setCartItems(syncedCart)
+               
+               // Dispatch cart updated event
+               window.dispatchEvent(new Event('cartUpdated'))
+            } else {
+               setCartItems(cart)
+            }
+         }
+      }
+
+      // Only run sync on initial load, not on subsequent cart updates
+      if (!cartSyncComplete) {
+         loadCart()
+      }
+
+      if (typeof window !== 'undefined') {
+         const handleCartUpdate = () => {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]')
             setCartItems(cart)
          }
-      }
-
-      loadCart()
-      if (typeof window !== 'undefined') {
-         window.addEventListener('cartUpdated', loadCart)
-      }
-
-      return () => {
-         if (typeof window !== 'undefined') {
-            window.removeEventListener('cartUpdated', loadCart)
+         
+         window.addEventListener('cartUpdated', handleCartUpdate)
+         
+         return () => {
+            window.removeEventListener('cartUpdated', handleCartUpdate)
          }
       }
-   }, [])
+   }, [cartSyncComplete])
+
+   // Function to sync cart items with latest Firestore data
+   const syncCartWithFirestore = async (currentCartItems: CartItem[]) => {
+      if (currentCartItems.length === 0) return currentCartItems
+
+      setIsCartSyncing(true)
+      
+      try {
+         console.log('🔄 Syncing cart with Firestore...')
+         console.log('Cart items to sync:', currentCartItems.map(item => ({ id: item.id, title: item.title, price: item.price, onSale: item.onSale })))
+         
+         // Get all products from Firestore
+         const allProducts = await getProducts()
+         console.log('Fetched products from Firestore:', allProducts.length)
+         
+         // Track changes for user notification
+         const changes: {
+            priceChanges: { item: string, oldPrice: number, newPrice: number }[]
+            saleStatusChanges: { item: string, nowOnSale: boolean }[]
+            stockChanges: { item: string, inStock: boolean }[]
+            removedItems: string[]
+         } = {
+            priceChanges: [],
+            saleStatusChanges: [],
+            stockChanges: [],
+            removedItems: []
+         }
+
+         // Update each cart item with latest data
+         const updatedCartItems = currentCartItems.reduce((acc: CartItem[], cartItem) => {
+            const currentProduct = allProducts.find(p => p.id === cartItem.id)
+            
+            // If product no longer exists in Firestore, mark for removal
+            if (!currentProduct) {
+               changes.removedItems.push(cartItem.title)
+               return acc // Don't include this item
+            }
+
+            // Create updated cart item with latest data
+            const updatedItem: CartItem = {
+               ...currentProduct, // Latest product data from Firestore
+               quantity: cartItem.quantity, // Preserve user's quantity
+               size: cartItem.size, // Preserve user's selection
+               customName: cartItem.customName, // Preserve customization
+               bowStyle: cartItem.bowStyle,
+               bowStyleName: cartItem.bowStyleName,
+               hasMatchingBowTie: cartItem.hasMatchingBowTie
+            }
+
+            // Check for price changes (considering size pricing)
+            let currentPrice = currentProduct.price
+            if (currentProduct.sizePricing && cartItem.size) {
+               const sizePrice = currentProduct.sizePricing.find(sp => sp.size === cartItem.size)
+               if (sizePrice) {
+                  currentPrice = sizePrice.price
+               }
+            }
+            
+            // Add bow tie cost if applicable
+            if (cartItem.hasMatchingBowTie) {
+               currentPrice += 100
+            }
+
+            // Update the price in the cart item
+            updatedItem.price = currentPrice
+
+            // Track price changes
+            if (cartItem.price !== currentPrice) {
+               changes.priceChanges.push({
+                  item: cartItem.title,
+                  oldPrice: cartItem.price,
+                  newPrice: currentPrice
+               })
+            }
+
+            // Track sale status changes
+            const wasOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
+            const nowOnSale = currentProduct.onSale === true && (currentProduct.saleQuantity || 0) > 0
+            
+            if (wasOnSale !== nowOnSale) {
+               changes.saleStatusChanges.push({
+                  item: cartItem.title,
+                  nowOnSale
+               })
+            }
+
+            // Track stock changes
+            if (cartItem.inStock !== currentProduct.inStock) {
+               changes.stockChanges.push({
+                  item: cartItem.title,
+                  inStock: currentProduct.inStock
+               })
+            }
+
+            acc.push(updatedItem)
+            return acc
+         }, [])
+
+         // Show notifications for changes
+         if (changes.priceChanges.length > 0) {
+            changes.priceChanges.forEach(change => {
+               if (change.newPrice < change.oldPrice) {
+                  toast.success(`🎉 Price reduced for "${change.item}": ₹${change.oldPrice} → ₹${change.newPrice}`)
+               } else {
+                  toast.info(`📈 Price updated for "${change.item}": ₹${change.oldPrice} → ₹${change.newPrice}`)
+               }
+            })
+         }
+
+         if (changes.saleStatusChanges.length > 0) {
+            changes.saleStatusChanges.forEach(change => {
+               if (change.nowOnSale) {
+                  toast.success(`🏷️ "${change.item}" is now on sale!`)
+               } else {
+                  toast.info(`ℹ️ Sale ended for "${change.item}"`)
+               }
+            })
+         }
+
+         if (changes.stockChanges.length > 0) {
+            changes.stockChanges.forEach(change => {
+               if (!change.inStock) {
+                  toast.error(`❌ "${change.item}" is now out of stock`)
+               } else {
+                  toast.success(`✅ "${change.item}" is back in stock`)
+               }
+            })
+         }
+
+         if (changes.removedItems.length > 0) {
+            changes.removedItems.forEach(itemTitle => {
+               toast.error(`🗑️ "${itemTitle}" has been removed from the store and your cart`)
+            })
+         }
+
+         // Update localStorage with synced data
+         localStorage.setItem('cart', JSON.stringify(updatedCartItems))
+         
+         console.log('✅ Cart sync completed. Changes detected:', changes)
+         
+         return updatedCartItems
+
+      } catch (error) {
+         console.error('❌ Error syncing cart with Firestore:', error)
+         toast.error('Failed to update cart. Please refresh the page.')
+         return currentCartItems
+      } finally {
+         setIsCartSyncing(false)
+         setCartSyncComplete(true)
+      }
+   }
 
    // Load coupons
    useEffect(() => {
-      getCoupons()
-         .then((fetchedCoupons) => {
+      const loadData = async () => {
+         try {
+            // Load coupons
+            const fetchedCoupons = await getCoupons()
             setCoupons(fetchedCoupons)
-         })
-         .catch((error) => {
-            console.error('Error fetching coupons:', error)
-         })
+         } catch (error) {
+            console.error('Error loading data:', error)
+         }
+      }
+
+      loadData()
    }, [])
 
    // Coupon validation function
@@ -172,21 +349,50 @@ export default function Cart() {
          toast.error('This coupon is no longer active')
          return false
       }
+      
+      console.log('=== DEBUGGING COUPON VALIDATION ===')
+      console.log('Cart items count:', cartItems.length)
+      
+      // Check onSale status from cart items (includes current Firestore data)
+      const saleItemsInCart = cartItems.some(cartItem => {
+         const isCurrentlyOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
+         console.log(`Item ${cartItem.title}: currently on sale = ${isCurrentlyOnSale}`)
+         return isCurrentlyOnSale
+      })
+      
+      console.log('Sale items found in cart:', saleItemsInCart)
+      
+      if (saleItemsInCart) {
+         const saleItems = cartItems.filter(cartItem => {
+            return cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
+         })
+         console.log('Sale items that triggered validation:', saleItems.map(item => item.title))
+         setAppliedCoupon(null)
+         toast.error('Coupons cannot be applied on sale items')
+         return false
+      }
 
       // Check if coupon applies to any items in cart
-      const applicableItems = cartItems.filter(item => {
-         // If no categories or collections specified, applies to all
+      const applicableItems = cartItems.filter(cartItem => {
+         const isCurrentlyOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
+         
+         // Exclude sale items
+         if (isCurrentlyOnSale) {
+            return false
+         }
+
+         // If no categories or collections specified, applies to all non-sale items
          if (coupon.applicableCategories.length === 0 && coupon.applicableCollections.length === 0) {
             return true
          }
 
          // Check category match
-         if (coupon.applicableCategories.length > 0 && coupon.applicableCategories.includes(item.category)) {
+         if (coupon.applicableCategories.length > 0 && coupon.applicableCategories.includes(cartItem.category)) {
             return true
          }
 
          // Check collection match
-         if (coupon.applicableCollections.length > 0 && coupon.applicableCollections.includes(item.collection || '')) {
+         if (coupon.applicableCollections.length > 0 && coupon.applicableCollections.includes(cartItem.collection || '')) {
             return true
          }
 
@@ -278,8 +484,16 @@ export default function Cart() {
    // Calculate discount
    let discount = 0
    if (appliedCoupon) {
-      // Calculate applicable items subtotal
+      // Calculate applicable items subtotal (excluding sale items)
       const applicableItems = cartItems.filter(item => {
+         // Check onSale status from cart item (includes current Firestore data)
+         const isCurrentlyOnSale = item.onSale === true && (item.saleQuantity || 0) > 0
+         
+         // Exclude sale items
+         if (isCurrentlyOnSale) {
+            return false
+         }
+
          if (appliedCoupon.applicableCategories.length === 0 && appliedCoupon.applicableCollections.length === 0) {
             return true
          }
@@ -304,6 +518,9 @@ export default function Cart() {
    const discountedSubtotal = subtotal - discount
    const shipping = discountedSubtotal > 799 ? 0 : 75
    const total = discountedSubtotal + shipping
+
+   // Check if any items are out of stock
+   const hasOutOfStockItems = cartItems.some(item => !item.inStock)
 
    const handleCheckout = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -330,6 +547,30 @@ export default function Cart() {
 
       // Initiate Razorpay payment
       await initiatePayment(total, checkoutForm, cartItems)
+   }
+
+   if (isCartSyncing) {
+      return (
+         <>
+            <Navbar />
+            <main className='gradient-bg min-h-screen'>
+               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
+                  <div className='text-center'>
+                     <div className='flex justify-center items-center mb-6'>
+                        <div className='animate-spin rounded-full h-16 w-16 border-b-2 border-primary-pink'></div>
+                     </div>
+                     <h1 className='text-3xl font-heading font-extrabold text-text-dark mb-4 leading-tight tracking-wide'>
+                        Updating Your Cart
+                     </h1>
+                     <p className='text-xl font-body text-text-light mb-8'>
+                        Fetching latest prices and availability...
+                     </p>
+                  </div>
+               </div>
+            </main>
+            <Footer />
+         </>
+      )
    }
 
    if (cartItems.length === 0) {
@@ -421,18 +662,26 @@ export default function Cart() {
                                        Includes Matching Bow Tie (+₹100)
                                     </p>
                                  )}
+                                 {!item.inStock && (
+                                    <div className='bg-red-50 border border-red-200 rounded-lg p-2 mb-2'>
+                                       <p className='text-red-600 text-sm font-medium flex items-center gap-1'>
+                                          <span>⚠️</span>
+                                          Out of Stock
+                                       </p>
+                                    </div>
+                                 )}
                                  <div className='flex items-center justify-center md:justify-start space-x-2'>
                                     <span className='text-xl font-accent font-bold text-primary-pink'>₹{item.price}</span>
-                                    {item.originalPrice === 0 ? '' : (
-                                       <>
-                                       {item.originalPrice && (
+                                    {item.originalPrice && item.originalPrice > 0 ? (
                                        <span className='font-body text-text-light line-through text-sm'>
                                           ₹{item.originalPrice}
                                        </span>
+                                    ):null}
+                                    {item.onSale && (item.saleQuantity || 0) > 0 && (
+                                       <span className='bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium'>
+                                          ON SALE
+                                       </span>
                                     )}
-                                       </>
-                                    )}
-                                    
                                  </div>
                               </div>
 
@@ -559,11 +808,25 @@ export default function Cart() {
                              <p className='text-sm text-gray-600'>Prices are inclusive of all taxes, packaging and handling.</p>
                           </div>
 
+                          {hasOutOfStockItems && (
+                             <div className='mb-4 bg-red-50 border border-red-200 rounded-lg p-3'>
+                                <p className='text-red-600 text-sm font-medium flex items-center gap-2'>
+                                   <span>⚠️</span>
+                                   Some items in your cart are out of stock. Please remove them to proceed.
+                                </p>
+                             </div>
+                          )}
+
                         <button
                            onClick={() => setShowCheckout(true)}
-                           className='btn-primary w-full'
+                           disabled={hasOutOfStockItems}
+                           className={`w-full py-3 px-6 rounded-lg font-heading font-semibold transition-colors ${
+                              hasOutOfStockItems 
+                                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                                 : 'btn-primary'
+                           }`}
                         >
-                           Proceed to Checkout
+                           {hasOutOfStockItems ? 'Remove Out of Stock Items to Proceed' : 'Proceed to Checkout'}
                         </button>
                      </div>
                   </motion.div>

@@ -51,6 +51,8 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isAddingToCart, setIsAddingToCart] = useState(false)
 
+  console.log('Related products:', relatedProducts)
+
   // Bow tie styles
   const bowTieStyles = [
     {
@@ -210,6 +212,12 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
   // Add to cart function
   const addToCart = async () => {
+    // Check stock availability first
+    if (!product.inStock) {
+      toast.error('This product is currently out of stock')
+      return
+    }
+
     // Validation
     if (!selectedSize) {
       toast.error('Please select a size')
@@ -232,15 +240,12 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
       const pricing = getCurrentPricing()
       const bowStyleData = selectedBowStyle ? bowTieStyles.find(bs => bs.id === selectedBowStyle) : null
 
-      // Create cart item
-      const cartItem: CartItem = {
-        id: product.id,
-        title: product.title,
+      // Create cart item - include onSale status for cart validation
+      const cartItem = {
+        ...product,
         price: pricing.price,
         quantity,
         size: selectedSize,
-        image: product.image,
-        category: product.category,
         customName: customName || undefined,
         bowStyle: selectedBowStyle || undefined,
         bowStyleName: bowStyleData?.name || undefined,
@@ -251,7 +256,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
       const currentCart = JSON.parse(localStorage.getItem('cart') || '[]')
       
       // Check if identical item exists
-      const existingItemIndex = currentCart.findIndex((item: CartItem) =>
+      const existingItemIndex = currentCart.findIndex((item: any) =>
         item.id === cartItem.id &&
         item.size === cartItem.size &&
         item.customName === cartItem.customName &&
@@ -376,13 +381,20 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
             <div className="space-y-4">
               {/* Main Image */}
               <div className="relative aspect-square bg-white rounded-lg overflow-hidden">
-                {product.saleQuantity && product.saleQuantity > 0 ? (
+                {product.onSale && product.saleQuantity && product.saleQuantity > 0 ? (
                   <div className="absolute top-4 left-4 z-10">
                     <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                       SALE
                     </span>
                   </div>
                 ): null}
+                {!product.inStock && (
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="bg-white text-gray-800 px-2 py-1 rounded-full text-xs font-bold border border-gray-300 shadow-md">
+                      OUT OF STOCK
+                    </span>
+                  </div>
+                )}
                 {discount > 0 && selectedSize && (
                   <div className="absolute top-4 right-4 z-10">
                     <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
@@ -606,11 +618,24 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
               {/* Add to Cart Button */}
               <div className="space-y-4">
+                {!product.inStock && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-red-600 text-xl">⚠️</span>
+                      <div>
+                        <p className="text-red-800 font-semibold">Out of Stock</p>
+                        <p className="text-red-700 text-sm">This item is currently unavailable.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <button
                   onClick={addToCart}
-                  disabled={isAddingToCart || isInCart()}
+                  disabled={!product.inStock || isAddingToCart || isInCart()}
                   className={`w-full py-4 px-6 rounded-lg font-heading font-semibold text-white transition-colors flex items-center justify-center space-x-2 ${
-                    isInCart()
+                    !product.inStock
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : isInCart()
                       ? 'bg-green-500 cursor-not-allowed'
                       : isAddingToCart
                       ? 'bg-gray-400 cursor-not-allowed'
@@ -619,7 +644,14 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span>
-                    {isInCart() ? 'In Cart' : isAddingToCart ? 'Adding...' : 'Add to Cart'}
+                    {!product.inStock 
+                      ? 'Out of Stock' 
+                      : isInCart() 
+                      ? 'In Cart' 
+                      : isAddingToCart 
+                      ? 'Adding...' 
+                      : 'Add to Cart'
+                    }
                   </span>
                 </button>
               </div>
@@ -679,14 +711,21 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                     >
                       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div className="relative aspect-square">
-                          {relatedProduct.saleQuantity && relatedProduct.saleQuantity > 0 ? (
+                          {relatedProduct.onSale && relatedProduct.saleQuantity && relatedProduct.saleQuantity > 0 && relatedProduct.inStock ? (
                             <div className="absolute top-2 left-2 z-10">
                               <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                                 SALE
                               </span>
                             </div>
                           ): null}
-                          {relatedDiscount > 0 && (
+                          {!relatedProduct.inStock && (
+                            <div className="absolute top-2 left-2 z-10">
+                              <span className="bg-white text-gray-800 px-2 py-1 rounded-full text-xs font-bold border border-gray-300 shadow-md">
+                                OUT OF STOCK
+                              </span>
+                            </div>
+                          )}
+                          {relatedDiscount > 0 && relatedProduct.inStock && (
                             <div className="absolute top-2 right-2 z-10">
                               <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                                 {relatedDiscount}% OFF

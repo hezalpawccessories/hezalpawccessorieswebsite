@@ -532,17 +532,17 @@ export default function ProductsPageClient({
               const displayPrice = getDisplayPrice(product)
 
               return (
-                <div key={product.id} className="group bg-white rounded-lg sm:rounded-xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl hover:border-primary-pink/30 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
+                <div key={product.id} className={`group bg-white rounded-lg sm:rounded-xl overflow-hidden border border-gray-200 shadow-md hover:shadow-xl hover:border-primary-pink/30 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1 ${!product.inStock ? 'opacity-75' : ''}`}>
                   {/* Image Container - Responsive Height */}
                   <div className="relative h-64 sm:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-                    {product.saleQuantity && product.saleQuantity > 0 ? (
+                    {product.onSale && product.saleQuantity && product.saleQuantity > 0 && product.inStock ? (
                       <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
                         <span className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           SALE
                         </span>
                       </div>
                     ): <> </>}
-                    {discount > 0 && (
+                    {discount > 0 && product.inStock && (
                       <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
                         <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           {discount}% OFF
@@ -556,8 +556,15 @@ export default function ProductsPageClient({
                       alt={product.title}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                      className="object-contain group-hover:scale-110 transition-transform duration-500 relative z-10"
+                      className={`object-contain group-hover:scale-110 transition-transform duration-500 relative z-10 ${!product.inStock ? 'grayscale opacity-60' : ''}`}
                     />
+                    {!product.inStock && (
+                      <div className="absolute inset-0 bg-gray-900 bg-opacity-40 flex items-center justify-center z-20">
+                        <div className="bg-white bg-opacity-95 px-3 py-2 rounded-lg">
+                          <p className="text-gray-800 font-semibold text-xs sm:text-sm">Out of Stock</p>
+                        </div>
+                      </div>
+                    )}
                     {/* Decorative Corners - Hidden on mobile */}
                     <div className="hidden sm:block absolute bottom-0 right-0 w-8 h-8 bg-primary-pink/10 rounded-tl-full"></div>
                     <div className="hidden sm:block absolute top-0 left-0 w-8 h-8 bg-primary-pink/10 rounded-br-full"></div>
@@ -583,7 +590,11 @@ export default function ProductsPageClient({
                         {/* Button */}
                         <NavigationLink
                           href={`/products/${product.id}`}
-                          className="w-full bg-gradient-to-r from-primary-pink to-pink-600 text-white py-2 rounded-lg text-xs font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-1"
+                          className={`w-full py-2 rounded-lg text-xs font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-1 ${
+                            !product.inStock 
+                              ? 'bg-gray-400 text-white cursor-not-allowed' 
+                              : 'bg-gradient-to-r from-primary-pink to-pink-600 text-white hover:from-pink-600 hover:to-primary-pink'
+                          }`}
                         >
                           <span>View</span>
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -593,7 +604,7 @@ export default function ProductsPageClient({
                       </div>
 
                       {/* Desktop Layout - Side by Side */}
-                      <div className="hidden sm:flex items-center justify-between bg-white/50 backdrop-blur-sm rounded-lg p-3 border border-gray-100">
+                      <div className="hidden sm:flex items-center justify-between">
                         {/* Price */}
                         <div className="flex flex-col">
                           <span className="font-bold text-primary-pink text-lg tracking-tight">
@@ -604,7 +615,11 @@ export default function ProductsPageClient({
                         {/* Enhanced View Button */}
                         <NavigationLink
                           href={`/products/${product.id}`}
-                          className="bg-gradient-to-r from-primary-pink to-pink-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-pink-600 hover:to-primary-pink transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
+                          className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2 ${
+                            !product.inStock 
+                              ? 'bg-gray-400 text-white cursor-not-allowed' 
+                              : 'bg-gradient-to-r from-primary-pink to-pink-600 text-white hover:from-pink-600 hover:to-primary-pink'
+                          }`}
                         >
                           <span>View</span>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

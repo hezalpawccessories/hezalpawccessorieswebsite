@@ -42,6 +42,7 @@ export const products: Product[] = [
     originalPrice: 1299,
     image: 'https://images.pexels.com/photos/7210754/pexels-photo-7210754.jpeg?auto=compress&cs=tinysrgb&w=600',
     category: 'Collars',
+    onSale: true, // Added for testing coupon validation
     description: 'Handcrafted premium leather collar with adjustable sizing and comfortable padding.',
     details: [
       'Made from genuine leather',

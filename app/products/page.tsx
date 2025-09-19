@@ -7,6 +7,9 @@ import { Product } from '@/lib/products'
 import ProductsPageClient from './ProductsPageClient'
 import Loader from '@/components/Loader'
 
+// Enable ISR - revalidate every 5 minutes (300 seconds)
+export const revalidate = 300
+
 interface Collection {
   id: string
   name: string
@@ -91,6 +94,24 @@ async function getProductsData(searchParams: SearchParams) {
     let allProducts = snapshot.docs.map(doc => {
       const data = doc.data() as any
       // Convert Firestore timestamps to serializable format
+      // const product = {
+      //   id: doc.id,
+      //   ...data,
+      //   createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+      //   updatedAt: data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt,
+      // }
+      
+      // // Debug log for the specific product we're tracking
+      // if (product.title?.includes('woof you')) {
+      //   console.log('Found "I woof you" product:', {
+      //     title: product.title,
+      //     onSale: product.onSale,
+      //     saleQuantity: product.saleQuantity,
+      //     id: product.id
+      //   })
+      // }
+      
+      // return product
       return {
         id: doc.id,
         ...data,
@@ -114,7 +135,7 @@ async function getProductsData(searchParams: SearchParams) {
 
     // Apply sale filter
     if (sale === 'true') {
-      filteredProducts = filteredProducts.filter(product => (product.saleQuantity || 0) > 0)
+      filteredProducts = filteredProducts.filter(product => product.onSale === true && (product.saleQuantity || 0) > 0)
     }
 
     // Apply search filter
@@ -172,7 +193,7 @@ async function getProductsData(searchParams: SearchParams) {
     })).sort((a, b) => a.name.localeCompare(b.name))
 
     // Check if there are products on sale
-    const hasProductsOnSale = allProducts.some(product => (product.saleQuantity || 0) > 0)
+    const hasProductsOnSale = allProducts.some(product => product.onSale === true && (product.saleQuantity || 0) > 0)
 
     console.log(`Filtered ${totalProducts} products from ${allProducts.length} total products`)
 
@@ -264,7 +285,7 @@ async function getProductsData(searchParams: SearchParams) {
       // Check for sale products
       const hasProductsOnSale = fallbackSnapshot.docs.some(doc => {
         const data = doc.data() as any
-        return (data.saleQuantity || 0) > 0
+        return data.onSale === true && (data.saleQuantity || 0) > 0
       })
 
       console.log('Fallback query successful, returning filtered results')
