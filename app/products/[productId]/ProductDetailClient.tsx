@@ -390,7 +390,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                 ): null}
                 {!product.inStock && (
                   <div className="absolute top-4 left-4 z-10">
-                    <span className="bg-white text-gray-800 px-2 py-1 rounded-full text-xs font-bold border border-gray-300 shadow-md">
+                    <span className="bg-gray-400 text-gray-900 px-2 py-1 rounded-full text-xs font-bold border border-gray-300 shadow-md">
                       OUT OF STOCK
                     </span>
                   </div>

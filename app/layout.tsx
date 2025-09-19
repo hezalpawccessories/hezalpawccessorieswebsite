@@ -176,20 +176,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <link rel="apple-touch-icon" href="/logom.png" />
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
-            
-            {/* Defer non-critical CSS loading */}
-            <script dangerouslySetInnerHTML={{
-              __html: `
-                (function() {
-                  var link = document.createElement('link');
-                  link.rel = 'stylesheet';
-                  link.href = '/_next/static/css/app/globals.css';
-                  link.media = 'print';
-                  link.onload = function() { this.media = 'all'; };
-                  document.head.appendChild(link);
-                })();
-              `
-            }} />
          </head>
          <body className={`${nunito.className} ${inter.variable} ${dmSans.variable} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <GoogleTagManager />
