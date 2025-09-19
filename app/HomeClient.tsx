@@ -23,7 +23,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
   const [landingImageLoaded, setLandingImageLoaded] = useState(!!initialLandingUrl)
 
   useEffect(() => {
-    // If server provided a URL, we assume it's already ready; otherwise keep null
+    // If server provided a URL, we assume it's ready; otherwise keep null
     setLandingImageUrl(initialLandingUrl)
     setLandingImageLoaded(!!initialLandingUrl)
   }, [initialLandingUrl])
@@ -178,10 +178,31 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
 
                   <div className='relative w-full h-96 rounded-xl overflow-hidden'>
-                    <Image fill src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg' alt='Happy puppy with accessories' className='object-cover' quality={50} sizes='(max-width: 768px) 100vw, 50vw' style={{ opacity: landingImageLoaded ? 0 : 1, transition: 'opacity 350ms ease' }} />
+                    <Image 
+                      fill 
+                      src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg' 
+                      alt='Happy puppy with accessories' 
+                      className='object-cover' 
+                      quality={50} 
+                      sizes='(max-width: 768px) 100vw, 50vw' 
+                      style={{ opacity: landingImageLoaded ? 0 : 1, transition: 'opacity 350ms ease' }} 
+                      fetchPriority="low"
+                    />
 
                     {landingImageUrl && (
-                      <Image fill src={landingImageUrl} alt='Landing banner' className='object-cover' quality={60} sizes='(max-width: 768px) 100vw, 50vw' style={{ opacity: landingImageLoaded ? 1 : 0, transition: 'opacity 350ms ease' }} priority={true} />
+                      <Image 
+                        fill 
+                        src={landingImageUrl} 
+                        alt='Landing banner' 
+                        className='object-cover' 
+                        quality={85} 
+                        sizes='(max-width: 768px) 100vw, 50vw' 
+                        style={{ opacity: landingImageLoaded ? 1 : 0, transition: 'opacity 350ms ease' }} 
+                        priority={true}
+                        fetchPriority="high"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyDzX1Hidazp0nVLV0Va2ASj3Lev+EOAEZ5/9k="
+                      />
                     )}
                   </div>
 

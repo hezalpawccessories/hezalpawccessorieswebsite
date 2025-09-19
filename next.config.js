@@ -18,6 +18,34 @@ const nextConfig = {
       imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
       minimumCacheTTL: 60,
    },
+   // Optimize CSS loading
+   experimental: {
+      optimizeCss: true,
+   },
+   // Compress assets
+   compress: true,
+   // Enable webpack optimizations
+   webpack: (config, { dev, isServer }) => {
+      if (!dev && !isServer) {
+         // Optimize CSS splitting for production
+         config.optimization = {
+            ...config.optimization,
+            splitChunks: {
+               ...config.optimization.splitChunks,
+               cacheGroups: {
+                  ...config.optimization.splitChunks.cacheGroups,
+                  styles: {
+                     name: 'styles',
+                     type: 'css/mini-extract',
+                     chunks: 'all',
+                     enforce: true,
+                  },
+               },
+            },
+         }
+      }
+      return config
+   },
 }
 
 module.exports = nextConfig

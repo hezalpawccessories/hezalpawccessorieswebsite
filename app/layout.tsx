@@ -8,41 +8,45 @@ import { Toaster } from 'sonner'
 import { GoogleAnalytics } from '@/components/Analytics/GoogleAnalytics'
 import { GoogleTagManager } from '@/components/Analytics/GoogleTagManager'
 
+// Optimized font loading with preload only for critical fonts
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter'
+  variable: '--font-inter',
+  preload: false,
 })
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-dm-sans'
+  variable: '--font-dm-sans',
+  preload: false,
 })
 
-// Optimized font loading for performance
+// Critical fonts for above-the-fold content
 const nunito = Nunito({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '600', '700'],
   display: 'swap',
   variable: '--font-nunito',
   preload: true,
 })
 
-const quicksand = Quicksand({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-quicksand',
-  preload: true,
-})
-
 const baloo2 = Baloo_2({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['600', '700'],
   display: 'swap',
   variable: '--font-baloo2',
   preload: true,
+})
+
+// Non-critical font - defer loading
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  variable: '--font-quicksand',
+  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -103,10 +107,89 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          className={`${inter.variable} ${dmSans.variable} ${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
       >
          <head>
+            {/* Inline critical CSS for above-the-fold content */}
+            <style dangerouslySetInnerHTML={{
+              __html: `
+                :root {
+                  --primary-pink: #FF69B4;
+                  --primary-gray: #2F2F2F;
+                  --cream: #FFFFFF;
+                  --text-dark: #2F2F2F;
+                  --text-body: #555555;
+                }
+                *,*::before,*::after { box-sizing: border-box; }
+                * { margin: 0; padding: 0; }
+                body {
+                  font-family: var(--font-nunito), system-ui, sans-serif;
+                  color: var(--text-body);
+                  background: var(--cream);
+                  line-height: 1.6;
+                  font-size: 16px;
+                }
+                .hero-bg {
+                  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 247, 250, 0.8) 50%, rgba(255, 255, 255, 1) 100%);
+                  position: relative;
+                }
+                .hero-title {
+                  font-family: var(--font-baloo2), cursive;
+                  font-weight: 700;
+                  background: linear-gradient(135deg, var(--primary-gray) 0%, #1a1a1a 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                }
+                .hero-accent {
+                  background: linear-gradient(135deg, var(--primary-pink) 0%, #E91E63 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                }
+                .btn-primary {
+                  background: linear-gradient(135deg, var(--primary-pink) 0%, #E91E63 100%);
+                  color: white;
+                  padding: 12px 24px;
+                  border-radius: 12px;
+                  font-weight: 600;
+                  border: none;
+                  cursor: pointer;
+                  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+                }
+                .btn-secondary {
+                  background: transparent;
+                  color: var(--primary-pink);
+                  padding: 12px 24px;
+                  border: 2px solid var(--primary-pink);
+                  border-radius: 12px;
+                  font-weight: 600;
+                  cursor: pointer;
+                }
+              `
+            }} />
+            
+            {/* Resource hints for performance */}
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link rel="preconnect" href="https://res.cloudinary.com" />
+            <link rel="dns-prefetch" href="https://vercel.com" />
+            
             <link rel="icon" href="/favicon.ico" />
             <link rel="apple-touch-icon" href="/logom.png" />
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
+            
+            {/* Defer non-critical CSS loading */}
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  var link = document.createElement('link');
+                  link.rel = 'stylesheet';
+                  link.href = '/_next/static/css/app/globals.css';
+                  link.media = 'print';
+                  link.onload = function() { this.media = 'all'; };
+                  document.head.appendChild(link);
+                })();
+              `
+            }} />
          </head>
          <body className={`${nunito.className} ${inter.variable} ${dmSans.variable} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <GoogleTagManager />
