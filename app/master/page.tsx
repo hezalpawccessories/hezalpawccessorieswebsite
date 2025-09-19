@@ -279,16 +279,26 @@ export default function AdminDashboard() {
             showCategoryStatus('Cannot delete default category', 'error')
             return
          }
-         if (!window.confirm(`Delete category "${name}"? This will not remove products referencing it.`)) return
+         
+         // Get products count for this category before deletion
+         const confirmMessage = `Delete category "${name}"? This will clear the category field from all products currently assigned to this category.`
+         if (!window.confirm(confirmMessage)) return
+         
          try {
             const { deleteCategory } = await import('@/integrations/firebase/firestoreCollections')
             await deleteCategory(id)
-            toast.success('Category deleted')
-            showCategoryStatus('Category deleted', 'success')
+            toast.success('Category deleted successfully', {
+               description: 'Category removed and products unassigned',
+               duration: 4000,
+            })
+            showCategoryStatus('Category deleted and products updated', 'success')
             await loadCategories()
          } catch (err) {
             console.error('Failed to delete category', err)
-            toast.error('Failed to delete category')
+            toast.error('Failed to delete category', {
+               description: err instanceof Error ? err.message : 'Unknown error occurred',
+               duration: 4000,
+            })
             showCategoryStatus('Failed to delete category', 'error')
          }
    }

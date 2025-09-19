@@ -196,6 +196,27 @@ export const getCategories = async (): Promise<Category[]> => {
 }
 
 export const deleteCategory = async (id: string) => {
+   // First, get the category name to find all products using it
+   const categoryDoc = await getDoc(doc(db, 'categories', id))
+   if (!categoryDoc.exists()) {
+      throw new Error('Category not found')
+   }
+   
+   const categoryName = categoryDoc.data().name
+   
+   // Get all products that have this category
+   const allProducts = await getProducts()
+   const productsWithCategory = allProducts.filter(product => product.category === categoryName)
+   
+   // Clear the category field for all products using this category
+   const updatePromises = productsWithCategory.map(product => 
+      updateProduct(product.id, { category: '' })
+   )
+   
+   // Wait for all product updates to complete
+   await Promise.all(updatePromises)
+   
+   // Now delete the category
    const docRef = doc(db, 'categories', id)
    await deleteDoc(docRef)
 }
