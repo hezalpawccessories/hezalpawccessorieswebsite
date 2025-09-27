@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Search, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Product } from '@/lib/products'
-import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
+import { getBanners, Banner, getProducts } from '@/integrations/firebase/firestoreCollections'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Loader from '@/components/Loader'
@@ -50,6 +50,10 @@ export default function ProductsPageClient({
   const urlSearchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState(searchParams.search || '')
   const [showFilters, setShowFilters] = useState(false)
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [allProductTitles, setAllProductTitles] = useState<string[]>([])
+  const [allProducts, setAllProducts] = useState<Product[]>([])
   
   // Banner state
   const [banners, setBanners] = useState<Banner[]>([])
@@ -77,6 +81,26 @@ export default function ProductsPageClient({
 
   // Show loading state for filters
   const [isFilterLoading, setIsFilterLoading] = useState(false)
+
+  // Load all products for search suggestions
+  useEffect(() => {
+    const loadAllProducts = async () => {
+      try {
+        const products = await getProducts()
+        setAllProducts(products)
+        const titles = products.map((product: Product) => product.title)
+        setAllProductTitles(titles)
+      } catch (error) {
+        console.error('Error loading all products for search:', error)
+        // Fallback to using initialProducts
+        const titles = initialProducts.map(product => product.title)
+        setAllProductTitles(titles)
+        setAllProducts(initialProducts)
+      }
+    }
+    
+    loadAllProducts()
+  }, [])
 
   // Hide filter loader when component updates (new products loaded)
   useEffect(() => {
@@ -190,6 +214,58 @@ export default function ProductsPageClient({
   // Handle pagination
   const handlePageChange = (page: number) => {
     updateURL({ page: page.toString() })
+  }
+
+  // Handle search input changes and generate suggestions
+  const handleSearchInputChange = (value: string) => {
+    setSearchQuery(value)
+    
+    if (value.trim().length > 0) {
+      // Use the same filtering logic as master page
+      const filtered = allProducts.filter(
+        (product: Product) =>
+          product.title.toLowerCase().includes(value.toLowerCase()) ||
+          product.category.toLowerCase().includes(value.toLowerCase())
+      )
+      
+      // Extract titles and limit to 6 suggestions
+      const suggestions = filtered.slice(0, 6).map((product: Product) => product.title)
+      
+      setSearchSuggestions(suggestions)
+      setShowSuggestions(suggestions.length > 0)
+    } else {
+      setSearchSuggestions([])
+      setShowSuggestions(false)
+    }
+  }
+
+  // Handle suggestion selection
+  const handleSuggestionSelect = (suggestion: string) => {
+    setSearchQuery(suggestion)
+    setShowSuggestions(false)
+    updateURL({ 
+      search: suggestion,
+      // Preserve existing filters
+      category: searchParams.category,
+      collection: searchParams.collection,
+      sale: searchParams.sale,
+      sort: searchParams.sort
+    })
+  }
+
+  // Handle search input blur
+  const handleSearchBlur = () => {
+    // Delay hiding suggestions to allow for suggestion clicks
+    setTimeout(() => {
+      setShowSuggestions(false)
+    }, 200)
+  }
+
+  // Handle search input focus
+  const handleSearchFocus = () => {
+    if (searchQuery.trim().length > 0 && searchSuggestions.length > 0) {
+      setShowSuggestions(true)
+    }
   }
 
   // Get price for display (handles size pricing)
@@ -330,11 +406,14 @@ export default function ProductsPageClient({
                     <input
                       type="text"
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => handleSearchInputChange(e.target.value)}
+                      onFocus={handleSearchFocus}
+                      onBlur={handleSearchBlur}
                       placeholder="Search products..."
                       className={`w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink text-sm ${
                         searchQuery ? 'pr-32' : 'pr-24'
                       }`}
+                      autoComplete="off"
                     />
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     
@@ -356,6 +435,42 @@ export default function ProductsPageClient({
                     >
                       Search
                     </button>
+
+                    {/* Search Suggestions Dropdown */}
+                    {showSuggestions && searchSuggestions.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+                        {searchSuggestions.map((suggestion, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => handleSuggestionSelect(suggestion)}
+                            className="w-full text-left px-4 py-3 hover:bg-gradient-to-r hover:from-primary-pink/5 hover:to-pink-50 transition-all duration-200 border-b border-gray-100 last:border-b-0 group"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <Search className="w-4 h-4 text-gray-400 group-hover:text-primary-pink transition-colors" />
+                              <span className="text-sm text-gray-700 group-hover:text-gray-900 font-medium">
+                                {suggestion}
+                              </span>
+                            </div>
+                            {/* Highlight matching text */}
+                            <div className="text-xs text-gray-500 ml-7 mt-1 group-hover:text-gray-600">
+                              {suggestion.toLowerCase().includes(searchQuery.toLowerCase()) && (
+                                <span>
+                                  Found in: <span className="font-semibold text-primary-pink">{searchQuery}</span>
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        ))}
+                        
+                        {/* Show count of suggestions */}
+                        <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
+                          <span className="text-xs text-gray-500">
+                            {searchSuggestions.length} suggestion{searchSuggestions.length !== 1 ? 's' : ''} found
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </form>
               </div>
