@@ -117,7 +117,7 @@ export default function Cart() {
             const stateCities = getCitiesForState(checkoutForm.state)
             suggestions = stateCities.filter(city => 
                city.toLowerCase().includes(value.toLowerCase())
-            )
+            ).sort()
          }
          
          // If no matches in state or no state selected, search all cities

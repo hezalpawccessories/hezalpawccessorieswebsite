@@ -1,17 +1,24 @@
-// Indian States and Union Territories
+// Indian States and Union Territories (sorted alphabetically)
 export const indianStates = [
+  "Andaman and Nicobar Islands",
   "Andhra Pradesh",
   "Arunachal Pradesh", 
   "Assam",
   "Bihar",
+  "Chandigarh",
   "Chhattisgarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
   "Goa",
   "Gujarat",
   "Haryana",
   "Himachal Pradesh",
+  "Jammu and Kashmir",
   "Jharkhand",
   "Karnataka",
   "Kerala",
+  "Ladakh",
+  "Lakshadweep",
   "Madhya Pradesh",
   "Maharashtra",
   "Manipur",
@@ -19,6 +26,7 @@ export const indianStates = [
   "Mizoram",
   "Nagaland",
   "Odisha",
+  "Puducherry",
   "Punjab",
   "Rajasthan",
   "Sikkim",
@@ -27,15 +35,7 @@ export const indianStates = [
   "Tripura",
   "Uttar Pradesh",
   "Uttarakhand",
-  "West Bengal",
-  "Andaman and Nicobar Islands",
-  "Chandigarh",
-  "Dadra and Nagar Haveli and Daman and Diu",
-  "Delhi",
-  "Jammu and Kashmir",
-  "Ladakh",
-  "Lakshadweep",
-  "Puducherry"
+  "West Bengal"
 ]
 
 // Major cities by state (top cities for each state)
@@ -80,7 +80,8 @@ export const citiesByState: Record<string, string[]> = {
 
 // Function to get cities for a specific state
 export const getCitiesForState = (state: string): string[] => {
-  return citiesByState[state] || []
+  const cities = citiesByState[state] || []
+  return cities.sort()
 }
 
 // Function to search cities across all states
@@ -98,6 +99,6 @@ export const searchCities = (query: string): string[] => {
     })
   })
   
-  // Remove duplicates and return top 10 matches
-  return Array.from(new Set(allCities)).slice(0, 10)
+  // Remove duplicates, sort alphabetically, and return top 10 matches
+  return Array.from(new Set(allCities)).sort().slice(0, 10)
 }
