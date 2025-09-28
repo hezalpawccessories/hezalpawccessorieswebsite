@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, DM_Sans, Nunito, Quicksand, Baloo_2 } from 'next/font/google'
+import { Nunito, Quicksand, Baloo_2 } from 'next/font/google'
 import { Suspense, lazy } from 'react'
 import { Toaster } from 'sonner'
 
@@ -10,22 +10,9 @@ const SpeedInsights = lazy(() => import('@vercel/speed-insights/next').then(m =>
 const GoogleAnalytics = lazy(() => import('@/components/Analytics/GoogleAnalytics').then(m => ({ default: m.GoogleAnalytics })))
 const GoogleTagManager = lazy(() => import('@/components/Analytics/GoogleTagManager').then(m => ({ default: m.GoogleTagManager })))
 
-// Optimized font loading with preload only for critical fonts
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-  preload: false,
-})
+// Optimized font loading - removed unused fonts (Inter, DM_Sans)
 
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-dm-sans',
-  preload: false,
-})
-
-// Critical fonts for above-the-fold content
+// Critical fonts - all preloaded for performance
 const nunito = Nunito({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
@@ -42,13 +29,13 @@ const baloo2 = Baloo_2({
   preload: true,
 })
 
-// Non-critical font - defer loading
+// Accent font - now preloaded for better performance
 const quicksand = Quicksand({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   display: 'swap',
   variable: '--font-quicksand',
-  preload: false,
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -106,7 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html
          lang='en'
          suppressHydrationWarning
-         className={`${inter.variable} ${dmSans.variable} ${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
+         className={`${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
       >
          <head>
             {/* Inline critical CSS for above-the-fold content */}
@@ -168,6 +155,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               `
             }} />
             
+            {/* Critical font preloading to break request chain */}
+            <link rel="preload" href="https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDLshdQ.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+            <link rel="preload" href="https://fonts.gstatic.com/s/baloo2/v22/wXKvE3kTposypRyd76Ay.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+            
             {/* Resource hints for performance */}
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -179,7 +170,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
          </head>
-         <body className={`${nunito.className} ${inter.variable} ${dmSans.variable} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
+         <body className={`${nunito.className} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <Suspense fallback={null}>
                <GoogleTagManager />
             </Suspense>

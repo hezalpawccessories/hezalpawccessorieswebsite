@@ -9,7 +9,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   compress: true,
   
   // Performance optimizations
@@ -86,19 +85,18 @@ const nextConfig = {
       }
     }
 
-    // Tree shaking optimization
-    config.optimization.usedExports = true
-    config.optimization.sideEffects = false
-
+    // Tree shaking is handled by Next.js automatically
+    // Remove manual optimization settings that conflict with Next.js
+    
     return config
   },
 
+  // Output file tracing for build optimization
+  outputFileTracingRoot: process.cwd(),
+  
   // Experimental features for performance
   experimental: {
-    // Enable modern output
-    outputFileTracingRoot: process.cwd(),
-    // Sentry external packages removed since it's disabled
-    // serverComponentsExternalPackages: ['@sentry/nextjs'],
+    // Modern features can be added here if needed
   },
 }
 
