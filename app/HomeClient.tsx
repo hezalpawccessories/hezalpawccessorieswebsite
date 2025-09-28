@@ -7,12 +7,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
-import ImageAutoSlider from '@/components/ui/image-auto-slider'
-import AnimatedSlideshow from '@/components/ui/animated-slideshow'
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, Suspense, lazy } from 'react'
 import { getBanners, Banner } from '@/integrations/firebase/firestoreCollections'
-import ScrollBaseAnimation from '@/components/ui/text-marquee'
 import SEOHead from '@/components/SEO/SEOHead'
+
+// Dynamic imports for heavy components to reduce initial bundle size
+const ImageAutoSlider = lazy(() => import('@/components/ui/image-auto-slider'))
+const AnimatedSlideshow = lazy(() => import('@/components/ui/animated-slideshow'))
+const ScrollBaseAnimation = lazy(() => import('@/components/ui/text-marquee'))
 
 interface Props {
   landingImageUrl: string | null
@@ -137,25 +139,31 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
    <div className='w-full bg-gradient-to-l from-transparent via-pink-500/20 to-transparent overflow-hidden'>
       {/* Horizontal inline marquee: all banners shown one after another */}
       <div className='h-12 md:h-12 flex items-center'>
-         <ScrollBaseAnimation
-            delay={0}
-            baseVelocity={-1}
-            className='font-bold tracking-[-0.02em]'
-         >
-            <div className='flex items-center space-x-12'>
-                      {Array.from({ length: 3 }, (_, repeatIndex) =>
-                           banners.map((banner, bannerIndex) => (
-                               <React.Fragment key={`${repeatIndex}-${bannerIndex}`}>
-                                  <span className='inline-block text-base md:text-lg font-bold'>
-                                     {banner.title}
-                                     {banner.subtitle ? <span className='mx-2 text-base md:text-lg font-normal'>• {banner.subtitle}</span> : null}
-                                  </span>
-                                  <span className='text-xl'>🐾</span>
-                               </React.Fragment>
-                           ))
-                      )}
-            </div>
-         </ScrollBaseAnimation>
+         <Suspense fallback={
+           <div className='flex items-center justify-center w-full h-12'>
+             <div className='text-base font-bold animate-pulse'>Loading banners...</div>
+           </div>
+         }>
+           <ScrollBaseAnimation
+              delay={0}
+              baseVelocity={-1}
+              className='font-bold tracking-[-0.02em]'
+           >
+              <div className='flex items-center space-x-12'>
+                        {Array.from({ length: 3 }, (_, repeatIndex) =>
+                             banners.map((banner, bannerIndex) => (
+                                 <React.Fragment key={`${repeatIndex}-${bannerIndex}`}>
+                                    <span className='inline-block text-base md:text-lg font-bold'>
+                                       {banner.title}
+                                       {banner.subtitle ? <span className='mx-2 text-base md:text-lg font-normal'>• {banner.subtitle}</span> : null}
+                                    </span>
+                                    <span className='text-xl'>🐾</span>
+                                 </React.Fragment>
+                             ))
+                        )}
+              </div>
+           </ScrollBaseAnimation>
+         </Suspense>
       </div>
    </div>
 )}
@@ -224,13 +232,22 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
               <p className='text-lg font-body text-gray-600'>Adorable Finds, One Category at a Time</p>
             </motion.div>
 
-            <AnimatedSlideshow slides={[
-              { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757081273/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_qxqxbn.png', title: 'Bandana/Neck Scarf' },
-              { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757082005/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_qgcyy9.png', title: 'Bow Ties' },
-              { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg', title: 'Collars' },
-              { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.33.09_20740e7c_n08afc.jpg', title: 'Collar-Leash Set' },
-              { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.34.56_e1ff4a5d_vur11d.jpg', title: 'Treat Jars' },
-            ]} />
+            <Suspense fallback={
+              <div className='flex items-center justify-center h-64 bg-gray-50 rounded-lg'>
+                <div className='text-center'>
+                  <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary-pink mx-auto mb-4'></div>
+                  <p className='text-gray-600'>Loading slideshow...</p>
+                </div>
+              </div>
+            }>
+              <AnimatedSlideshow slides={[
+                { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757081273/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_qxqxbn.png', title: 'Bandana/Neck Scarf' },
+                { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757082005/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_qgcyy9.png', title: 'Bow Ties' },
+                { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg', title: 'Collars' },
+                { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.33.09_20740e7c_n08afc.jpg', title: 'Collar-Leash Set' },
+                { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.34.56_e1ff4a5d_vur11d.jpg', title: 'Treat Jars' },
+              ]} />
+            </Suspense>
 
             <div className='text-center mt-12'>
               <NavigationLink href='/products'><button className='btn-primary font-body font-medium'>View All Products</button></NavigationLink>
@@ -289,7 +306,15 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                      <p className='text-lg font-body text-gray-600'>A few snaps from our lovely customers</p>
                      
                   </div>
-                  <ImageAutoSlider />
+                  <Suspense fallback={
+                    <div className='flex items-center justify-center h-40 bg-gray-50 rounded-lg'>
+                      <div className='text-center'>
+                        <div className='animate-pulse text-gray-600'>Loading happy pets gallery...</div>
+                      </div>
+                    </div>
+                  }>
+                    <ImageAutoSlider />
+                  </Suspense>
                </div>
             </section>
 

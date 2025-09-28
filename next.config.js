@@ -4,12 +4,18 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
-const { withSentryConfig } = require('@sentry/nextjs')
+// Sentry disabled for performance optimization
+// const { withSentryConfig } = require('@sentry/nextjs')
 
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   compress: true,
+  
+  // Performance optimizations
+  poweredByHeader: false,
+  
+  // Image optimization
   images: {
     remotePatterns: [
       {
@@ -28,10 +34,83 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
+
+  // Bundle optimization
+  webpack: (config, { dev, isServer }) => {
+    // Production optimizations
+    if (!dev && !isServer) {
+      // Optimize bundle splitting
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            // Separate vendor libraries
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            // Separate Firebase/Firestore
+            firebase: {
+              test: /[\\/]node_modules[\\/]@?firebase/,
+              name: 'firebase',
+              chunks: 'all',
+              priority: 20,
+            },
+            // Sentry disabled - no need for separate chunk
+            // sentry: {
+            //   test: /[\\/]node_modules[\\/]@sentry/,
+            //   name: 'sentry', 
+            //   chunks: 'all',
+            //   priority: 15,
+            // },
+            // Separate animation libraries
+            animations: {
+              test: /[\\/]node_modules[\\/](framer-motion|@lottiefiles)/,
+              name: 'animations',
+              chunks: 'all',
+              priority: 12,
+            },
+            // Common components
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 5,
+              reuseExistingChunk: true,
+            }
+          }
+        }
+      }
+    }
+
+    // Tree shaking optimization
+    config.optimization.usedExports = true
+    config.optimization.sideEffects = false
+
+    return config
+  },
+
+  // Experimental features for performance
+  experimental: {
+    // Enable modern output
+    outputFileTracingRoot: process.cwd(),
+    // Sentry external packages removed since it's disabled
+    // serverComponentsExternalPackages: ['@sentry/nextjs'],
+  },
 }
 
-// Wrap config with analyzer and sentry
-module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
+// Export config with bundle analyzer only (Sentry disabled)
+module.exports = withBundleAnalyzer(nextConfig)
+
+// Sentry configuration disabled for performance optimization
+// If you need to re-enable Sentry, uncomment the code below:
+/*
+// const { withSentryConfig } = require('@sentry/nextjs')
+module.exports = withBundleAnalyzer(nextConfig)
+// module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
   org: 'hezal-pawccessories',
   project: 'javascript-nextjs',
   silent: !process.env.CI,
@@ -39,3 +118,4 @@ module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
   disableLogger: true,
   automaticVercelMonitors: true,
 })
+*/

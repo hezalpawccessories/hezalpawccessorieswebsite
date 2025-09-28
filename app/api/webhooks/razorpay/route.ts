@@ -1,14 +1,20 @@
 /**
  * Razorpay Webhook Handler
  * CRITICAL for production - ensures payment status updates even if user closes browser
- * Handles: payment.captured, payment.failed, order.paid events
+ * Handles: payment.captured, pay            // Sentry disabled - using console instead
+            console.error(`Payment failed: ${payment.error_description || 'Unknown error'}`, {
+              paymentId: payment.id,
+              orderId: payment.order_id,
+              errorCode: payment.error_code
+            })iled, order.paid events
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { updatePaymentStatusByRazorpayId } from '@/lib/firebase/orders'
 import { updatePaymentStatusByRazorpayId as updatePaymentLogByRazorpayId } from '@/lib/firebase/payments'
-import * as Sentry from '@sentry/nextjs'
+// Sentry disabled for performance optimization
+// import * as Sentry from '@sentry/nextjs'
 
 interface WebhookPayment {
   id: string
@@ -76,7 +82,8 @@ export async function POST(request: NextRequest) {
 
     if (signature !== expectedSignature) {
       console.error('Invalid webhook signature')
-      Sentry.captureMessage('Invalid Razorpay webhook signature', 'warning')
+      // Sentry disabled - using console instead
+      console.warn('Invalid Razorpay webhook signature')
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
     }
 
@@ -117,6 +124,7 @@ export async function POST(request: NextRequest) {
             })
 
             // Track successful payment in Sentry
+            /* 
             Sentry.addBreadcrumb({
               message: 'Payment captured via webhook',
               category: 'payment',
@@ -126,6 +134,7 @@ export async function POST(request: NextRequest) {
                 amount: payment.amount
               }
             })
+            */
           }
         }
         break
@@ -153,6 +162,7 @@ export async function POST(request: NextRequest) {
             })
 
             // Track failed payment in Sentry
+            /*
             Sentry.captureException(new Error(`Payment failed: ${payment.error_description || 'Unknown error'}`), {
               tags: {
                 payment_id: payment.id,
@@ -160,6 +170,7 @@ export async function POST(request: NextRequest) {
                 error_code: payment.error_code
               }
             })
+            */
           }
         }
         break
@@ -176,6 +187,7 @@ export async function POST(request: NextRequest) {
             })
 
             // Track successful order completion
+            /*
             Sentry.addBreadcrumb({
               message: 'Order paid via webhook',
               category: 'order',
@@ -184,6 +196,7 @@ export async function POST(request: NextRequest) {
                 amount: order.amount
               }
             })
+            */
           }
         }
         break
@@ -232,12 +245,14 @@ export async function POST(request: NextRequest) {
     console.error('Webhook processing error:', error)
     
     // Capture error in Sentry
+    /*
     Sentry.captureException(error, {
       tags: {
         component: 'webhook',
         service: 'razorpay'
       }
     })
+    */
 
     return NextResponse.json({ 
       error: 'Webhook processing failed',
@@ -254,3 +269,4 @@ export async function GET() {
     version: '1.0.0'
   }, { status: 200 })
 }
+

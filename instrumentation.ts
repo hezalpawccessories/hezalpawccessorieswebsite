@@ -1,13 +1,10 @@
-import * as Sentry from '@sentry/nextjs';
+// Sentry disabled for performance optimization
+// If you need to re-enable Sentry in the future, uncomment the code below
 
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./sentry.server.config');
-  }
-
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./sentry.edge.config');
-  }
+  // Sentry initialization disabled
+  console.log('Sentry instrumentation is disabled for performance optimization');
 }
 
-export const onRequestError = Sentry.captureRequestError;
+// Sentry error handler disabled
+export const onRequestError = () => {};

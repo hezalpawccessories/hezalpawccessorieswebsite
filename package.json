@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.14.4",
     "@motionone/utils": "^10.18.0",
+    "@next/bundle-analyzer": "^15.5.4",
     "@sentry/nextjs": "^9.43.0",
     "@types/node": "20.6.2",
     "@types/react": "18.2.22",
@@ -34,5 +36,8 @@
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.0.0"
   }
 }

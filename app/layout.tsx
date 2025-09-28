@@ -1,12 +1,14 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, DM_Sans, Nunito, Quicksand, Baloo_2 } from 'next/font/google'
-import { Suspense } from 'react'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Suspense, lazy } from 'react'
 import { Toaster } from 'sonner'
-import { GoogleAnalytics } from '@/components/Analytics/GoogleAnalytics'
-import { GoogleTagManager } from '@/components/Analytics/GoogleTagManager'
+
+// Dynamic imports for analytics to reduce initial bundle size
+const Analytics = lazy(() => import('@vercel/analytics/next').then(m => ({ default: m.Analytics })))
+const SpeedInsights = lazy(() => import('@vercel/speed-insights/next').then(m => ({ default: m.SpeedInsights })))
+const GoogleAnalytics = lazy(() => import('@/components/Analytics/GoogleAnalytics').then(m => ({ default: m.GoogleAnalytics })))
+const GoogleTagManager = lazy(() => import('@/components/Analytics/GoogleTagManager').then(m => ({ default: m.GoogleTagManager })))
 
 // Optimized font loading with preload only for critical fonts
 const inter = Inter({ 
@@ -178,12 +180,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <meta name="msapplication-TileColor" content="#ec4899" />
          </head>
          <body className={`${nunito.className} ${inter.variable} ${dmSans.variable} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
-            <GoogleTagManager />
+            <Suspense fallback={null}>
+               <GoogleTagManager />
+            </Suspense>
             <Suspense fallback={null}>
                <GoogleAnalytics />
             </Suspense>
-            <SpeedInsights />
-            <Analytics />
+            <Suspense fallback={null}>
+               <SpeedInsights />
+            </Suspense>
+            <Suspense fallback={null}>
+               <Analytics />
+            </Suspense>
             <Toaster
                position="top-right"
                expand={true}
