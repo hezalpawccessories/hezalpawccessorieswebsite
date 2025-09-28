@@ -1,4 +1,4 @@
-import './globals.css'
+// import './globals.css'
 import type { Metadata } from 'next'
 import { Nunito, Quicksand, Baloo_2 } from 'next/font/google'
 import { Suspense, lazy } from 'react'
@@ -194,10 +194,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   background-size: 60px 60px;
   pointer-events: none;
 }
-
+(function() {
+      var link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = '/globals.css';
+      link.as = 'style';
+      link.onload = function() {        // ✅ Proper JavaScript function
+        this.onload = null;
+        this.rel = 'stylesheet';
+      };
+      document.head.appendChild(link);
+    })();
                   
               `
             }} />
+
+           
             
             {/* Critical font preloading to break request chain */}
             <link rel="preload" href="https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDLshdQ.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
