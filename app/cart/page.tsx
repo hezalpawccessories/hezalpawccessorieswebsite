@@ -350,27 +350,34 @@ export default function Cart() {
          return false
       }
       
-      console.log('=== DEBUGGING COUPON VALIDATION ===')
-      console.log('Cart items count:', cartItems.length)
+      // console.log('=== DEBUGGING COUPON VALIDATION ===')
+      // console.log('Cart items count:', cartItems.length)
       
-      // Check onSale status from cart items (includes current Firestore data)
-      const saleItemsInCart = cartItems.some(cartItem => {
+      // Check sale items and non-sale items in cart
+      const saleItemsInCart = cartItems.filter(cartItem => {
          const isCurrentlyOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
          console.log(`Item ${cartItem.title}: currently on sale = ${isCurrentlyOnSale}`)
          return isCurrentlyOnSale
       })
       
-      console.log('Sale items found in cart:', saleItemsInCart)
+      const nonSaleItemsInCart = cartItems.filter(cartItem => {
+         const isCurrentlyOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
+         return !isCurrentlyOnSale
+      })
       
-      if (saleItemsInCart) {
-         const saleItems = cartItems.filter(cartItem => {
-            return cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
-         })
-         console.log('Sale items that triggered validation:', saleItems.map(item => item.title))
+      console.log('Sale items in cart:', saleItemsInCart.map(item => item.title))
+      console.log('Non-sale items in cart:', nonSaleItemsInCart.map(item => item.title))
+      
+      // NEW LOGIC: If ONLY sale items in cart (no non-sale items), block coupon
+      if (saleItemsInCart.length > 0 && nonSaleItemsInCart.length === 0) {
+         console.log('Cart has ONLY sale items - blocking coupon')
          setAppliedCoupon(null)
          toast.error('Coupons cannot be applied on sale items')
          return false
       }
+      
+      // If mixed cart (sale + non-sale items), allow coupon but apply only to non-sale items
+      // This will be handled in the discount calculation below
 
       // Check if coupon applies to any items in cart
       const applicableItems = cartItems.filter(cartItem => {
@@ -434,7 +441,16 @@ export default function Cart() {
 
          if (validateCouponForCurrentCart(coupon)) {
             setAppliedCoupon(coupon)
-            toast.success(`Coupon "${coupon.code}" applied successfully!`)
+            
+            // Check if there are sale items in cart to show appropriate message
+            const hasSaleItems = cartItems.some(item => item.onSale === true && (item.saleQuantity || 0) > 0)
+            const hasNonSaleItems = cartItems.some(item => !(item.onSale === true && (item.saleQuantity || 0) > 0))
+            
+            if (hasSaleItems && hasNonSaleItems) {
+               toast.success(`Coupon "${coupon.code}" applied successfully! Discount applies to non-sale items only.`)
+            } else {
+               toast.success(`Coupon "${coupon.code}" applied successfully!`)
+            }
          }
       } catch (error) {
          console.error('Error applying coupon:', error)
@@ -778,14 +794,52 @@ export default function Cart() {
                         <h2 className='text-2xl font-heading font-bold text-text-dark mb-6'>Order Summary</h2>
 
                         <div className='space-y-4 mb-6'>
-                           <div className='flex justify-between'>
-                              <span className='font-body text-text-light'>Subtotal</span>
-                              <span className='font-heading font-semibold'>₹{subtotal}</span>
-                           </div>
+                           {/* Enhanced breakdown for mixed cart (sale + non-sale items) */}
+                           {(() => {
+                              const saleItems = cartItems.filter(item => item.onSale === true && (item.saleQuantity || 0) > 0)
+                              const nonSaleItems = cartItems.filter(item => !(item.onSale === true && (item.saleQuantity || 0) > 0))
+                              const saleSubtotal = saleItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+                              const nonSaleSubtotal = nonSaleItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+                              
+                              if (appliedCoupon && saleItems.length > 0 && nonSaleItems.length > 0) {
+                                 // Mixed cart with coupon applied - show detailed breakdown
+                                 return (
+                                    <>
+                                       <div className='flex justify-between text-sm'>
+                                          <span className='font-body text-gray-600'>Non-sale items</span>
+                                          <span className='font-heading font-medium'>₹{nonSaleSubtotal}</span>
+                                       </div>
+                                       <div className='flex justify-between text-sm'>
+                                          <span className='font-body text-gray-600'>Sale items</span>
+                                          <span className='font-heading font-medium'>₹{saleSubtotal}</span>
+                                       </div>
+                                       <div className='flex justify-between'>
+                                          <span className='font-body text-text-light'>Subtotal</span>
+                                          <span className='font-heading font-semibold'>₹{subtotal}</span>
+                                       </div>
+                                    </>
+                                 )
+                              } else {
+                                 // Regular single subtotal display
+                                 return (
+                                    <div className='flex justify-between'>
+                                       <span className='font-body text-text-light'>Subtotal</span>
+                                       <span className='font-heading font-semibold'>₹{subtotal}</span>
+                                    </div>
+                                 )
+                              }
+                           })()}
                            
                            {appliedCoupon && discount > 0 && (
                               <div className='flex justify-between text-green-600'>
-                                 <span className='font-body'>Discount ({appliedCoupon.code})</span>
+                                 <span className='font-body'>
+                                    Discount ({appliedCoupon.code})
+                                    {(() => {
+                                       const saleItems = cartItems.filter(item => item.onSale === true && (item.saleQuantity || 0) > 0)
+                                       const nonSaleItems = cartItems.filter(item => !(item.onSale === true && (item.saleQuantity || 0) > 0))
+                                       return saleItems.length > 0 && nonSaleItems.length > 0 ? ' - on non-sale items' : ''
+                                    })()}
+                                 </span>
                                  <span className='font-heading font-semibold'>-₹{discount}</span>
                               </div>
                            )}
