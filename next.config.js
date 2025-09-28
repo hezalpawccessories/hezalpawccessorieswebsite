@@ -20,24 +20,6 @@ const nextConfig = {
    },
    // Compress assets
    compress: true,
-   
-   // Performance optimizations
-   poweredByHeader: false,
-   
-   // Webpack optimizations for CSS
-   webpack: (config, { dev, isServer }) => {
-      // Optimize CSS loading in production
-      if (!dev && !isServer) {
-         // Split CSS into smaller chunks
-         config.optimization.splitChunks.cacheGroups.styles = {
-            name: 'styles',
-            test: /\.(css|scss|sass)$/,
-            chunks: 'all',
-            enforce: true,
-         }
-      }
-      return config
-   },
 }
 
 module.exports = nextConfig
