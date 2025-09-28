@@ -285,6 +285,38 @@ export default function ProductsPageClient({
     return `₹${product.price}`
   }
 
+  // Get original price for display (handles size pricing)
+  const getOriginalPrice = (product: Product) => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      const originalPrices = product.sizePricing
+        .filter(sp => sp.originalPrice && sp.originalPrice > sp.price)
+        .map(sp => sp.originalPrice!)
+      
+      if (originalPrices.length > 0) {
+        const minOriginalPrice = Math.min(...originalPrices)
+        const maxOriginalPrice = Math.max(...originalPrices)
+        
+        if (minOriginalPrice === maxOriginalPrice) {
+          return `₹${minOriginalPrice}`
+        } else {
+          return `₹${minOriginalPrice} - ₹${maxOriginalPrice}`
+        }
+      }
+    } else if (product.originalPrice && product.originalPrice > product.price) {
+      return `₹${product.originalPrice}`
+    }
+    
+    return null
+  }
+
+  // Check if product has original price
+  const hasOriginalPrice = (product: Product) => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      return product.sizePricing.some(sp => sp.originalPrice && sp.originalPrice > sp.price)
+    }
+    return product.originalPrice && product.originalPrice > product.price
+  }
+
   // Get discount percentage for display
   const getDiscountPercentage = (product: Product) => {
     if (product.sizePricing && product.sizePricing.length > 0) {
@@ -698,6 +730,11 @@ export default function ProductsPageClient({
                       <div className="sm:hidden space-y-2">
                         {/* Price */}
                         <div className="text-center">
+                          {hasOriginalPrice(product) && (
+                            <div className="text-gray-500 text-xs line-through mb-1">
+                              {getOriginalPrice(product)}
+                            </div>
+                          )}
                           <span className="font-bold text-primary-pink text-sm tracking-tight">
                             {displayPrice}
                           </span>
@@ -722,6 +759,11 @@ export default function ProductsPageClient({
                       <div className="hidden sm:flex items-center justify-between">
                         {/* Price */}
                         <div className="flex flex-col">
+                          {hasOriginalPrice(product) && (
+                            <span className="text-gray-500 text-sm line-through mb-1">
+                              {getOriginalPrice(product)}
+                            </span>
+                          )}
                           <span className="font-bold text-primary-pink text-lg tracking-tight">
                             {displayPrice}
                           </span>

@@ -188,6 +188,38 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
     return `₹${price}`
   }
 
+  // Check if product has original price (for main product)
+  const hasOriginalPriceForProduct = () => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      return product.sizePricing.some(sp => sp.originalPrice && sp.originalPrice > sp.price)
+    }
+    return product.originalPrice && product.originalPrice > product.price
+  }
+
+  // Get original price text for display when no size selected
+  const getOriginalPriceText = () => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      const originalPrices = product.sizePricing
+        .filter(sp => sp.originalPrice && sp.originalPrice > sp.price)
+        .map(sp => sp.originalPrice!)
+      
+      if (originalPrices.length > 0) {
+        const minOriginalPrice = Math.min(...originalPrices)
+        const maxOriginalPrice = Math.max(...originalPrices)
+        
+        if (minOriginalPrice === maxOriginalPrice) {
+          return `₹${minOriginalPrice}`
+        } else {
+          return `₹${minOriginalPrice} - ₹${maxOriginalPrice}`
+        }
+      }
+    } else if (product.originalPrice && product.originalPrice > product.price) {
+      return `₹${product.originalPrice}`
+    }
+    
+    return null
+  }
+
   // Get available images
   const getProductImages = () => {
     // Start with the main image
@@ -339,6 +371,38 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
     return `₹${product.price}`
   }
 
+  // Get original price for related products (handles size pricing)
+  const getRelatedProductOriginalPrice = (product: Product) => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      const originalPrices = product.sizePricing
+        .filter(sp => sp.originalPrice && sp.originalPrice > sp.price)
+        .map(sp => sp.originalPrice!)
+      
+      if (originalPrices.length > 0) {
+        const minOriginalPrice = Math.min(...originalPrices)
+        const maxOriginalPrice = Math.max(...originalPrices)
+        
+        if (minOriginalPrice === maxOriginalPrice) {
+          return `₹${minOriginalPrice}`
+        } else {
+          return `₹${minOriginalPrice} - ₹${maxOriginalPrice}`
+        }
+      }
+    } else if (product.originalPrice && product.originalPrice > product.price) {
+      return `₹${product.originalPrice}`
+    }
+    
+    return null
+  }
+
+  // Check if related product has original price
+  const hasRelatedProductOriginalPrice = (product: Product) => {
+    if (product.sizePricing && product.sizePricing.length > 0) {
+      return product.sizePricing.some(sp => sp.originalPrice && sp.originalPrice > sp.price)
+    }
+    return product.originalPrice && product.originalPrice > product.price
+  }
+
   const images = getProductImages()
   const { price, originalPrice } = getCurrentPricing()
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0
@@ -472,9 +536,11 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                   <span className="text-3xl font-bold text-primary-pink">
                     {getDisplayPriceText()}
                   </span>
-                  {originalPrice && originalPrice > price && selectedSize ? (
+                  {/* Show original price when size is selected OR when no size selected but original prices exist */}
+                  {((originalPrice && originalPrice > price && selectedSize) || 
+                    (!selectedSize && hasOriginalPriceForProduct())) ? (
                     <span className="text-xl text-text-light line-through">
-                      ₹{originalPrice}
+                      {selectedSize ? `₹${originalPrice}` : getOriginalPriceText()}
                     </span>
                   ) : null}
                   {discount > 0 && selectedSize && (
@@ -709,7 +775,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                       href={`/products/${relatedProduct.id}`}
                       className="group"
                     >
-                      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow hover:border-primary-pink/30 transition-all duration-300 border border-gray-200">
                         <div className="relative aspect-square">
                           {relatedProduct.onSale && relatedProduct.saleQuantity && relatedProduct.saleQuantity > 0 && relatedProduct.inStock ? (
                             <div className="absolute top-2 left-2 z-10">
@@ -741,14 +807,16 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-heading font-medium text-text-dark mb-2 group-hover:text-primary-pink transition-colors">
+                          <h3 className="font-heading font-medium text-text-dark mb-2 group-hover:text-primary-pink transition-colors truncate" title={relatedProduct.title}>
                             {relatedProduct.title}
                           </h3>
                           <div className="flex items-center space-x-2">
                             <span className="font-bold text-primary-pink">{relatedDisplayPrice}</span>
-                            {relatedProduct.originalPrice && relatedProduct.originalPrice > relatedProduct.price && !relatedProduct.sizePricing ? (
-                              <span className="text-sm text-text-light line-through">₹{relatedProduct.originalPrice}</span>
-                            ) : null}
+                            {hasRelatedProductOriginalPrice(relatedProduct) && (
+                              <span className="text-sm text-text-light line-through">
+                                {getRelatedProductOriginalPrice(relatedProduct)}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
