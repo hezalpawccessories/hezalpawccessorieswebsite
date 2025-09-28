@@ -119,6 +119,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 247, 250, 0.8) 50%, rgba(255, 255, 255, 1) 100%);
                   position: relative;
                 }
+                  .hero-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff69b4' fill-opacity='0.02'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
                 .hero-title {
                   font-family: var(--font-baloo2), cursive;
                   font-weight: 700;
@@ -126,6 +139,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   -webkit-background-clip: text;
                   -webkit-text-fill-color: transparent;
                   background-clip: text;
+                  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
                 .hero-accent {
                   background: linear-gradient(135deg, var(--primary-pink) 0%, #E91E63 100%);
@@ -152,6 +166,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   font-weight: 600;
                   cursor: pointer;
                 }
+                  .pet-pattern-bg {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 105, 180, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 105, 180, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 105, 180, 0.02) 0%, transparent 50%);
+  background-size: 800px 800px, 600px 600px, 400px 400px;
+  background-position: 0 0, 100px 100px, 200px 200px;
+  background-repeat: repeat;
+}
+  .features-bg {
+  background: linear-gradient(135deg, 
+    rgba(245, 245, 245, 1) 0%, 
+    rgba(250, 250, 250, 0.8) 50%, 
+    rgba(245, 245, 245, 1) 100%);
+  position: relative;
+}
+  .features-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff69b4' fill-opacity='0.015'%3E%3Cpath d='M30 30c0-8.284-6.716-15-15-15s-15 6.716-15 15 6.716 15 15 15 15-6.716 15-15zm30 0c0-8.284-6.716-15-15-15s-15 6.716-15 15 6.716 15 15 15 15-6.716 15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+                  
               `
             }} />
             

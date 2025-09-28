@@ -22,13 +22,6 @@
   margin: 0;
 }
 
-body {
-  font-family: var(--font-nunito), 'Nunito', sans-serif;
-  color: var(--text-body);
-  background: var(--cream);
-  line-height: 1.6;
-  font-size: 16px;
-}
 
 /* Font Classes - Using CSS Variables for Performance */
 .font-heading {
@@ -45,58 +38,6 @@ body {
 
 .minimal-bg {
   background: var(--cream);
-}
-
-.pet-pattern-bg {
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255, 105, 180, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 105, 180, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255, 105, 180, 0.02) 0%, transparent 50%);
-  background-size: 800px 800px, 600px 600px, 400px 400px;
-  background-position: 0 0, 100px 100px, 200px 200px;
-  background-repeat: repeat;
-}
-
-.hero-bg {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 1) 0%, 
-    rgba(255, 247, 250, 0.8) 50%, 
-    rgba(255, 255, 255, 1) 100%);
-  position: relative;
-}
-
-.hero-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff69b4' fill-opacity='0.02'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-
-.features-bg {
-  background: linear-gradient(135deg, 
-    rgba(245, 245, 245, 1) 0%, 
-    rgba(250, 250, 250, 0.8) 50%, 
-    rgba(245, 245, 245, 1) 100%);
-  position: relative;
-}
-
-.features-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff69b4' fill-opacity='0.015'%3E%3Cpath d='M30 30c0-8.284-6.716-15-15-15s-15 6.716-15 15 6.716 15 15 15 15-6.716 15-15zm30 0c0-8.284-6.716-15-15-15s-15 6.716-15 15 6.716 15 15 15 15-6.716 15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 60px 60px;
-  pointer-events: none;
 }
 
 /* Floating Animations */
@@ -137,21 +78,6 @@ body {
 }
 
 /* Enhanced Text Styles */
-.hero-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-gray) 0%, #1a1a1a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-accent {
-  background: linear-gradient(135deg, var(--primary-pink) 0%, #E91E63 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 .section-title {
   font-family: 'Baloo 2', cursive;
@@ -362,39 +288,6 @@ body #nprogress .bar {
   }
 }
 
-/* Alternative peg animations - uncomment the one you prefer */
-
-/* Option 1: Bouncing Circle (currently active) */
- body #nprogress .peg {
-  display: block;
-  position: absolute;
-  right: 0px;
-  width: 15px;
-  height: 15px;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="25" fill="%23FF69B4"><animate attributeName="r" values="20;30;20" dur="1s" repeatCount="indefinite"/></circle><circle cx="50" cy="50" r="15" fill="%23FF1493"><animate attributeName="opacity" values="1;0.5;1" dur="0.8s" repeatCount="indefinite"/></circle></svg>') center/contain no-repeat !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493 !important;
-  opacity: 1.0;
-  transform: translateY(-50%) !important;
-  top: 50% !important;
-  animation: nprogress-peg-bounce 1.2s ease-in-out infinite !important;
-} 
-
-/* Option 5: Custom GIF (uncomment and replace 'your-gif-file.gif' with your actual GIF file)
-body #nprogress .peg {
-  display: block;
-  position: absolute;
-  right: 0px;
-  width: 30px;
-  height: 30px;
-  background: url('/public/your-gif-file.gif') center/contain no-repeat !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 8px #FF69B4 !important;
-  opacity: 1.0;
-  transform: translateY(-50%) !important;
-  top: 50% !important;
-}
-
 /* Bento-style testimonials: use CSS columns to create a masonry flow for variable-height cards. */
 .bento-container {
   /* default: single column for smallest screens */
@@ -434,77 +327,11 @@ body #nprogress .peg {
   box-shadow: 0 8px 20px rgba(0,0,0,0.04);
 }
 
-
-@keyframes nprogress-peg-bounce {
-  0%, 100% { 
-    transform: translateY(-50%) scale(1);
-    box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493;
-  }
-  50% { 
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 0 12px #FF69B4, 0 0 6px #FF1493;
-  }
-}
-
-@keyframes nprogress-peg-wiggle {
-  0%, 100% { 
-    transform: translateY(-50%) rotate(0deg) scale(1);
-    box-shadow: 0 0 8px #FF69B4, 0 0 4px #FF1493;
-  }
-  25% { 
-    transform: translateY(-50%) rotate(-3deg) scale(1.05);
-    box-shadow: 0 0 10px #FF69B4, 0 0 6px #FF1493;
-  }
-  75% { 
-    transform: translateY(-50%) rotate(3deg) scale(1.05);
-    box-shadow: 0 0 10px #FF69B4, 0 0 6px #FF1493;
-  }
-}
-
-@keyframes nprogress-peg-pulse {
-  0%, 100% { 
-    transform: translateY(-50%) scale(1);
-    opacity: 1;
-  }
-  50% { 
-    transform: translateY(-50%) scale(1.2);
-    opacity: 0.8;
-  }
-}
-
-body #nprogress .spinner {
-  display: block;
-  position: fixed !important;
-  z-index: 9999 !important;
-  top: 74px !important;
-  right: 15px !important;
-}
-
 /* Desktop spinner positioning */
 @media (min-width: 640px) {
   body #nprogress .spinner {
     top: 90px !important;
   }
-}
-
-body #nprogress .spinner-icon {
-  width: 20px;
-  height: 20px;
-  box-sizing: border-box;
-  border: solid 3px transparent !important;
-  border-top-color: #FF69B4 !important;
-  border-left-color: #FF1493 !important;
-  border-radius: 50%;
-  animation: nprogress-spinner 400ms linear infinite;
-}
-
-.nprogress-custom {
-  pointer-events: none;
-}
-
-@keyframes nprogress-spinner {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* Custom Scrollbar */
@@ -614,11 +441,6 @@ body #nprogress .spinner-icon {
 
 .testimonial-card:focus-within {
   @apply ring-2 ring-pink-300 ring-offset-2;
-}
-
-/* Enhanced contrast for better readability */
-.hero-title {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
