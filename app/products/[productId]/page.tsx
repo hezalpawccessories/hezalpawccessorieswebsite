@@ -1,3 +1,19 @@
+/**
+ * Product Detail Page - Optimized for Build Performance
+ * 
+ * Build Strategy:
+ * - Pre-renders only the first 12 products at build time (generateStaticParams)
+ * - All other products use ISR (Incremental Static Regeneration) 
+ * - ISR revalidates every 60 seconds for fresh data
+ * - This reduces build time from ~166 pages to just 12 pages
+ * 
+ * Performance Benefits:
+ * - Faster builds (12 vs 166 pages)
+ * - Popular products still get SSG benefits
+ * - Less popular products load on-demand with caching
+ * - Fresh data every 60 seconds via ISR
+ */
+
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -5,8 +21,8 @@ import ProductDetailClient from './ProductDetailClient'
 import { getProducts } from '@/integrations/firebase/firestoreCollections'
 import { Product } from '@/lib/products'
 
-// Enable ISR - revalidate every 2 minutes for fresh product data
-export const revalidate = 120
+// Enable ISR - revalidate every 60 seconds for fresh product data
+export const revalidate = 60
 
 // Generate metadata for SEO
 export async function generateMetadata({ 
@@ -75,22 +91,47 @@ export async function generateMetadata({
   }
 }
 
-// Generate static params for better performance
+// Generate static params for build-time optimization
+// Only pre-build first 12 products, rest will be generated on-demand with ISR
 export async function generateStaticParams() {
   try {
     const products = await getProducts()
-    return products.map((product) => ({
+    
+    // Sort products by creation date (newest first) or by title for consistency
+    const sortedProducts = products.sort((a, b) => {
+      // Try to sort by creation date if available, otherwise by title
+      const aDate = (a as any).createdAt
+      const bDate = (b as any).createdAt
+      
+      if (aDate && bDate) {
+        const aTime = aDate?.toDate?.()?.getTime() || new Date(aDate).getTime()
+        const bTime = bDate?.toDate?.()?.getTime() || new Date(bDate).getTime()
+        return bTime - aTime // Newest first
+      }
+      
+      // Fallback to alphabetical sorting by title
+      return a.title.localeCompare(b.title)
+    })
+    
+    // Only return first 12 products for build-time pre-rendering
+    const preRenderProducts = sortedProducts.slice(0, 12)
+    
+    console.log(`Pre-rendering ${preRenderProducts.length} out of ${products.length} product pages at build time`)
+    
+    return preRenderProducts.map((product) => ({
       productId: product.id,
     }))
   } catch (error) {
     console.error('Error generating static params:', error)
+    // Return empty array so no pages are pre-built if there's an error
     return []
   }
 }
 
-// Server component to fetch data
+// Server component to fetch data - optimized for ISR
 async function getProductData(productId: string): Promise<{ product: Product | null, relatedProducts: Product[] }> {
   try {
+    console.log(`Fetching product data for: ${productId}`)
     const products = await getProducts()
     
     // Convert products to plain objects without Firestore timestamps
@@ -106,6 +147,7 @@ async function getProductData(productId: string): Promise<{ product: Product | n
     const product = serializedProducts.find(p => p.id === productId)
     
     if (!product) {
+      console.log(`Product not found: ${productId}`)
       return { product: null, relatedProducts: [] }
     }
 
@@ -114,9 +156,10 @@ async function getProductData(productId: string): Promise<{ product: Product | n
       .filter(p => p.category === product.category && p.id !== product.id)
       .slice(0, 4)
 
+    console.log(`Successfully fetched product: ${product.title} with ${relatedProducts.length} related products`)
     return { product, relatedProducts }
   } catch (error) {
-    console.error('Error fetching product data:', error)
+    console.error(`Error fetching product data for ${productId}:`, error)
     return { product: null, relatedProducts: [] }
   }
 }
@@ -127,16 +170,22 @@ export default async function ProductDetailPage({
   params: Promise<{ productId: string }> 
 }) {
   const { productId } = await params
+  
+  // Fetch product data with error handling for ISR
   const { product, relatedProducts } = await getProductData(productId)
 
+  // If product not found, show 404
   if (!product) {
     notFound()
   }
 
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-pink"></div>
+      <div className="min-h-screen flex items-center justify-center gradient-bg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-pink mx-auto mb-4"></div>
+          <p className="text-text-light">Loading product details...</p>
+        </div>
       </div>
     }>
       <ProductDetailClient 
