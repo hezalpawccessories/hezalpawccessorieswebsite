@@ -181,7 +181,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
                   <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
 
-                  <div className='relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-pink-100 via-rose-50 to-orange-50'>
+                  <div className='relative h-80 sm:h-96 w-full sm:max-w-[400px] sm:mx-auto rounded-xl overflow-hidden'>
                     <Image 
                       fill 
                       src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_800,h_600,q_60,f_webp/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'} 
