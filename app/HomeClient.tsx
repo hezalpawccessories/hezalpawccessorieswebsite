@@ -186,7 +186,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
 
                   <div className='relative w-full h-96 rounded-xl overflow-hidden'>
-                    <Image 
+                    {/* <Image 
                       fill 
                       src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg' 
                       alt='Happy puppy with accessories' 
@@ -211,7 +211,18 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                         placeholder="blur"
                         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyDzX1Hidazp0nVLV0Va2ASj3Lev+EOAEZ5/9k="
                       />
-                    )}
+                    )} */}
+                    <Image 
+    fill
+    src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'}
+    alt='Landing banner'
+    className='object-cover'
+    quality={85}
+    priority
+    fetchPriority="high"
+    placeholder="blur"
+    blurDataURL="data:image/jpeg;base64,..."
+  />
                   </div>
 
                 </div>

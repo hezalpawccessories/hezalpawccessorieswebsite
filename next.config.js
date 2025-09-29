@@ -97,7 +97,6 @@ const nextConfig = {
   
   // Experimental features for performance
   experimental: {
-    optimizeCss: true,  
     // Modern features can be added here if needed
   },
 }
