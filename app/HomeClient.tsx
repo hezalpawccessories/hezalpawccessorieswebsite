@@ -55,12 +55,13 @@ export default function HomeClient({ landingImageUrl }: Props) {
   ]
 
   const testimonials = [
-      {
-         name: '@sparkle.shiro',
+    {
+         name: '@victor_labrador_doggo',
          rating: 5,
          comment:
-            'I was looking for bandanas for my furbaby for festive occasions and while scrolling through Instagram, I came across Hezal accessories profile and instantly liked their products. Hezal accessories has a wide collection for all occasions with exquisite designs. Also, the quality is top-notch. Service is good and products are delivered on time without requiring any follow up, glad to be their customer.',
+            "I absolutely love Hezal Accessories, the best brand for my dog's outfits! 💕 Their products are stylish, well-made, and super comfortable for pets. The fabric quality is excellent – soft, durable, and gentle on the skin. The designs are creative and available in all sizes, making it easy to find the perfect fit. I have a reversible bandana (Mickey Mouse + polka dots), a festive Christmas bandana, and an army-style bowtie – all of them look amazing on my dog and fit perfectly. Stylish, comfy, and always bringing compliments. Highly recommend! 🐾✨We absolutely love you guys ♥ Keep growing and shining always ✨"
       },
+      
       {
          name: '@lexie_quinn_maben',
          rating: 5,
@@ -80,11 +81,11 @@ export default function HomeClient({ landingImageUrl }: Props) {
             "We ordered our first ever bandana from Hezal, the quality was absolutely amazing, everything from the fabric to the pattern was just spectacular. Now we're the proud owners of easily 20 HA pieces 😍",
       },
       {
-         name: '@victor_labrador_doggo',
+         name: '@sparkle.shiro',
          rating: 5,
          comment:
-            "I absolutely love Hezal Accessories, the best brand for my dog's outfits! 💕 Their products are stylish, well-made, and super comfortable for pets. The fabric quality is excellent – soft, durable, and gentle on the skin. The designs are creative and available in all sizes, making it easy to find the perfect fit. I have a reversible bandana (Mickey Mouse + polka dots), a festive Christmas bandana, and an army-style bowtie – all of them look amazing on my dog and fit perfectly. Stylish, comfy, and always bringing compliments. Highly recommend! 🐾✨We absolutely love you guys ♥ Keep growing and shining always ✨"
-      }
+            'I was looking for bandanas for my furbaby for festive occasions and while scrolling through Instagram, I came across Hezal accessories profile and instantly liked their products. Hezal accessories has a wide collection for all occasions with exquisite designs. Also, the quality is top-notch. Service is good and products are delivered on time without requiring any follow up, glad to be their customer.',
+      },
    ]
 
   // Banner state (client-side fetch still used for banners)
