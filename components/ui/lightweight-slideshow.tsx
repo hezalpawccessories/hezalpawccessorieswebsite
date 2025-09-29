@@ -25,7 +25,7 @@ export function LightweightSlideshow({ slides, className }: LightweightSlideshow
             alt={slides[activeSlide]?.title || slides[0]?.title}
             fill
             sizes="(max-width: 640px) 90vw, (max-width: 1024px) 60vw, 40vw"
-            className="object-contain transition-all duration-500 ease-in-out"
+            className="object-contain transition-all duration-500 ease-in-out py-2"
             priority
           />
         </div>
