@@ -7,6 +7,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // Sentry disabled for performance optimization
 // const { withSentryConfig } = require('@sentry/nextjs')
 
+//~~ using critters, so that browser doesn't wait for Globalcss to load, just focus on Inline Critical css
+const Critters = require('critters-webpack-plugin')
+
 const nextConfig = {
   reactStrictMode: true,
   compress: true,
@@ -38,6 +41,17 @@ const nextConfig = {
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
     if (!dev && !isServer) {
+
+      //~~ Add Critters to inline critical CSS
+      config.plugins.push(
+        new Critters({
+          preload: 'swap',     // Preload important CSS
+          inlineFonts: true,   // Inline @font-face
+          compress: true,      // Minify inlined CSS
+        })
+      )
+
+
       // Optimize bundle splitting
       config.optimization = {
         ...config.optimization,

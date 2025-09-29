@@ -38,6 +38,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "critters-webpack-plugin": "^3.0.2",
     "cross-env": "^10.0.0"
   }
 }
