@@ -192,7 +192,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                       alt='Happy puppy with accessories' 
                       className='object-cover' 
                       quality={50} 
-                      sizes='(max-width: 768px) 100vw, 50vw' 
+                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw' 
                       style={{ opacity: landingImageLoaded ? 0 : 1, transition: 'opacity 350ms ease' }} 
                       fetchPriority="low"
                     />
@@ -204,7 +204,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                         alt='Landing banner' 
                         className='object-cover' 
                         quality={85} 
-                        sizes='(max-width: 768px) 100vw, 50vw' 
+                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw' 
                         style={{ opacity: landingImageLoaded ? 1 : 0, transition: 'opacity 350ms ease' }} 
                         priority={true}
                         fetchPriority="high"

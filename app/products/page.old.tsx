@@ -1435,6 +1435,7 @@ function ProductsContent() {
                            width={600}
                            height={256}
                            className='w-full h-80 object-contain rounded-t-2xl'
+                           sizes='(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 600px'
                         />
 
                         {/* Thumbnail Gallery */}

@@ -1472,6 +1472,7 @@ Team Hezal Accessories 💜
                                  height={192}
                                  className='w-full h-48 object-contain hover:opacity-95 transition-all duration-500 cursor-pointer'
                                  onClick={() => handleImageClick(product.id)}
+                                 sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw'
                               />
 
                               <div className='p-3 sm:p-4'>

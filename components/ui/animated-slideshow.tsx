@@ -165,7 +165,7 @@ function ActiveImages({ slides }: { slides: Slide[] }) {
           className={`absolute inset-0 transition-opacity duration-700 ${i === activeSlide ? 'opacity-100 z-30' : 'opacity-0 z-0'}`}
           aria-hidden={i !== activeSlide}
         >
-          <Image src={s.image} alt={s.title} fill className='object-contain pb-8' sizes='(max-width: 768px) 100vw, 50vw' priority={i === activeSlide} />
+          <Image src={s.image} alt={s.title} fill className='object-contain pb-8' sizes='(max-width: 640px) 90vw, (max-width: 1024px) 60vw, 40vw' priority={i === activeSlide} />
         </div>
       ))}
     </>

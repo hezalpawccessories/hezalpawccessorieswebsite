@@ -78,6 +78,7 @@ export default function About() {
                   height={384}
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
                 />
               </motion.div>
 

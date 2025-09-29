@@ -58,6 +58,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
                   height={400}
                   className="rounded-xl object-contain max-h-80 bg-gray-100"
                   priority
+                  sizes="(max-width: 768px) 90vw, (max-width: 1024px) 400px, 400px"
                 />
               </div>
               {allImages.length > 1 && (
