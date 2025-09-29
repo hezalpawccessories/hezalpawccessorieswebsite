@@ -19,13 +19,13 @@ export function LightweightSlideshow({ slides, className }: LightweightSlideshow
     <div className={cn('group relative w-full', className)}>
       <div className="flex flex-col items-center space-y-8">
         {/* Image Display */}
-        <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-2xl overflow-hidden bg-gradient-to-br from-pink-100 to-purple-100 shadow-xl">
+        <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-2xl overflow-hidden ">
           <Image
             src={slides[activeSlide]?.image || slides[0]?.image}
             alt={slides[activeSlide]?.title || slides[0]?.title}
             fill
             sizes="(max-width: 640px) 90vw, (max-width: 1024px) 60vw, 40vw"
-            className="object-cover transition-all duration-500 ease-in-out"
+            className="object-contain transition-all duration-500 ease-in-out"
             priority
           />
         </div>

@@ -95,11 +95,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          className={`${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
       >
          <head>
-            {/* Preload critical LCP image */}
+            {/* Single optimized preload for critical LCP image */}
             <link 
               rel="preload" 
               as="image" 
-              href="https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg"
+              href="https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_800,h_600,q_60,f_webp/v1755786569/kdqtrcjjxdkdeak97rwx.jpg"
               fetchPriority="high"
             />
             

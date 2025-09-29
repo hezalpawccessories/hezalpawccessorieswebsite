@@ -180,14 +180,14 @@ export default function HomeClient({ landingImageUrl }: Props) {
                   <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
 
-                  <div className='relative w-full h-96 rounded-xl overflow-hidden'>
+                  <div className='relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden bg-gradient-to-br from-pink-100 via-rose-50 to-orange-50'>
                     <Image 
                       fill 
-                      src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'} 
+                      src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_800,h_600,q_60,f_webp/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'} 
                       alt='Happy puppy with accessories' 
-                      className='object-cover' 
-                      quality={75} 
-                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' 
+                      className='object-cover transition-opacity duration-300' 
+                      quality={60} 
+                      sizes='(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px' 
                       priority={true}
                       fetchPriority="high"
                       placeholder="blur"
