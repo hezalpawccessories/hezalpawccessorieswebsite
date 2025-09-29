@@ -169,7 +169,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
               <div className='order-2 lg:order-1'>
                 <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
                 <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
-                <div className='flex flex-col sm:flex-row gap-4'>
+                <div className='flex gap-4'>
                   <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
                   <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
                 </div>
@@ -185,13 +185,16 @@ export default function HomeClient({ landingImageUrl }: Props) {
                       fill 
                       src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_800,h_600,q_60,f_webp/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'} 
                       alt='Happy puppy with accessories' 
-                      className='object-cover transition-opacity duration-300' 
+                      className='object-cover transition-opacity duration-500 ease-out' 
                       quality={60} 
                       sizes='(max-width: 640px) 400px, (max-width: 1024px) 600px, 800px' 
                       priority={true}
                       fetchPriority="high"
                       placeholder="blur"
                       blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyDzX1Hidazp0nVLV0Va2ASj3Lev+EOAEZ5/9k="
+                      style={{
+                        background: 'linear-gradient(135deg, #fce7f3 0%, #fdf2f8 50%, #fef7ed 100%)'
+                      }}
                     />
                   </div>
 
