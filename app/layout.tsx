@@ -95,6 +95,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          className={`${nunito.variable} ${quicksand.variable} ${baloo2.variable}`}
       >
          <head>
+            {/* Preload critical LCP image */}
+            <link 
+              rel="preload" 
+              as="image" 
+              href="https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg"
+              fetchPriority="high"
+            />
+            
             {/* Inline critical CSS for above-the-fold content */}
             <style dangerouslySetInnerHTML={{
               __html: `

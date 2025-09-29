@@ -22,15 +22,8 @@ interface Props {
   landingImageUrl: string | null
 }
 
-export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props) {
-  const [landingImageUrl, setLandingImageUrl] = useState<string | null>(initialLandingUrl)
-  const [landingImageLoaded, setLandingImageLoaded] = useState(!!initialLandingUrl)
-
-  useEffect(() => {
-    // If server provided a URL, we assume it's ready; otherwise keep null
-    setLandingImageUrl(initialLandingUrl)
-    setLandingImageLoaded(!!initialLandingUrl)
-  }, [initialLandingUrl])
+export default function HomeClient({ landingImageUrl }: Props) {
+  // Simplified - no complex state management for LCP optimization
 
   // Structured data for organization
   const organizationSchema = {
@@ -173,78 +166,33 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
         <section className='relative overflow-hidden hero-bg'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
-              <Suspense fallback={
-                <div className='order-2 lg:order-1'>
-                  <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
-                  <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
-                  <div className='flex flex-col sm:flex-row gap-4'>
-                    <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
-                    <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
-                  </div>
+              <div className='order-2 lg:order-1'>
+                <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
+                <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
+                <div className='flex flex-col sm:flex-row gap-4'>
+                  <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
+                  <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
                 </div>
-              }>
-                <PerformanceMotion initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className='order-2 lg:order-1'>
-                  <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
-                  <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
-                  <div className='flex flex-col sm:flex-row gap-4'>
-                    <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
-                    <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
-                  </div>
-                </PerformanceMotion>
-              </Suspense>
+              </div>
 
-              <Suspense fallback={
-                <div className='relative order-1 lg:order-2'>
-                  <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-2xl p-8 shadow-sm relative'>
-                    <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
-                    <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
-                    <div className='relative w-full h-96 rounded-xl overflow-hidden bg-gray-200'></div>
-                  </div>
-                </div>
-              }>
-                <PerformanceMotion initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className='relative order-1 lg:order-2'>
+              <div className='relative order-1 lg:order-2'>
                 <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-2xl p-8 shadow-sm relative'>
                   <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
 
                   <div className='relative w-full h-96 rounded-xl overflow-hidden'>
-                    {/* <Image 
+                    <Image 
                       fill 
-                      src='https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg' 
+                      src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'} 
                       alt='Happy puppy with accessories' 
                       className='object-cover' 
-                      quality={50} 
-                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw' 
-                      style={{ opacity: landingImageLoaded ? 0 : 1, transition: 'opacity 350ms ease' }} 
-                      fetchPriority="low"
+                      quality={75} 
+                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' 
+                      priority={true}
+                      fetchPriority="high"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyDzX1Hidazp0nVLV0Va2ASj3Lev+EOAEZ5/9k="
                     />
-
-                    {landingImageUrl && (
-                      <Image 
-                        fill 
-                        src={landingImageUrl} 
-                        alt='Landing banner' 
-                        className='object-cover' 
-                        quality={85} 
-                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw' 
-                        style={{ opacity: landingImageLoaded ? 1 : 0, transition: 'opacity 350ms ease' }} 
-                        priority={true}
-                        fetchPriority="high"
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyDzX1Hidazp0nVLV0Va2ASj3Lev+EOAEZ5/9k="
-                      />
-                    )} */}
-                    <Image 
-    fill
-    src={landingImageUrl || 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1755786569/kdqtrcjjxdkdeak97rwx.jpg'}
-    alt='Landing banner'
-    className='object-cover'
-    quality={85}
-    priority={true}
-    fetchPriority="high"
-    placeholder="blur"
-    blurDataURL="data:image/jpeg;base64,..."
-  />
                   </div>
 
                 </div>
@@ -252,8 +200,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                   <p className='font-body font-semibold'>🐕 Happy Pets</p>
                   <p className='text-sm font-body opacity-90'>1000+ Satisfied Customers</p>
                 </div>
-              </PerformanceMotion>
-              </Suspense>
+              </div>
             </div>
           </div>
         </section>
