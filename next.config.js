@@ -34,60 +34,73 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
 
-  // Bundle optimization
+  // Bundle optimization for reducing unused JavaScript
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
     if (!dev && !isServer) {
-
-      // Optimize bundle splitting
+      // Enhanced tree shaking
       config.optimization = {
         ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
         splitChunks: {
           chunks: 'all',
+          minSize: 10000,
+          maxSize: 244000,
           cacheGroups: {
-            // Separate vendor libraries
+            // Critical UI libraries
+            ui: {
+              test: /[\\/]node_modules[\\/](lucide-react|sonner)/,
+              name: 'ui',
+              chunks: 'all',
+              priority: 30,
+            },
+            // Firebase - already modular v9
+            firebase: {
+              test: /[\\/]node_modules[\\/]@?firebase/,
+              name: 'firebase',
+              chunks: 'all',
+              priority: 25,
+            },
+            // Animation libraries - load separately to avoid blocking
+            animations: {
+              test: /[\\/]node_modules[\\/](framer-motion)/,
+              name: 'animations',
+              chunks: 'async', // Load only when needed
+              priority: 20,
+            },
+            // Vercel analytics - separate chunk
+            vercel: {
+              test: /[\\/]node_modules[\\/]@vercel/,
+              name: 'vercel',
+              chunks: 'async',
+              priority: 15,
+            },
+            // React core
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom)/,
+              name: 'react',
+              chunks: 'all',
+              priority: 40,
+            },
+            // Default vendor chunk
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
               priority: 10,
-            },
-            // Separate Firebase/Firestore
-            firebase: {
-              test: /[\\/]node_modules[\\/]@?firebase/,
-              name: 'firebase',
-              chunks: 'all',
-              priority: 20,
-            },
-            // Sentry disabled - no need for separate chunk
-            // sentry: {
-            //   test: /[\\/]node_modules[\\/]@sentry/,
-            //   name: 'sentry', 
-            //   chunks: 'all',
-            //   priority: 15,
-            // },
-            // Separate animation libraries
-            animations: {
-              test: /[\\/]node_modules[\\/](framer-motion|@lottiefiles)/,
-              name: 'animations',
-              chunks: 'all',
-              priority: 12,
-            },
-            // Common components
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-              priority: 5,
               reuseExistingChunk: true,
-            }
+            },
           }
         }
       }
-    }
 
-    // Tree shaking is handled by Next.js automatically
-    // Remove manual optimization settings that conflict with Next.js
+      // Mark certain modules as having no side effects for better tree shaking
+      config.module.rules.push({
+        test: /[\\/]node_modules[\\/](lodash|date-fns)/,
+        sideEffects: false,
+      })
+    }
     
     return config
   },

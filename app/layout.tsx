@@ -4,11 +4,10 @@ import { Nunito, Quicksand, Baloo_2 } from 'next/font/google'
 import { Suspense, lazy } from 'react'
 import { Toaster } from 'sonner'
 
-// Dynamic imports for analytics to reduce initial bundle size
+// Dynamic imports for analytics to reduce initial bundle size - Switch to lighter GA4 Direct
 const Analytics = lazy(() => import('@vercel/analytics/next').then(m => ({ default: m.Analytics })))
 const SpeedInsights = lazy(() => import('@vercel/speed-insights/next').then(m => ({ default: m.SpeedInsights })))
-const GoogleAnalytics = lazy(() => import('@/components/Analytics/GoogleAnalytics').then(m => ({ default: m.GoogleAnalytics })))
-const GoogleTagManager = lazy(() => import('@/components/Analytics/GoogleTagManager').then(m => ({ default: m.GoogleTagManager })))
+const GA4Direct = lazy(() => import('@/components/Analytics/GA4Direct').then(m => ({ default: m.default })))
 
 // Optimized font loading - removed unused fonts (Inter, DM_Sans)
 
@@ -216,10 +215,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
          </head>
          <body className={`${nunito.className} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <Suspense fallback={null}>
-               <GoogleTagManager />
-            </Suspense>
-            <Suspense fallback={null}>
-               <GoogleAnalytics />
+               <GA4Direct />
             </Suspense>
             <Suspense fallback={null}>
                <SpeedInsights />

@@ -14,7 +14,9 @@ import SEOHead from '@/components/SEO/SEOHead'
 // Dynamic imports for heavy components to reduce initial bundle size
 const ImageAutoSlider = lazy(() => import('@/components/ui/image-auto-slider'))
 const AnimatedSlideshow = lazy(() => import('@/components/ui/animated-slideshow'))
+const LightweightSlideshow = lazy(() => import('@/components/ui/lightweight-slideshow'))
 const ScrollBaseAnimation = lazy(() => import('@/components/ui/text-marquee'))
+const PerformanceMotion = lazy(() => import('@/components/ui/PerformanceMotion'))
 
 interface Props {
   landingImageUrl: string | null
@@ -171,16 +173,36 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
         <section className='relative overflow-hidden hero-bg'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
-              <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className='order-2 lg:order-1'>
-                <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
-                <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
-                <div className='flex flex-col sm:flex-row gap-4'>
-                  <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
-                  <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
+              <Suspense fallback={
+                <div className='order-2 lg:order-1'>
+                  <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
+                  <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
+                  <div className='flex flex-col sm:flex-row gap-4'>
+                    <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
+                    <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
+                  </div>
                 </div>
-              </motion.div>
+              }>
+                <PerformanceMotion initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className='order-2 lg:order-1'>
+                  <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
+                  <p className='text-lg lg:text-xl font-body text-gray-600 mb-8 leading-relaxed max-w-lg'>Discover premium pet accessories that combine style, comfort, and quality. From adorable collars to treat jars, we have everything your furry baby needs.</p>
+                  <div className='flex flex-col sm:flex-row gap-4'>
+                    <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
+                    <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
+                  </div>
+                </PerformanceMotion>
+              </Suspense>
 
-              <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className='relative order-1 lg:order-2'>
+              <Suspense fallback={
+                <div className='relative order-1 lg:order-2'>
+                  <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-2xl p-8 shadow-sm relative'>
+                    <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
+                    <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
+                    <div className='relative w-full h-96 rounded-xl overflow-hidden bg-gray-200'></div>
+                  </div>
+                </div>
+              }>
+                <PerformanceMotion initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className='relative order-1 lg:order-2'>
                 <div className='bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-2xl p-8 shadow-sm relative'>
                   <div className='absolute -top-2 -right-2 w-4 h-4 bg-pink-300 rounded-full opacity-60'></div>
                   <div className='absolute -bottom-2 -left-2 w-3 h-3 bg-pink-400 rounded-full opacity-40'></div>
@@ -218,7 +240,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
     alt='Landing banner'
     className='object-cover'
     quality={85}
-    priority
+    priority={true}
     fetchPriority="high"
     placeholder="blur"
     blurDataURL="data:image/jpeg;base64,..."
@@ -230,7 +252,8 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                   <p className='font-body font-semibold'>🐕 Happy Pets</p>
                   <p className='text-sm font-body opacity-90'>1000+ Satisfied Customers</p>
                 </div>
-              </motion.div>
+              </PerformanceMotion>
+              </Suspense>
             </div>
           </div>
         </section>
@@ -251,7 +274,7 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                 </div>
               </div>
             }>
-              <AnimatedSlideshow slides={[
+              <LightweightSlideshow slides={[
                 { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757081273/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_qxqxbn.png', title: 'Bandana/Neck Scarf' },
                 { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757082005/WhatsApp_Image_2025-09-04_at_19.28.45_0db24edb_qgcyy9.png', title: 'Bow Ties' },
                 { image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg', title: 'Collars' },
@@ -270,40 +293,64 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
 {/* Testimonials */}
             <section className='py-16 lg:py-20 features-bg'>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-                  <motion.div
-                     initial={{ opacity: 0, y: 50 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     transition={{ duration: 0.8 }}
-                     className='text-center mb-12'
-                  >
-                     <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
+                  <Suspense fallback={
+                    <div className='text-center mb-12'>
+                      <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
                         What Pet Parents Say
-                     </h2>
-                     <p className='text-lg font-body text-gray-600'>Don&apos;t just take our word for it</p>
-                  </motion.div>
+                      </h2>
+                      <p className='text-lg font-body text-gray-600'>Don&apos;t just take our word for it</p>
+                    </div>
+                  }>
+                    <PerformanceMotion
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8 }}
+                      className='text-center mb-12'
+                    >
+                      <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>
+                        What Pet Parents Say
+                      </h2>
+                      <p className='text-lg font-body text-gray-600'>Don&apos;t just take our word for it</p>
+                    </PerformanceMotion>
+                  </Suspense>
 
                   {/* Bento-style responsive testimonials using CSS columns for a masonry feel */}
                   <div className='bento-container'>
                      {testimonials.map((testimonial, index) => (
-                        <motion.div
-                           key={index}
-                           initial={{ opacity: 0, y: 30 }}
-                           whileInView={{ opacity: 1, y: 0 }}
-                           transition={{ duration: 0.6, delay: index * 0.05 }}
-                           className='testimonial-card mb-6 break-inside-avoid'
-                        >
-                           <div className='flex items-center mb-4'>
+                        <Suspense key={index} fallback={
+                          <div className='testimonial-card mb-6 break-inside-avoid'>
+                            <div className='flex items-center mb-4'>
                               {Array.from({ length: testimonial.rating }).map((_, i) => (
-                                 <Star
-                                    key={i}
-                                    className='w-5 h-5 text-pink-500'
-                                    fill='currentColor'
-                                 />
+                                <Star
+                                  key={i}
+                                  className='w-5 h-5 text-pink-500'
+                                  fill='currentColor'
+                                />
                               ))}
-                           </div>
-                           <p className='font-body text-gray-600 mb-4 italic'>&quot;{testimonial.comment}&quot;</p>
-                           <p className='font-body font-semibold text-gray-900'>- {testimonial.name}</p>
-                        </motion.div>
+                            </div>
+                            <p className='font-body text-gray-600 mb-4 italic'>&quot;{testimonial.comment}&quot;</p>
+                            <p className='font-body font-semibold text-gray-900'>- {testimonial.name}</p>
+                          </div>
+                        }>
+                          <PerformanceMotion
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: index * 0.05 }}
+                            className='testimonial-card mb-6 break-inside-avoid'
+                          >
+                            <div className='flex items-center mb-4'>
+                              {Array.from({ length: testimonial.rating }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className='w-5 h-5 text-pink-500'
+                                  fill='currentColor'
+                                />
+                              ))}
+                            </div>
+                            <p className='font-body text-gray-600 mb-4 italic'>&quot;{testimonial.comment}&quot;</p>
+                            <p className='font-body font-semibold text-gray-900'>- {testimonial.name}</p>
+                          </PerformanceMotion>
+                        </Suspense>
                      ))}
                   </div>
                </div>
@@ -348,23 +395,39 @@ export default function HomeClient({ landingImageUrl: initialLandingUrl }: Props
                   </div>
                </div>
                <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
-                  <motion.div
-                     initial={{ opacity: 0, y: 50 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     transition={{ duration: 0.8 }}
-                  >
-                     <h2 className='text-3xl md:text-4xl section-title text-white mb-4 leading-tight'>
+                  <Suspense fallback={
+                    <div>
+                      <h2 className='text-3xl md:text-4xl section-title text-white mb-4 leading-tight'>
                         Ready to Spoil Your Pet?
-                     </h2>
-                     <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
+                      </h2>
+                      <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
                         Join thousands of happy pet parents who trust Hezal Accessories for their four legged babies.
-                     </p>
-                     <NavigationLink href='/products'>
+                      </p>
+                      <NavigationLink href='/products'>
                         <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-200 transition-colors'>
-                           Start Shopping Now
+                          Start Shopping Now
                         </button>
-                     </NavigationLink>
-                  </motion.div>
+                      </NavigationLink>
+                    </div>
+                  }>
+                    <PerformanceMotion
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <h2 className='text-3xl md:text-4xl section-title text-white mb-4 leading-tight'>
+                        Ready to Spoil Your Pet?
+                      </h2>
+                      <p className='text-lg font-body text-white/90 mb-8 max-w-2xl mx-auto'>
+                        Join thousands of happy pet parents who trust Hezal Accessories for their four legged babies.
+                      </p>
+                      <NavigationLink href='/products'>
+                        <button className='bg-white text-pink-500 px-8 py-4 rounded-md font-body font-semibold text-lg hover:bg-gray-200 transition-colors'>
+                          Start Shopping Now
+                        </button>
+                      </NavigationLink>
+                    </PerformanceMotion>
+                  </Suspense>
                </div>
             </section>
          
