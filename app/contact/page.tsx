@@ -77,7 +77,7 @@ export default function Contact() {
             title="Contact Us - Hezal Accessories | Get in Touch"
             description="Contact Hezal Accessories for inquiries about our premium pet accessories. Get support, ask questions, or provide feedback. We're here to help you and your furry friends."
             keywords={['contact hezal accessories', 'pet accessories support', 'customer service', 'pet product inquiries', 'dog collar questions']}
-            canonicalUrl="/contact"
+            canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/contact`}
             structuredData={{
                "@context": "https://schema.org",
                "@type": "ContactPage",

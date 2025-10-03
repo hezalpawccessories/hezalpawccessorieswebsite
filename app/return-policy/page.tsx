@@ -2,10 +2,16 @@
 
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SEOHead from '@/components/SEO/SEOHead'
 
 export default function ReturnPolicy() {
   return (
     <>
+      <SEOHead 
+        title="Return & Cancellation Policy - Hezal Accessories"
+        description="Read our return and cancellation policy. Please note that all sales are final as we offer made to order products. Contact us for any issues with your order."
+        canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/return-policy`}
+      />
       <Navbar />
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>

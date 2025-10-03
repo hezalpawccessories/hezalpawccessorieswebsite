@@ -407,8 +407,53 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
   const { price, originalPrice } = getCurrentPricing()
   const discount = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0
 
+  // Generate Product Schema for SEO
+  const additionalImages = (product as any).images || []
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.title,
+    "image": [product.image, ...additionalImages],
+    "description": product.description,
+    "sku": product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "Hezal Accessories"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "url": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products/${product.id}`,
+      "priceCurrency": "INR",
+      "lowPrice": product.sizePricing ? Math.min(...product.sizePricing.map(sp => sp.price)) : product.price,
+      "highPrice": product.sizePricing ? Math.max(...product.sizePricing.map(sp => sp.price)) : product.price,
+      "offerCount": product.sizePricing ? product.sizePricing.length : 1,
+      "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating.toString(),
+      "reviewCount": product.reviews.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "category": product.category,
+    "itemCondition": "https://schema.org/NewCondition",
+    "additionalProperty": product.sizePricing ? product.sizePricing.map(sp => ({
+      "@type": "PropertyValue",
+      "name": "Size",
+      "value": sp.size
+    })) : []
+  }
+
   return (
     <>
+      {/* Product Schema Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      
       <Navbar />
       
       <main className="gradient-bg min-h-screen">

@@ -5,10 +5,33 @@ import { Mail, Phone, MapPin, Heart, Award, Calendar } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Image from 'next/image'
+import SEOHead from '@/components/SEO/SEOHead'
 
 export default function Owner() {
    return (
       <>
+       <SEOHead 
+            title="About Owner - Hezal Accessories | Hezal Garg, Founder"
+            description="Learn more about Hezal Garg, the founder of Hezal Accessories, and her passion for creating premium pet products."
+            keywords={['about hezal accessories', 'hezal garg', 'founder', 'pet accessories', 'premium pet products']}
+            canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/owner`}
+            structuredData={{
+               "@context": "https://schema.org",
+               "@type": "WebPage",
+               "name": "About Hezal Garg - Hezal Accessories",
+               "description": "Learn more about Hezal Garg, the founder of Hezal Accessories, and her passion for creating premium pet products.",
+               "mainEntity": {
+                  "@type": "Organization",
+                  "name": "Hezal Accessories",
+                  "contactPoint": {
+                     "@type": "ContactPoint",
+                     "telephone": "+91-7060266900",
+                     "contactType": "Customer Service",
+                     "availableLanguage": ["English", "Hindi"]
+                  }
+               }
+            }}
+         />
          <Navbar />
          <main className='gradient-bg'>
             {/* Hero Section */}

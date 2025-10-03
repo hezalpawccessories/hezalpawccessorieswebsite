@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
       <SEOHead 
         title="Privacy Policy - Hezal Accessories"
         description="Read our privacy policy to understand how Hezal Accessories collects, uses, and protects your personal information when you shop for premium pet accessories."
-        canonicalUrl="/privacy-policy"
+        canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/privacy-policy`}
         noIndex={false}
       />
       <Navbar />

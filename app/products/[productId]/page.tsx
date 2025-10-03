@@ -46,40 +46,76 @@ export async function generateMetadata({
       ? `₹${Math.min(...product.sizePricing.map(p => p.price))} - ₹${Math.max(...product.sizePricing.map(p => p.price))}`
       : `₹${product.price}`
 
+    const minPrice = product.sizePricing 
+      ? Math.min(...product.sizePricing.map(p => p.price))
+      : product.price
+
+    const maxPrice = product.sizePricing 
+      ? Math.max(...product.sizePricing.map(p => p.price))
+      : product.price
+
+    // Generate comprehensive keywords
+    const keywords = [
+      product.title,
+      product.category,
+      'pet accessories',
+      'dog accessories',
+      'cat accessories',
+      'premium pet products',
+      'hezal accessories',
+      'buy ' + product.title.toLowerCase(),
+      product.category.toLowerCase() + ' for pets',
+      product.collection || '',
+      'handcrafted pet accessories',
+      'custom pet products'
+    ].filter(Boolean)
+
+    const description = product.description 
+      ? `${product.description.substring(0, 155)}... Available in multiple sizes. ${priceRange}. Free shipping on orders above ₹799.`
+      : `Buy ${product.title} for your pet. High-quality ${product.category.toLowerCase()} from Hezal Accessories. ${priceRange}. Free shipping on orders above ₹799.`
+
+    // Get additional images safely
+    const additionalImages = (product as any).images || []
+
     return {
-      title: `${product.title} - ${priceRange} | Hezal Accessories`,
-      description: product.description || `Buy ${product.title} for your pet. High-quality ${product.category.toLowerCase()} from Hezal Accessories. ${priceRange}. Free shipping on orders above ₹799.`,
-      keywords: [
-        product.title,
-        product.category,
-        'pet accessories',
-        'dog accessories',
-        'cat accessories',
-        'hezal accessories',
-        product.collection || ''
-      ].filter(Boolean).join(', '),
+      title: `${product.title} - ${priceRange} | Premium Pet ${product.category} | Hezal Accessories`,
+      description,
+      keywords: keywords.join(', '),
+      authors: [{ name: 'Hezal Accessories' }],
       openGraph: {
         title: `${product.title} | Hezal Accessories`,
-        description: product.description || `Buy ${product.title} for your pet. High-quality ${product.category.toLowerCase()} starting from ${priceRange}.`,
+        description: description,
+        url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products/${product.id}`,
         images: [
           {
             url: product.image,
-            width: 800,
-            height: 600,
+            width: 1200,
+            height: 630,
             alt: product.title,
-          }
+          },
+          ...(Array.isArray(additionalImages) ? additionalImages.slice(0, 3).map((img: string) => ({
+            url: img,
+            width: 1200,
+            height: 630,
+            alt: `${product.title} - Additional view`,
+          })) : [])
         ],
         type: 'website',
         siteName: 'Hezal Accessories',
       },
-      twitter: {
-        card: 'summary_large_image',
-        title: `${product.title} | Hezal Accessories`,
-        description: product.description || `Buy ${product.title} for your pet. High-quality ${product.category.toLowerCase()}.`,
-        images: [product.image],
-      },
       alternates: {
-        canonical: `/products/${product.id}`,
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products/${product.id}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
     }
   } catch (error) {

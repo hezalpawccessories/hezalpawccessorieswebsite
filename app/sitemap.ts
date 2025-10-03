@@ -1,9 +1,11 @@
 import { MetadataRoute } from 'next'
+import { getProducts } from '@/integrations/firebase/firestoreCollections'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'
   
-  const staticPages = [
+  // Static pages with their priorities
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -60,5 +62,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  return staticPages
+  // Fetch all products dynamically for sitemap
+  try {
+    const products = await getProducts()
+    
+    // Generate product pages entries
+    const productPages: MetadataRoute.Sitemap = products.map((product) => ({
+      url: `${baseUrl}/products/${product.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8, // High priority for individual product pages
+    }))
+
+    // Combine static pages and product pages
+    return [...staticPages, ...productPages]
+  } catch (error) {
+    console.error('Error generating sitemap:', error)
+    // Return static pages if product fetch fails
+    return staticPages
+  }
 }

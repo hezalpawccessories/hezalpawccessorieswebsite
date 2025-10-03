@@ -113,6 +113,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
         title="Hezal Accessories - Premium Pet Accessories & Custom Dog Collars"
         description="Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends. Free shipping on orders over ₹999."
         keywords={['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories', 'pet fashion', 'dog fashion']}
+        canonicalUrl={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}
         ogType="website"
         structuredData={{
           "@context": "https://schema.org",

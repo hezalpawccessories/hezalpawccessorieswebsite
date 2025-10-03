@@ -2,10 +2,16 @@
 
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import SEOHead from '@/components/SEO/SEOHead'
 
 export default function TermsAndConditions() {
   return (
     <>
+      <SEOHead 
+        title="Shipping Policy - Hezal Accessories"
+        description="Read our shipping policy to understand order processing, delivery times, shipping charges, and tracking information for your premium pet accessories."
+        canonicalUrl={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/shipping-policy`}
+      />
       <Navbar />
       <main className='min-h-screen bg-white'>
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>

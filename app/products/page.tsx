@@ -35,43 +35,67 @@ export async function generateMetadata({
   const resolvedSearchParams = await searchParams
   const { category, collection, sale, search } = resolvedSearchParams
   
-  let title = 'Premium Pet Accessories'
-  let description = 'Stylish and comfortable accessories for your furry friends. Shop collars, leashes, toys, and more.'
+  let title = 'Premium Pet Accessories - Shop Dog Collars, Leashes & More'
+  let description = 'Shop stylish and comfortable pet accessories for your furry friends. Premium dog collars, leashes, bow ties, bandanas, and treat jars. Handcrafted with love. Free shipping on orders above ₹799.'
+  let keywords = 'pet accessories, dog collars, pet leashes, dog bow ties, pet bandanas, treat jars, premium pet gear, handcrafted pet products, custom dog accessories, hezal accessories'
   
   if (category && category !== 'All') {
-    title = `${category} - Pet Accessories`
-    description = `Shop premium ${category.toLowerCase()} for your pets. High-quality, stylish, and comfortable accessories.`
+    title = `${category} - Premium Pet Accessories | Hezal Accessories`
+    description = `Shop premium ${category.toLowerCase()} for your pets. High-quality, stylish, and comfortable ${category.toLowerCase()}. Handcrafted designs with free shipping on orders above ₹799.`
+    keywords = `${category.toLowerCase()}, pet ${category.toLowerCase()}, dog ${category.toLowerCase()}, cat ${category.toLowerCase()}, premium ${category.toLowerCase()}, buy ${category.toLowerCase()}, ${keywords}`
   }
   
   if (collection) {
-    title = `${collection} Collection - Pet Accessories`
-    description = `Explore our ${collection} collection of premium pet accessories. Curated designs for your beloved pets.`
+    title = `${collection} Collection - Premium Pet Accessories | Hezal Accessories`
+    description = `Explore our ${collection} collection of premium pet accessories. Curated designs with handcrafted quality for your beloved pets. Free shipping on orders above ₹799.`
+    keywords = `${collection} collection, ${collection} pet accessories, premium ${collection} products, ${keywords}`
   }
   
   if (sale === 'true') {
-    title = 'Sale - Pet Accessories'
-    description = 'Shop discounted pet accessories. Limited time offers on premium collars, leashes, and toys.'
+    title = 'Sale - Discounted Pet Accessories | Hezal Accessories'
+    description = 'Shop discounted pet accessories with amazing deals. Limited time offers on premium collars, leashes, bow ties, and more. Free shipping on orders above ₹799.'
+    keywords = `pet accessories sale, discounted pet products, pet accessories deals, cheap pet collars, affordable pet leashes, ${keywords}`
   }
   
   if (search) {
-    title = `Search: ${search} - Pet Accessories`
-    description = `Search results for "${search}". Find the perfect pet accessories for your furry friends.`
+    title = `Search: ${search} - Pet Accessories | Hezal Accessories`
+    description = `Search results for "${search}". Find the perfect pet accessories including collars, leashes, bow ties, and more for your furry friends.`
+    keywords = `${search}, search ${search}, ${keywords}`
   }
 
   return {
     title,
     description,
-    keywords: 'pet accessories, dog collars, pet leashes, pet toys, pet supplies, pet fashion',
+    keywords,
+    authors: [{ name: 'Hezal Accessories' }],
     openGraph: {
       title,
       description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products`,
+      images: [
+        {
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/logom.png`,
+          width: 1200,
+          height: 630,
+          alt: 'Hezal Accessories - Premium Pet Products',
+        }
+      ],
       type: 'website',
       siteName: 'Hezal Accessories',
     },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   }
 }
