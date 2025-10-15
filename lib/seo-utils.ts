@@ -66,7 +66,7 @@ export const generateOrganizationSchema = () => {
     "name": "Hezal Accessories",
     "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.hezalaccessories.com",
     "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.hezalaccessories.com"}/logom.png`,
-    "description": "Premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends.",
+    "description": "Premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby.",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": process.env.NEXT_PUBLIC_BUSINESS_PHONE || "+91-7060266900",

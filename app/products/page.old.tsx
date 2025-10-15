@@ -699,7 +699,7 @@ function ProductsContent() {
                      Premium <span className='text-primary-pink'>Pet Accessories</span>
                   </h1>
                   <p className='text-xl font-body text-text-body max-w-2xl mx-auto'>
-                     Discover our carefully curated collection of premium pet accessories designed with love for your furry friends
+                     Discover our carefully curated collection of premium pet accessories designed with love for your furry baby
                   </p>
                </motion.div>
 

@@ -32,7 +32,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
     "name": "Hezal Accessories",
     "url": "https://www.hezalaccessories.com",
     "logo": "https://www.hezalaccessories.com/logom.png",
-    "description": "Premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends.",
+    "description": "Premium pet accessories including collars, leashes, bow ties, collar-leash matching sets, custom treat-jars and bandanas. Handcrafted with love for your furry baby.",
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "Customer Service",
@@ -111,7 +111,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
     <>
       <SEOHead
         title="Hezal Accessories - Premium Pet Accessories & Custom Dog Collars"
-        description="Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends. Free shipping on orders over ₹999."
+        description="Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby. Free shipping on orders over ₹999."
         keywords={['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories', 'pet fashion', 'dog fashion']}
         canonicalUrl={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}
         ogType="website"

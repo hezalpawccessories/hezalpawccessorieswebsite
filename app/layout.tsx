@@ -39,12 +39,30 @@ const quicksand = Quicksand({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'),
-  title: 'Hezal Accessories - Premium Pet Accessories & Custom Dog Collars',
-  description: 'Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends. Free shipping on orders over ₹999.',
+  title: 'Hezal Accessories - Premium Pet Accessories',
+  description: "Your pet deserves only the best! Discover premium pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Quality products for your furry baby. Free shipping on orders over ₹799.",
   keywords: ['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories'],
   authors: [{ name: 'Hezal Accessories' }],
   creator: 'Hezal Accessories',
   publisher: 'Hezal Accessories',
+  icons: {
+    icon: [
+      { url: '/logom.png', sizes: 'any' },
+      { url: '/logom.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logom.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logom.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/logom.png',
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/logom.png',
+      },
+    ],
+  },
+  manifest: '/site.webmanifest',
   robots: {
     index: true,
     follow: true,
@@ -62,7 +80,7 @@ export const metadata: Metadata = {
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com',
     siteName: 'Hezal Accessories',
     title: 'Hezal Accessories - Premium Pet Accessories & Custom Dog Collars',
-    description: 'Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry friends.',
+    description: 'Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby.',
     images: [
       {
         url: '/logom.png',
@@ -72,13 +90,13 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Hezal Accessories - Premium Pet Accessories',
-    description: 'Premium pet accessories including custom dog collars, leashes, and stylish pet gear.',
-    images: ['/logom.png'],
-    creator: '@hezal_accessories', // Updated Twitter handle
-  },
+  // twitter: {
+  //   card: 'summary_large_image',
+  //   title: 'Hezal Accessories - Premium Pet Accessories',
+  //   description: 'Premium pet accessories including custom dog collars, leashes, and stylish pet gear.',
+  //   images: ['/logom.png'],
+  //   creator: '@hezal_accessories', // Updated Twitter handle
+  // },
   alternates: {
     canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com',
   },
@@ -216,10 +234,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <link rel="preconnect" href="https://res.cloudinary.com" />
             <link rel="dns-prefetch" href="https://vercel.com" />
             
-            <link rel="icon" href="/favicon.ico" />
-            <link rel="apple-touch-icon" href="/logom.png" />
             <meta name="theme-color" content="#ec4899" />
             <meta name="msapplication-TileColor" content="#ec4899" />
+            <meta name="msapplication-TileImage" content="/logom.png" />
          </head>
          <body className={`${nunito.className} ${quicksand.variable} ${baloo2.variable}`} suppressHydrationWarning={true}>
             <Suspense fallback={null}>

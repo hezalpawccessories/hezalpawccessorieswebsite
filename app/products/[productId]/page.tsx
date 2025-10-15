@@ -122,7 +122,7 @@ export async function generateMetadata({
     console.error('Error generating metadata:', error)
     return {
       title: 'Product | Hezal Accessories',
-      description: 'Premium pet accessories for your furry friends.'
+      description: 'Premium pet accessories for your furry baby.'
     }
   }
 }

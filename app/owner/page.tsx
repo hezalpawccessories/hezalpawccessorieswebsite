@@ -204,7 +204,7 @@ export default function Owner() {
                         <p className='text-text-light leading-relaxed'>
                            I envision a world where every pet owner has access to high-quality, affordable accessories
                            that enhance their pet&apos;s life. Through Hezal Accessories, I want to create a community
-                           of pet lovers who share the same passion for giving their furry friends the best.
+                           of pet lovers who share the same passion for giving their furry baby the best.
                         </p>
                         <p className='text-text-light leading-relaxed'>
                            My goal is not just to sell products, but to build lasting relationships with pet families

@@ -350,7 +350,7 @@ export default function ProductsPageClient({
             <h1 className="text-3xl sm:text-4xl font-heading font-bold text-primary-pink">Pet Accessories</h1>
             </div>
             <p className="text-xl text-text-light">
-              Stylish and comfortable accessories for your furry friends
+              Stylish and comfortable accessories for your furry baby
             </p>
           </div>
 

@@ -36,7 +36,7 @@ export async function generateMetadata({
   const { category, collection, sale, search } = resolvedSearchParams
   
   let title = 'Premium Pet Accessories - Shop Dog Collars, Leashes & More'
-  let description = 'Shop stylish and comfortable pet accessories for your furry friends. Premium dog collars, leashes, bow ties, bandanas, and treat jars. Handcrafted with love. Free shipping on orders above ₹799.'
+  let description = 'Shop stylish and comfortable pet accessories for your furry baby. Premium dog collars, leashes, bow ties, bandanas, and treat jars. Handcrafted with love. Free shipping on orders above ₹799.'
   let keywords = 'pet accessories, dog collars, pet leashes, dog bow ties, pet bandanas, treat jars, premium pet gear, handcrafted pet products, custom dog accessories, hezal accessories'
   
   if (category && category !== 'All') {
@@ -59,7 +59,7 @@ export async function generateMetadata({
   
   if (search) {
     title = `Search: ${search} - Pet Accessories | Hezal Accessories`
-    description = `Search results for "${search}". Find the perfect pet accessories including collars, leashes, bow ties, and more for your furry friends.`
+    description = `Search results for "${search}". Find the perfect pet accessories including collars, leashes, bow ties, and more for your furry baby.`
     keywords = `${search}, search ${search}, ${keywords}`
   }
 

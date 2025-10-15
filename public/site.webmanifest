@@ -1,0 +1,41 @@
+{
+  "name": "Hezal Accessories - Premium Pet Accessories",
+  "short_name": "Hezal Accessories",
+  "description": "Premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logom.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logom.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "pets", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Shop Products",
+      "short_name": "Shop",
+      "description": "Browse all pet accessories",
+      "url": "/products",
+      "icons": [{ "src": "/logom.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "description": "Get in touch with us",
+      "url": "/contact",
+      "icons": [{ "src": "/logom.png", "sizes": "96x96" }]
+    }
+  ]
+}
