@@ -17,7 +17,7 @@ interface SEOHeadProps {
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
-  title = "Hezal Accessories - Premium Pet Accessories",
+  title = "Hezal Accessories - Pet Accessories | Dog Accessories",
   description = "Your pet deserves only the best! Discover premium pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Quality products for your furry baby. Free shipping on orders over ₹799.",
   keywords = ["pet accessories","huft", "dog collars", "custom pet products", "dog leashes", "pet bow ties", "bandanas", "premium pet gear", "stylish pet accessories", "handcrafted pet items", "pet gifts", "collar-leash sets", "custom treat jars", "pet fashion", "dog accessories", "cat accessories"],
   canonicalUrl,

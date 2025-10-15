@@ -110,8 +110,8 @@ export default function HomeClient({ landingImageUrl }: Props) {
   return (
     <>
       <SEOHead
-        title="Hezal Accessories - Premium Pet Accessories & Custom Dog Collars"
-        description="Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby. Free shipping on orders over ₹999."
+        title="Hezal Accessories - Pet Accessories | Dog Accessories"
+        description="Your pet deserves only the best! Discover premium pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Quality products for your furry baby. Free shipping on orders over ₹799."
         keywords={['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories', 'pet fashion', 'dog fashion']}
         canonicalUrl={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}
         ogType="website"
@@ -119,7 +119,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "Hezal Accessories",
-          "description": "Premium pet accessories seller specializing in custom dog collars, leashes, and stylish pet gear. Your pet deserves only the best!",
+          "description": "Pet accessories seller specializing in dog collars, leashes, bandanas, custom treat-jars and more. Your pet deserves only the best!",
           "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.hezalaccessories.com",
           "potentialAction": {
             "@type": "SearchAction",

@@ -39,8 +39,8 @@ const quicksand = Quicksand({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'),
-  title: 'Hezal Accessories - Premium Pet Accessories',
-  description: "Your pet deserves only the best! Discover premium pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Quality products for your furry baby. Free shipping on orders over ₹799.",
+  title: 'Hezal Accessories - Pet Accessories | Dog Accessories',
+  description: "Your pet deserves only the best! Discover pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Quality products for your furry baby. Free shipping on orders over ₹799.",
   keywords: ['pet accessories', 'dog collars', 'custom pet products', 'dog leashes', 'pet bow ties', 'bandanas', 'premium pet gear', 'handcrafted pet accessories'],
   authors: [{ name: 'Hezal Accessories' }],
   creator: 'Hezal Accessories',
@@ -79,8 +79,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com',
     siteName: 'Hezal Accessories',
-    title: 'Hezal Accessories - Premium Pet Accessories & Custom Dog Collars',
-    description: 'Discover premium pet accessories including custom dog collars, leashes, bow ties, and bandanas. Handcrafted with love for your furry baby.',
+    title: 'Hezal Accessories - Pet Accessories | Dog Accessories',
+    description: 'Your pet deserves only the best! Discover pet accessories including dog collars, leashes, bow ties, collar-leash sets, custom treat-jars and bandanas. Handcrafted with love for your furry baby.',
     images: [
       {
         url: '/logom.png',
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
   },
   // twitter: {
   //   card: 'summary_large_image',
-  //   title: 'Hezal Accessories - Premium Pet Accessories',
+  //   title: 'Hezal Accessories - Pet Accessories | Dog Accessories',
   //   description: 'Premium pet accessories including custom dog collars, leashes, and stylish pet gear.',
   //   images: ['/logom.png'],
   //   creator: '@hezal_accessories', // Updated Twitter handle
