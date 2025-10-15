@@ -63,6 +63,29 @@ export async function generateMetadata({
     keywords = `${search}, search ${search}, ${keywords}`
   }
 
+  // Build dynamic canonical URL based on active filters
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'
+  let canonicalPath = '/products'
+  const params = new URLSearchParams()
+  
+  // Add query parameters that affect the content
+  if (category && category !== 'All') {
+    params.append('category', category)
+  }
+  if (collection) {
+    params.append('collection', collection)
+  }
+  if (sale === 'true') {
+    params.append('sale', 'true')
+  }
+  // Note: We don't include 'search', 'sort', or 'page' in canonical URL
+  // as they don't create unique content worth indexing separately
+  
+  const queryString = params.toString()
+  if (queryString) {
+    canonicalPath += `?${queryString}`
+  }
+
   return {
     title,
     description,
@@ -71,10 +94,10 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products`,
+      url: `${baseUrl}${canonicalPath}`,
       images: [
         {
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/logom.png`,
+          url: `${baseUrl}/logom.png`,
           width: 1200,
           height: 630,
           alt: 'Hezal Accessories - Premium Pet Products',
@@ -84,7 +107,7 @@ export async function generateMetadata({
       siteName: 'Hezal Accessories',
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'}/products`,
+      canonical: `${baseUrl}${canonicalPath}`,
     },
     robots: {
       index: true,

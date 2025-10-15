@@ -127,6 +127,65 @@ export async function generateMetadata({
   }
 }
 
+// Generate JSON-LD structured data for SEO
+function generateProductJsonLd(product: Product) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hezalaccessories.com'
+  
+  // Calculate price information
+  const price = product.onSale && product.originalPrice 
+    ? product.price 
+    : product.sizePricing 
+      ? Math.min(...product.sizePricing.map(p => p.price))
+      : product.price
+
+  const highPrice = product.sizePricing 
+    ? Math.max(...product.sizePricing.map(p => p.price))
+    : undefined
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description || `Premium ${product.category.toLowerCase()} for your pet`,
+    image: [
+      product.image,
+      ...(product.images || [])
+    ].filter(Boolean),
+    sku: product.id,
+    brand: {
+      '@type': 'Brand',
+      name: 'Hezal Accessories'
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/products/${product.id}`,
+      priceCurrency: 'INR',
+      price: price,
+      ...(highPrice && highPrice !== price && { highPrice }),
+      availability: product.inStock 
+        ? 'https://schema.org/InStock' 
+        : 'https://schema.org/OutOfStock',
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      ...(product.onSale && product.originalPrice && {
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: product.price,
+          priceCurrency: 'INR',
+          referencePrice: product.originalPrice
+        }
+      })
+    },
+    category: product.category,
+    ...(product.collection && {
+      additionalProperty: {
+        '@type': 'PropertyValue',
+        name: 'Collection',
+        value: product.collection
+      }
+    })
+  }
+}
+
 // Generate static params for build-time optimization
 // Only pre-build first 12 products, rest will be generated on-demand with ISR
 export async function generateStaticParams() {
@@ -215,19 +274,30 @@ export default async function ProductDetailPage({
     notFound()
   }
 
+  // Generate structured data for SEO
+  const jsonLd = generateProductJsonLd(product)
+
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center gradient-bg">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-pink mx-auto mb-4"></div>
-          <p className="text-text-light">Loading product details...</p>
-        </div>
-      </div>
-    }>
-      <ProductDetailClient 
-        product={product} 
-        relatedProducts={relatedProducts}
+    <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    </Suspense>
+      
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center gradient-bg">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-pink mx-auto mb-4"></div>
+            <p className="text-text-light">Loading product details...</p>
+          </div>
+        </div>
+      }>
+        <ProductDetailClient 
+          product={product} 
+          relatedProducts={relatedProducts}
+        />
+      </Suspense>
+    </>
   )
 }
