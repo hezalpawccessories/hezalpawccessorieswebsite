@@ -142,7 +142,7 @@ export default function Cart() {
       const loadCart = async () => {
          if (typeof window !== 'undefined') {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-            console.log('Loading cart from localStorage:', cart)
+            // console.log('Loading cart from localStorage:', cart)
             
             if (cart.length > 0 && !cartSyncComplete) {
                // Sync cart with latest Firestore data
@@ -183,12 +183,12 @@ export default function Cart() {
       setIsCartSyncing(true)
       
       try {
-         console.log('🔄 Syncing cart with Firestore...')
-         console.log('Cart items to sync:', currentCartItems.map(item => ({ id: item.id, title: item.title, price: item.price, onSale: item.onSale })))
+         // console.log('🔄 Syncing cart with Firestore...')
+         // console.log('Cart items to sync:', currentCartItems.map(item => ({ id: item.id, title: item.title, price: item.price, onSale: item.onSale })))
          
          // Get all products from Firestore
          const allProducts = await getProducts()
-         console.log('Fetched products from Firestore:', allProducts.length)
+         // console.log('Fetched products from Firestore:', allProducts.length)
          
          // Track changes for user notification
          const changes: {
@@ -313,7 +313,7 @@ export default function Cart() {
          // Update localStorage with synced data
          localStorage.setItem('cart', JSON.stringify(updatedCartItems))
          
-         console.log('✅ Cart sync completed. Changes detected:', changes)
+         // console.log('✅ Cart sync completed. Changes detected:', changes)
          
          return updatedCartItems
 
@@ -356,7 +356,7 @@ export default function Cart() {
       // Check sale items and non-sale items in cart
       const saleItemsInCart = cartItems.filter(cartItem => {
          const isCurrentlyOnSale = cartItem.onSale === true && (cartItem.saleQuantity || 0) > 0
-         console.log(`Item ${cartItem.title}: currently on sale = ${isCurrentlyOnSale}`)
+         // console.log(`Item ${cartItem.title}: currently on sale = ${isCurrentlyOnSale}`)
          return isCurrentlyOnSale
       })
       
@@ -365,12 +365,12 @@ export default function Cart() {
          return !isCurrentlyOnSale
       })
       
-      console.log('Sale items in cart:', saleItemsInCart.map(item => item.title))
-      console.log('Non-sale items in cart:', nonSaleItemsInCart.map(item => item.title))
+      // console.log('Sale items in cart:', saleItemsInCart.map(item => item.title))
+      // console.log('Non-sale items in cart:', nonSaleItemsInCart.map(item => item.title))
       
       // NEW LOGIC: If ONLY sale items in cart (no non-sale items), block coupon
       if (saleItemsInCart.length > 0 && nonSaleItemsInCart.length === 0) {
-         console.log('Cart has ONLY sale items - blocking coupon')
+         // console.log('Cart has ONLY sale items - blocking coupon')
          setAppliedCoupon(null)
          toast.error('Coupons cannot be applied on sale items')
          return false
@@ -388,19 +388,32 @@ export default function Cart() {
             return false
          }
 
-         // If no categories or collections specified, applies to all non-sale items
+         // If no categories AND no collections specified, applies to all non-sale items
          if (coupon.applicableCategories.length === 0 && coupon.applicableCollections.length === 0) {
             return true
          }
 
-         // Check category match
-         if (coupon.applicableCategories.length > 0 && coupon.applicableCategories.includes(cartItem.category)) {
-            return true
-         }
+         // Check if item matches either category OR collection
+         const matchesCategory = coupon.applicableCategories.length > 0 && 
+                                coupon.applicableCategories.includes(cartItem.category)
+         
+         const matchesCollection = coupon.applicableCollections.length > 0 && 
+                                  coupon.applicableCollections.includes(cartItem.collection || '')
 
-         // Check collection match
-         if (coupon.applicableCollections.length > 0 && coupon.applicableCollections.includes(cartItem.collection || '')) {
-            return true
+         // FIXED: If coupon has BOTH categories and collections specified,
+         // item must match the specified category AND one of the specified collections
+         if (coupon.applicableCategories.length > 0 && coupon.applicableCollections.length > 0) {
+            return matchesCategory && matchesCollection
+         }
+         
+         // If only categories specified, match category
+         if (coupon.applicableCategories.length > 0) {
+            return matchesCategory
+         }
+         
+         // If only collections specified, match collection
+         if (coupon.applicableCollections.length > 0) {
+            return matchesCollection
          }
 
          return false
@@ -510,15 +523,34 @@ export default function Cart() {
             return false
          }
 
+         // If no categories AND no collections specified, applies to all non-sale items
          if (appliedCoupon.applicableCategories.length === 0 && appliedCoupon.applicableCollections.length === 0) {
             return true
          }
-         if (appliedCoupon.applicableCategories.includes(item.category)) {
-            return true
+
+         // Check if item matches either category OR collection
+         const matchesCategory = appliedCoupon.applicableCategories.length > 0 && 
+                                appliedCoupon.applicableCategories.includes(item.category)
+         
+         const matchesCollection = appliedCoupon.applicableCollections.length > 0 && 
+                                  appliedCoupon.applicableCollections.includes(item.collection || '')
+
+         // FIXED: If coupon has BOTH categories and collections specified,
+         // item must match the specified category AND one of the specified collections
+         if (appliedCoupon.applicableCategories.length > 0 && appliedCoupon.applicableCollections.length > 0) {
+            return matchesCategory && matchesCollection
          }
-         if (appliedCoupon.applicableCollections.includes(item.collection || '')) {
-            return true
+         
+         // If only categories specified, match category
+         if (appliedCoupon.applicableCategories.length > 0) {
+            return matchesCategory
          }
+         
+         // If only collections specified, match collection
+         if (appliedCoupon.applicableCollections.length > 0) {
+            return matchesCollection
+         }
+
          return false
       })
       
