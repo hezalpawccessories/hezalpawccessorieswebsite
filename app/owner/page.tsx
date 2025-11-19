@@ -1,3 +1,6 @@
+// ISR - revalidate every 1 hour (owner page rarely changes)
+export const revalidate = 3600
+
 'use client'
 
 import { motion } from 'framer-motion'

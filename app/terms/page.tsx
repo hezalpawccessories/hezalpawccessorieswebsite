@@ -1,3 +1,6 @@
+// ISR - revalidate every 24 hours (legal content rarely changes)
+export const revalidate = 86400
+
 'use client'
 
 import Navbar from '@/components/Navbar'
