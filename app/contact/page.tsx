@@ -1,6 +1,3 @@
-// ISR - revalidate every 1 hour (contact page occasionally updated)
-export const revalidate = 3600
-
 'use client'
 
 import { useState } from 'react'

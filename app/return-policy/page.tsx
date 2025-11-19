@@ -1,6 +1,3 @@
-// ISR - revalidate every 24 hours (return policy rarely changes)
-export const revalidate = 86400
-
 'use client'
 
 import Navbar from '@/components/Navbar'
