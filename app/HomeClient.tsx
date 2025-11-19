@@ -2,7 +2,7 @@
 
 import React from 'react'
 import NavigationLink from '@/components/NavigationLink'
-import { ArrowRight, Star, Shield, Truck, Heart, Gift } from 'lucide-react'
+import { ArrowRight, Star, Shield, Truck, Heart, Gift, Package, Award } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -48,10 +48,10 @@ export default function HomeClient({ landingImageUrl }: Props) {
   }
 
   const features = [
-    { icon: <Shield className='w-8 h-8' />, title: 'Premium Quality', description: 'Only the finest materials for your beloved pets' },
-    { icon: <Truck className='w-8 h-8' />, title: 'Fast Delivery', description: 'Quick and safe delivery to your doorstep' },
-    { icon: <Heart className='w-8 h-8' />, title: 'Made with Love', description: 'Every product crafted with care and attention' },
-    { icon: <Gift className='w-8 h-8' />, title: 'Special Offers', description: 'Regular discounts and exclusive deals' },
+    { icon: Package, title: 'Handcrafted', description: 'Each product is carefully crafted with attention to detail and premium materials.' },
+    { icon: Shield, title: 'Pet-Safe Materials', description: 'Only non-toxic, pet-friendly materials that are gentle on your pet skin.' },
+    { icon: Truck, title: 'Fast Delivery', description: 'Quick and reliable shipping across India. Free shipping on orders over ₹799.' },
+    { icon: Award, title: 'Trusted by 1000+', description: 'Join thousands of satisfied pet parents who love our products.' }
   ]
 
   const testimonials = [
@@ -165,8 +165,8 @@ export default function HomeClient({ landingImageUrl }: Props) {
    </div>
 )}
       <main className='pet-pattern-bg '>
-        <section className='relative overflow-hidden hero-bg'>
-          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24 relative z-10'>
+        <section className='relative overflow-hidden hero-bg min-h-[88vh] flex flex-col items-center justify-center'>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
               <div className='order-2 lg:order-1'>
                 <h1 className='text-4xl md:text-5xl lg:text-6xl hero-title mb-6 leading-tight'>Your Pet Deserves Only the <span className='hero-accent'>BEST</span></h1>
@@ -175,6 +175,7 @@ export default function HomeClient({ landingImageUrl }: Props) {
                   <NavigationLink href='/products'><button className='btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto'><span>Shop Now</span><ArrowRight className='w-5 h-5' /></button></NavigationLink>
                   <NavigationLink href='/about'><button className='btn-secondary w-full sm:w-auto'>About Us</button></NavigationLink>
                 </div>
+
               </div>
 
               <div className='relative order-1 lg:order-2'>
@@ -206,16 +207,33 @@ export default function HomeClient({ landingImageUrl }: Props) {
                   <p className='text-sm font-body opacity-90'>1000+ Satisfied Customers</p>
                 </div>
               </div>
+
+              
             </div>
           </div>
+          <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 lg:mt-16 w-full'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+              {features.map((f, i) => {const IC = f.icon; return (<motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className='text-center'>
+            <div className='w-14 h-14 mx-auto mb-4 bg-pink-50 rounded-xl flex items-center justify-center'>
+              <IC className='w-7 h-7 text-pink-600' />
+          </div>
+          <h3 className='text-lg font-bold text-gray-900 mb-2'>{f.title}</h3>
+          <p className='text-sm text-gray-600'>{f.description}</p></motion.div>
+        )})}
+          </div>
+          </div>
         </section>
+
+        {/* <section className='px-4 sm:px-6 lg:px-8 py-12 lg:py-24 bg-white border-y border-gray-100'>
+          
+          </section> */}
 
         {/* Rest of the page: features, slideshow, products preview, testimonials, etc. */}
         <section className='py-16 lg:py-20 bg-white relative'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
             <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className='text-center mb-0'>
-              <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-2 leading-tight'>Pet Accessories</h2>
-              <p className='text-lg font-body text-gray-600'>Adorable Finds, One Category at a Time</p>
+              <h2 className='text-3xl md:text-4xl section-title text-gray-900 mb-4 leading-tight'>Pet Accessories</h2>
+              <p className='text-lg font-body text-gray-600 mb-4'>Adorable Finds, One Category at a Time</p>
             </motion.div>
 
             <Suspense fallback={
