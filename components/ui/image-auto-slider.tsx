@@ -19,6 +19,8 @@ export default function ImageAutoSlider() {
     { src: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757077947/WhatsApp_Image_2025-09-05_at_12.42.55_528d0761_lhqqyh.jpg', title: '@happy.dog.rumi' },
   ], [])
 
+  
+
   const duplicatedItems = useMemo(() => {
     const imgs = happyPetItems.map(i => ({ src: i.src, title: i.title }))
     return [...imgs, ...imgs]
