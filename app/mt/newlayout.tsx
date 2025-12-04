@@ -441,7 +441,10 @@ export default function NewLayout( {landingImageUrl}: Props) {
 
             {/* Final CTA Banner */}
             <section className="px-4">
+                {/* Background image attribution: www.freepik.com */}
                 <div className="max-w-3xl mx-auto rounded-[3rem] overflow-hidden relative text-center py-12 md:py-24 px-6 shadow-2xl bg-[url('/ctabg.jpg')] bg-[length:100%_100%] md:bg-cover bg-no-repeat bg-center">
+                    {/* Screen reader only attribution */}
+                    <span className="sr-only">Background image from www.freepik.com</span>
                     
                     <div className="relative z-10 space-y-4 md:space-y-8 pt-8 md:pt-10 px-4 md:px-0 pb-12 md:pb-4">
                         <h2 className="text-2xl md:text-5xl font-black text-gray-900 tracking-tight">

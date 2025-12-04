@@ -1002,7 +1002,7 @@ export default function ProductsPageClient({
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                  className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-colors border ${
                     (searchParams.category || 'All') === category
                       ? 'bg-primary-pink text-white border-primary-pink'
                       : 'bg-white text-gray-600 border-gray-200'
