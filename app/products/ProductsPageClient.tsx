@@ -54,6 +54,8 @@ export default function ProductsPageClient({
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [allProductTitles, setAllProductTitles] = useState<string[]>([])
   const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [showMobileSort, setShowMobileSort] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
   
   // Banner state
   const [banners, setBanners] = useState<Banner[]>([])
@@ -236,6 +238,14 @@ export default function ProductsPageClient({
     } else {
       setSearchSuggestions([])
       setShowSuggestions(false)
+      // Reset search when input is cleared (e.g. backspace)
+      updateURL({ 
+        search: undefined,
+        category: searchParams.category,
+        collection: searchParams.collection,
+        sale: searchParams.sale,
+        sort: searchParams.sort
+      })
     }
   }
 
@@ -341,18 +351,6 @@ export default function ProductsPageClient({
       
       <main className="gradient-bg min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="text-center mb-8 ">
-            <div className="mb-4 flex sm:flex-row mx-auto items-center justify-center gap-2">
-            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-text-dark ">
-              Premium 
-            </h1>
-            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-primary-pink">Pet Accessories</h1>
-            </div>
-            <p className="text-xl text-text-light">
-              Stylish and comfortable accessories for your furry baby
-            </p>
-          </div>
 
           {/* Banner Section */}
           {!loadingBanners && banners.length > 0 && (
@@ -360,7 +358,7 @@ export default function ProductsPageClient({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mb-8 bg-gradient-to-r from-teal-400/90 via-blue-400/90 to-pink-300/90 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm"
+              className="mb-8 bg-gradient-to-r from-pink-400/90 via-purple-400/90 to-pink-300/90 rounded-xl shadow-lg overflow-hidden backdrop-blur-sm"
             >
               <div className="relative h-12 flex items-center bg-white/10">
                 <div className="flex-1 overflow-hidden whitespace-nowrap">
@@ -428,11 +426,27 @@ export default function ProductsPageClient({
             </motion.div>
           )}
 
+
+          {/* Header */}
+          <div className="text-center mb-0 md:mb-8">
+            <div className="mb-2 md:mb-4 flex sm:flex-row mx-auto items-center justify-center gap-2">
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-text-dark ">
+              Premium 
+            </h1>
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold text-primary-pink">Pet Accessories</h1>
+            </div>
+            <p className="text-lg sm:text-lg md:text-xl text-text-light">
+              Stylish and comfortable accessories for your furry baby
+            </p>
+          </div>
+
+          
+
           {/* Search and Filters Row */}
           <div className="mb-6">
             <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
               {/* Search Bar */}
-              <div className="w-full lg:flex-1 lg:max-w-md">
+              <div className="w-full lg:flex-1 lg:max-w-md hidden md:block">
                 <form onSubmit={handleSearch}>
                   <div className="relative">
                     <input
@@ -569,7 +583,7 @@ export default function ProductsPageClient({
               </div>
 
               {/* Mobile Sort Only Row */}
-              <div className="sm:hidden">
+              {/* <div className="hidden">
                 <select
                   value={searchParams.sort || 'name'}
                   onChange={(e) => handleSortChange(e.target.value)}
@@ -580,12 +594,12 @@ export default function ProductsPageClient({
                   <option value="price-high">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
                 </select>
-              </div>
+              </div> */}
             </div>
           </div>
 
           {/* Categories Row */}
-          <div className="mb-4">
+          <div className="md:mb-4 hidden md:block">
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               {categories.map((category) => (
                 <button
@@ -606,12 +620,25 @@ export default function ProductsPageClient({
           {/* Mobile Collections and Sale Row - Show only on small screens, below categories */}
           <div className="mb-8 sm:hidden">
             {/* Subtle separator line */}
-            <div className="w-16 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-4"></div>
+            {/* <div className="w-16 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-4"></div> */}
             
             <div className="flex flex-col gap-3">
               {/* Collections Row - Mobile */}
               {collections.length > 0 && (
                 <div className="flex items-center gap-2">
+                  {hasProductsOnSale && (
+                  <button
+                    onClick={handleSaleToggle}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      searchParams.sale === 'true'
+                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md transform scale-105'
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {/* {searchParams.sale === 'true' ? '✓ On Sale' : 'View Sale Items'} */}
+                    On Sale
+                  </button>
+                  )}
                   <select
                     value={searchParams.collection || ''}
                     onChange={(e) => handleCollectionChange(e.target.value)}
@@ -639,7 +666,7 @@ export default function ProductsPageClient({
               )}
 
               {/* Sale Filter Row - Mobile, less prominent */}
-              {hasProductsOnSale && (
+              {/* {hasProductsOnSale && (
                 <div className="flex justify-center">
                   <button
                     onClick={handleSaleToggle}
@@ -650,9 +677,10 @@ export default function ProductsPageClient({
                     }`}
                   >
                     {searchParams.sale === 'true' ? '✓ On Sale' : 'View Sale Items'}
+                    
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
 
@@ -875,6 +903,171 @@ export default function ProductsPageClient({
           )}
         </div>
       </main>
+
+      {/* Mobile Bottom Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex flex-col bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        
+        {/* Search Input View - Shown above categories when active */}
+        {(showMobileSearch || searchQuery) && (
+          <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+             <form onSubmit={(e) => { 
+                 handleSearch(e); 
+                 setShowMobileSearch(false); 
+                 setShowSuggestions(false); 
+               }} 
+               className="relative flex-1"
+             >
+                <input
+                  autoFocus={!searchQuery}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                  placeholder="Search products..."
+                  className={`w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-pink text-sm ${
+                    searchQuery ? 'pr-20' : 'pr-16'
+                  }`}
+                />
+                
+                {/* Clear Button inside input */}
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => { handleClearSearch(); setShowMobileSearch(false); }}
+                    className="absolute right-20 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary-pink text-white px-3 py-2 rounded text-xs"
+                >
+                  Search
+                </button>
+
+                {/* Search Suggestions for Mobile */}
+                {showSuggestions && searchSuggestions.length > 0 && (
+                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                    {searchSuggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => { 
+                          handleSuggestionSelect(suggestion); 
+                          setShowMobileSearch(false); 
+                          setShowSuggestions(false);
+                        }}
+                        className="w-full text-left px-4 py-3 border-b border-gray-100 last:border-b-0"
+                      >
+                        <span className="text-sm text-gray-700 font-medium">
+                          {suggestion}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+             </form>
+             
+             {/* Close Search Button - Only if no query (to close empty bar) */}
+             {!searchQuery && (
+               <button 
+                 onClick={() => setShowMobileSearch(false)}
+                 className="p-2 text-gray-500"
+               >
+                 <X className="w-6 h-6" />
+               </button>
+             )}
+          </div>
+        )}
+
+        {/* Categories Bar - Always Visible */}
+        <div className="px-4 py-3 flex items-center gap-3">
+            {/* Filter/Sort Button */}
+            <button 
+              onClick={() => setShowMobileSort(true)}
+              className="p-2 text-gray-600 hover:text-primary-pink transition-colors"
+            >
+              <Filter className="w-6 h-6" />
+            </button>
+
+            {/* Scrollable Categories */}
+            <div className="flex-1 overflow-x-auto flex items-center gap-2 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <style jsx>{`
+                .no-scrollbar::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    (searchParams.category || 'All') === category
+                      ? 'bg-primary-pink text-white border-primary-pink'
+                      : 'bg-white text-gray-600 border-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+        </div>
+      </div>
+
+      {/* Mobile Floating Search Button */}
+      {!showMobileSearch && !searchQuery && (
+        <button
+          onClick={() => setShowMobileSearch(true)}
+          className="md:hidden fixed bottom-20 right-4 z-50 p-3 bg-primary-pink text-white rounded-full shadow-xl hover:bg-pink-600 transition-all hover:scale-110 active:scale-95"
+          aria-label="Search"
+        >
+          <Search className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Mobile Sort Drawer */}
+      {showMobileSort && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowMobileSort(false)} />
+          <motion.div 
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            className="relative w-full bg-white rounded-t-2xl p-6 shadow-xl"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-gray-900">Sort Products</h3>
+              <button onClick={() => setShowMobileSort(false)} className="p-1 bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-3">
+               {[
+                 { label: 'Name (A-Z)', value: 'name' },
+                 { label: 'Price: Low to High', value: 'price-low' },
+                 { label: 'Price: High to Low', value: 'price-high' },
+                 { label: 'Highest Rated', value: 'rating' }
+               ].map((option) => (
+                 <button
+                   key={option.value}
+                   onClick={() => {
+                     handleSortChange(option.value);
+                     setShowMobileSort(false);
+                   }}
+                   className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${
+                     (searchParams.sort || 'name') === option.value
+                       ? 'bg-primary-pink text-white shadow-md'
+                       : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                   }`}
+                 >
+                   <span className="font-medium">{option.label}</span>
+                 </button>
+               ))}
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <Footer />
     </>
