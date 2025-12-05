@@ -150,26 +150,26 @@ export default function ProductsPageClient({
     })
   }
 
-  // Handle collection selection - preserve other filters  
+  // Handle collection selection - clear sale filter (mutually exclusive)
   const handleCollectionChange = (collection: string) => {
     updateURL({ 
       collection: collection === '' ? undefined : collection,
-      // Preserve existing filters
+      sale: undefined, // Clear sale when collection is selected
+      // Preserve other filters
       category: searchParams.category,
-      sale: searchParams.sale,
       search: searchParams.search,
       sort: searchParams.sort
     })
   }
 
-  // Handle sale filter - preserve other filters
+  // Handle sale filter - clear collection (mutually exclusive)
   const handleSaleToggle = () => {
     const newSaleValue = searchParams.sale === 'true' ? undefined : 'true'
     updateURL({ 
       sale: newSaleValue,
-      // Preserve existing filters
+      collection: undefined, // Clear collection when sale is toggled on
+      // Preserve other filters
       category: searchParams.category,
-      collection: searchParams.collection,
       search: searchParams.search,
       sort: searchParams.sort
     })
@@ -523,6 +523,19 @@ export default function ProductsPageClient({
 
               {/* Desktop Filters Row - Collections, Sale, and Sort */}
               <div className="hidden sm:flex sm:flex-row gap-3 w-full lg:w-auto">
+                {/* Sale Filter */}
+                  {/* {hasProductsOnSale && (
+                    <button
+                      onClick={handleSaleToggle}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 sm:flex-initial ${
+                        searchParams.sale === 'true'
+                          ? 'bg-red-500 text-white'
+                          : 'bg-white text-text-dark hover:bg-gray-100 border border-gray-300'
+                      }`}
+                    >
+                      On Sale
+                    </button>
+                  )} */}
                 {/* Collections with Clear Filter - Desktop only */}
                 {collections.length > 0 && (
                   <div className="flex items-center gap-2">
@@ -554,19 +567,7 @@ export default function ProductsPageClient({
 
                 {/* Sale Filter and Sort on same line - Desktop */}
                 <div className="flex items-center gap-3">
-                  {/* Sale Filter */}
-                  {hasProductsOnSale && (
-                    <button
-                      onClick={handleSaleToggle}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-1 sm:flex-initial ${
-                        searchParams.sale === 'true'
-                          ? 'bg-red-500 text-white'
-                          : 'bg-white text-text-dark hover:bg-gray-100 border border-gray-300'
-                      }`}
-                    >
-                      On Sale
-                    </button>
-                  )}
+                  
 
                   {/* Sort */}
                   <select
@@ -619,14 +620,11 @@ export default function ProductsPageClient({
 
           {/* Mobile Collections and Sale Row - Show only on small screens, below categories */}
           <div className="mb-8 sm:hidden">
-            {/* Subtle separator line */}
-            {/* <div className="w-16 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-4"></div> */}
-            
             <div className="flex flex-col gap-3">
               {/* Collections Row - Mobile */}
               {collections.length > 0 && (
                 <div className="flex items-center gap-2">
-                  {hasProductsOnSale && (
+                  {/* {hasProductsOnSale && (
                   <button
                     onClick={handleSaleToggle}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -635,10 +633,10 @@ export default function ProductsPageClient({
                         : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    {/* {searchParams.sale === 'true' ? '✓ On Sale' : 'View Sale Items'} */}
+                    
                     On Sale
                   </button>
-                  )}
+                  )} */}
                   <select
                     value={searchParams.collection || ''}
                     onChange={(e) => handleCollectionChange(e.target.value)}
@@ -665,22 +663,7 @@ export default function ProductsPageClient({
                 </div>
               )}
 
-              {/* Sale Filter Row - Mobile, less prominent */}
-              {/* {hasProductsOnSale && (
-                <div className="flex justify-center">
-                  <button
-                    onClick={handleSaleToggle}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      searchParams.sale === 'true'
-                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md transform scale-105'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    {searchParams.sale === 'true' ? '✓ On Sale' : 'View Sale Items'}
-                    
-                  </button>
-                </div>
-              )} */}
+              
             </div>
           </div>
 
@@ -711,14 +694,14 @@ export default function ProductsPageClient({
                   {/* Image Container - Responsive Height */}
                   <div className="relative h-64 sm:h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                     {product.onSale && product.saleQuantity && product.saleQuantity > 0 && product.inStock ? (
-                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
-                        <span className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
+                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
+                        <span className="bg-gradient-to-r from-red-500 to-red-700 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           SALE
                         </span>
                       </div>
                     ): <> </>}
                     {discount > 0 && product.inStock && (
-                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10">
+                      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
                         <span className="bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
                           {discount}% OFF
                         </span>
