@@ -99,6 +99,52 @@ export default function NewLayout( {landingImageUrl}: Props) {
          { icon: Award, title: 'Trusted by 1000+', description: 'Join thousands of satisfied pet parents who love our products.' }
        ]
 
+       const topProducts = [
+        {
+            name: 'Christmas Snowing collar-leash Set ',
+            rating: '4.9',
+            count: '24',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1764824930/j7otgqnlystjj15f8w6k.jpg',
+            url:'/products/51972e5f-8354-4ff9-b704-349e0498a742',
+        },
+        {
+            name: 'Pawsitive Vibes tie on Bandana ',
+            rating: '4.8',
+            count: '18',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1756850974/rlivmormjfsvqvcoetxa.jpg',
+            url:'/products/2586cf22-2766-4ee6-9085-ac44fcc2ddd1',
+        },
+        {
+            name: 'Big Day Bow Tie ',
+            rating: '4.9',
+            count: '30',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757941386/yrlkiw6takh5mgw9cv7n.jpg',
+            url:'/products/9a9ed83a-6d9f-4f2c-a74f-bf7621029c11',
+        },
+        
+        {
+            name: 'Treats and Treasure Jar gray lid ',  
+            rating: '4.9',
+            count: '20',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757415052/ghxf9ln7okvgjg86trdu.jpg',
+            url:'/products/195a4585-a2bc-4851-ab2f-2215f8d92ece',
+        },
+        {
+            name: 'Winter Pines Tie-On Bandana',
+            rating: '4.8',
+            count: '15',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1763792783/uzdojkb87fs8keyeepkg.jpg',
+            url:'/products/38c7667f-0300-4097-8519-abf4e945e8e9',
+        },
+        {
+            name: 'Plaid Pawfect Collar',
+            rating: '4.7',
+            count: '12',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757957326/jokpwee4kbxaar6elk5q.jpg',
+            url:'/products/b4ead27a-80e2-4162-8703-7d40932d2683',
+        },
+       ]
+
     return (
         <>
         
@@ -227,7 +273,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                 <div className="flex gap-8 px-4">
                                     {[1, 2, 3, 4, 5].map((item) => (
                                         <article key={item} className="w-[280px] md:w-[320px] flex-shrink-0 group cursor-pointer">
-                                            <Link href="/products">
+                                            {/* <Link href="/products">
                                                 <div className="relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
                                                     <Image 
                                                         src={`https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_600,h_800,q_80/v1755786569/kdqtrcjjxdkdeak97rwx.jpg`}
@@ -245,6 +291,23 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                                      <span className="text-xs text-gray-500 ml-1">(45)</span>
                                                 </div>
                                                 
+                                            </Link> */}
+                                            <Link href={topProducts[item - 1].url} className="block cursor-pointer">
+                                                <div className="relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden mb-4 shadow-md group-hover:shadow-2xl transition-shadow duration-300">
+                                                    <Image
+                                                        src={topProducts[item - 1].image.replace('/upload/', '/upload/w_640,f_auto,q_auto,c_fill/')}
+                                                        alt={topProducts[item - 1].name}
+                                                        fill
+                                                        loading="lazy"
+                                                        sizes="(max-width: 768px) 280px, 320px"
+                                                        className="object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform"
+                                                    />
+                                                    {/* Clickable indicator - visible on mobile, prominent on desktop hover */}
+                                                    <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center opacity-80 md:opacity-60 group-hover:opacity-100 transition-opacity duration-200">
+                                                        <ArrowRight className="w-5 h-5 text-gray-900" />
+                                                    </div>
+                                                </div>
+                                                <h3 className="text-sm md:text-lg text-center font-bold text-gray-900 mb-1 group-hover:text-pink-600 transition-colors duration-200">{topProducts[item - 1].name}</h3>
                                             </Link>
                                         </article>
                                     ))}
@@ -312,7 +375,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                             ].map((cat, idx) => (
                                 <Link key={idx} href={cat.link} className="block">
                                     <article className="group cursor-pointer">
-                                        <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-4 bg-white">
+                                        <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-4 bg-white border border-primary-pink">
                                              <Image 
                                                 src={cat.image}
                                                 alt={cat.name}
@@ -440,7 +503,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
             </section>
 
             {/* Final CTA Banner */}
-            <section className="px-4">
+            <section className="px-4 py-20">
                 {/* Background image attribution: www.freepik.com */}
                 <div className="max-w-3xl mx-auto rounded-[3rem] overflow-hidden relative text-center py-12 md:py-24 px-6 shadow-2xl bg-[url('/ctabg.jpg')] bg-[length:100%_100%] md:bg-cover bg-no-repeat bg-center">
                     {/* Screen reader only attribution */}
@@ -453,7 +516,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                         <p className="text-base text-gray-700 max-w-md mx-auto font-medium">
                             Join thousands of happy pet parents and give your furry friend the style they deserve.
                         </p>
-                        <button className="bg-gray-900 text-white px-6 py-3 md:px-10 md:py-5 rounded-full text-lg font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-12 md:mb-0">
+                        <button className="bg-gray-900 text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-lg font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-12 md:mb-0">
                             Shop All Accessories
                         </button>
                     </div>
