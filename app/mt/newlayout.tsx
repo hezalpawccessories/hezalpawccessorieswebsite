@@ -176,7 +176,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
 
         <main>
             {/* /* Section 1: Hero Section */}
-             <section className='relative min-h-screen relative flex flex-col justify-center overflow-hidden pb-20 bg-gradient-to-b from-white to-pink-100'
+             <section className='relative min-h-screen relative flex flex-col justify-center overflow-hidden pb-20 bg-gradient-to-b from-white to-pink-100 noise-bg-strong'
             >
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full'>
                         <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
@@ -223,8 +223,8 @@ export default function NewLayout( {landingImageUrl}: Props) {
                       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 lg:mt-16 w-full'>
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
                           {features.map((f, i) => {const IC = f.icon; return (<motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className='text-center'>
-                        <div className='w-14 h-14 mx-auto mb-4 bg-pink-50 rounded-xl flex items-center justify-center'>
-                          <IC className='w-7 h-7 text-pink-600' />
+                        <div className='w-14 h-14 mx-auto my-2 bg-pink-50 rounded-xl flex items-center justify-center'>
+                          <IC className='w-10 h-10 text-pink-600' />
                       </div>
                       <h3 className='text-lg font-bold text-gray-900 mb-2'>{f.title}</h3>
                       <p className='text-sm text-gray-600'>{f.description}</p></motion.div>
@@ -245,7 +245,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">🐾</span>
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">Handcrafted with Love in India</span>
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">🐾</span>
-                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">✨ Use Code WELCOME10 for 10% Off</span>
+                        <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">✨ Use Code WELCOME10 for 10% Off</span>
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">🐾</span>
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">Free Shipping on orders above ₹799</span>
                         <span className="text-base lg:text-lg font-bold mx-6 tracking-wider uppercase">🐾</span>
@@ -258,7 +258,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                     
                     {/* 2. Most Loved Products */}
                     <div className="space-y-8">
-                        <div className="flex justify-between items-end px-4">
+                        <div className="flex justify-center sm:justify-between items-end px-4">
                             <div>
                                 <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">Most Loved</h2>
                                 <p className="text-lg text-gray-600 font-medium">Favorites chosen by pet parents like you.</p>
@@ -273,25 +273,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                 <div className="flex gap-8 px-4">
                                     {[1, 2, 3, 4, 5].map((item) => (
                                         <article key={item} className="w-[280px] md:w-[320px] flex-shrink-0 group cursor-pointer">
-                                            {/* <Link href="/products">
-                                                <div className="relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
-                                                    <Image 
-                                                        src={`https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_600,h_800,q_80/v1755786569/kdqtrcjjxdkdeak97rwx.jpg`}
-                                                        alt="Festive Bandana Red"
-                                                        fill
-                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                                    />
-                                                    <div className="absolute bottom-6 right-6 lg:right-4 lg:bottom-4 bg-white/90 backdrop-blur-sm p-3 rounded-full opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
-                                                        <ArrowRight className="w-5 h-5 text-gray-900" />
-                                                    </div>
-                                                </div>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-1">Festive Bandana Red</h3>
-                                                <div className="flex items-center gap-1 mb-2">
-                                                     {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
-                                                     <span className="text-xs text-gray-500 ml-1">(45)</span>
-                                                </div>
-                                                
-                                            </Link> */}
+                                            
                                             <Link href={topProducts[item - 1].url} className="block cursor-pointer">
                                                 <div className="relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden mb-4 shadow-md group-hover:shadow-2xl transition-shadow duration-300">
                                                     <Image
@@ -325,10 +307,10 @@ export default function NewLayout( {landingImageUrl}: Props) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {[
-                                { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'/birthdaycollection.png', alt: 'Unique Birthday/Barkday Collection for pets' },
-                                { name: 'Christmas Collection', link: '/products?collection=Christmas', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_1000,h_800,q_80/v1755786569/kdqtrcjjxdkdeak97rwx.jpg', alt: 'Unique Christmas Collection for pets' },
-                                { name: 'Classic Print', link: '/products?collection=Classic+Prints', image:'/classicprintcollage.png', alt: 'Unique Classic Print Collection for pets' },
-                                { name: 'Festive Collection', link: '/products?collection=Festive', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/c_fill,w_1000,h_800,q_80/v1755786569/kdqtrcjjxdkdeak97rwx.jpg', alt: 'Unique Festive Collection for pets' }
+                                { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376330/birthday-collection-hezal_accessories_rhwvs7.png', alt: 'Unique Birthday/Barkday Collection for pets' },
+                                { name: 'Christmas Collection', link: '/products?collection=Christmas', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376329/christmas-collection-hezal_accessories_fihusg.png', alt: 'Unique Christmas Collection for pets' },
+                                { name: 'Classic Print', link: '/products?collection=Classic+Prints', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376331/classic-collection-hezal_accessories_nbsi8f.png', alt: 'Unique Classic Print Collection for pets' },
+                                { name: 'Festive Collection', link: '/products?collection=Festive', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376328/festive-collection-hezal_accessories_pbge3y.png', alt: 'Unique Festive Collection for pets' }
                             ].map((collection, idx) => (
                                 <Link key={idx} href={collection.link} className="block">
                                     <article className="group relative h-[400px] rounded-[2.5rem] overflow-hidden cursor-pointer">
@@ -338,7 +320,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                             fill
                                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div className="absolute bottom-10 left-10 text-white">
                                             <h3 className="text-3xl font-bold mb-2">{collection.name}</h3>
                                             <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b-2 border-white pb-1">
@@ -350,48 +332,54 @@ export default function NewLayout( {landingImageUrl}: Props) {
                             ))}
                         </div>
                         <div className="text-center">
-                             <Link href="/products" className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-gray-900 text-gray-900 rounded-full font-bold hover:bg-gray-900 hover:text-white transition-all">
+                             <Link href="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-gray-900 text-gray-900 rounded-full font-bold hover:bg-gray-900 hover:text-white transition-all">
                                 View All Collections
                             </Link>
                         </div>
                     </div>
 
                     {/* 4. Shop by Category */}
-                    <div className="space-y-12">
-                         <div className="flex justify-between items-end">
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Shop by Category</h2>
+                    <div className="space-y-8">
+                        
+                        <div className="flex justify-center sm:justify-between items-end px-4">
+                            <div>
+                                <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">Shop by Category</h2>
+                                <p className="text-lg text-gray-600 font-medium">Explore our different categories</p>
+                            </div>
                             <Link href="/products" className="hidden md:flex items-center gap-2 text-pink-600 font-bold hover:text-pink-700 transition-colors">
                                 View All <ArrowRight className="w-5 h-5" />
                             </Link>
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                            {[
-                                { name: 'Bandana/Neck Scarf', link: '/products?category=Bandana%2Fneck+scarf', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078384/WhatsApp_Image_2025-09-04_at_19.27.12_5e2bcfa4_v6ppiw.jpg' },
-                                { name: 'Bow Ties', link: '/products?category=Bow+ties', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757386309/boo5x68anbketijwrakj.jpg' },
-                                { name: 'Collar-Leash Set', link: '/products?category=Collar-leash+set', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757082004/WhatsApp_Image_2025-09-04_at_19.33.09_20740e7c_kmrhlb.png' },
-                                { name: 'Collars', link: '/products?category=Collars', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.37.44_52689dd9_s2twm9.jpg' },
-                                { name: 'Treat Jars', link: '/products?category=Treat+Jars', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757078385/WhatsApp_Image_2025-09-04_at_19.34.56_e1ff4a5d_vur11d.jpg' }
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                            {[        
+                                { name: 'Bandana/Neck Scarf', link: '/products?category=Bandana%2Fneck+scarf', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_640,f_auto,q_auto,c_fill,f_webp/v1766375758/bandanas-hezal_accessories_flg8rv.png' },
+                                { name: 'Bow Ties', link: '/products?category=Bow+ties', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_640,f_auto,q_auto,c_fill,f_webp/v1766375759/bowties-hezal_accessories_piens3.png' },
+                                { name: 'Collar-Leash Set', link: '/products?category=Collar-leash+set', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_640,f_auto,q_auto,c_fill,f_webp/v1766375760/collar-leash-set-hezal_accessories_okaqsc.png' },
+                                { name: 'Collars', link: '/products?category=Collars', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_640,f_auto,q_auto,c_fill,f_webp/v1766375762/collars-hezal_accessories_oppkel.png' },
+                                { name: 'Treat Jars', link: '/products?category=Treat+Jars', image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_640,f_auto,q_auto,c_fill,f_webp/v1766375764/treat-jars-hezal_accessories_xtl1yd.png' }
                             ].map((cat, idx) => (
                                 <Link key={idx} href={cat.link} className="block">
                                     <article className="group cursor-pointer">
-                                        <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-4 bg-white border border-primary-pink">
+                                        <div className="relative aspect-[4/3] md:aspect-square rounded-[2rem] overflow-hidden mb-4 bg-gradient-to-br from-primary-pink/10 to-white/20 hover:bg-primary-pink/20 border border-primary-pink">
                                              <Image 
                                                 src={cat.image}
                                                 alt={cat.name}
                                                 fill
-                                                className="object-contain group-hover:scale-105 transition-transform duration-500"
+                                                loading="lazy"
+                                                sizes="(max-width: 640px) 150px, (max-width: 1024px) 200px, 250px"
+                                                className="object-contain group-hover:scale-110 transition-transform duration-500"
                                             />
                                             {/* Hover Arrow Overlay */}
-                                            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300 z-10">
+                                            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity md:translate-y-2 group-hover:translate-y-0 duration-300 z-10">
                                                 <ArrowRight className="w-5 h-5 text-gray-900" />
                                             </div>
                                         </div>
-                                        <h3 className="text-xl font-bold text-gray-900 text-center group-hover:text-pink-600 transition-colors">{cat.name}</h3>
+                                        <h3 className="text-base sm:text-xl font-bold text-gray-900 text-center group-hover:text-pink-600 transition-colors">{cat.name}</h3>
                                     </article>
                                 </Link>
                             ))}
-                        </div>
+                        </div> 
                     </div>
 
                 </div>
@@ -489,6 +477,8 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                         alt={pet.title}
                                         width={400}
                                         height={400} // Approximate height, actual will be determined by image aspect ratio
+                                        loading="lazy"
+                                        sizes="(max-width: 640px) 150px, (max-width: 1024px) 200px, 250px"
                                         className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
@@ -505,18 +495,18 @@ export default function NewLayout( {landingImageUrl}: Props) {
             {/* Final CTA Banner */}
             <section className="px-4 py-20">
                 {/* Background image attribution: www.freepik.com */}
-                <div className="max-w-3xl mx-auto rounded-[3rem] overflow-hidden relative text-center py-12 md:py-24 px-6 shadow-2xl bg-[url('/ctabg.jpg')] bg-[length:100%_100%] md:bg-cover bg-no-repeat bg-center">
+                <div className="max-w-3xl mx-auto rounded-[3rem] overflow-hidden relative text-center py-12 md:py-24 px-6 shadow-2xl bg-[url('https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766378451/ctabg_nf7nea.jpg')] bg-[length:100%_100%] md:bg-cover bg-no-repeat bg-center">
                     {/* Screen reader only attribution */}
                     <span className="sr-only">Background image from www.freepik.com</span>
                     
-                    <div className="relative z-10 space-y-4 md:space-y-8 pt-8 md:pt-10 px-4 md:px-0 pb-12 md:pb-4">
-                        <h2 className="text-2xl md:text-5xl font-black text-gray-900 tracking-tight">
+                    <div className="relative z-10 space-y-4 md:space-y-6 pt-8 md:pt-10 px-4 md:px-0 pb-12 md:pb-4">
+                        <h2 className="text-xl md:text-5xl font-black text-gray-900 tracking-tight">
                             Ready to Spoil Your Pup?
                         </h2>
-                        <p className="text-base text-gray-700 max-w-md mx-auto font-medium">
+                        <p className="text-sm sm:text-base text-gray-700 max-w-md mx-auto font-medium">
                             Join thousands of happy pet parents and give your furry friend the style they deserve.
                         </p>
-                        <button className="bg-gray-900 text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-lg font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-12 md:mb-0">
+                        <button className="bg-text-dark text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-base sm:text-lg font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-12 md:mb-0">
                             Shop All Accessories
                         </button>
                     </div>
