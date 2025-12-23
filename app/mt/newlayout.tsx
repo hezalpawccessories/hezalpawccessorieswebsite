@@ -305,7 +305,7 @@ export default function NewLayout( {landingImageUrl}: Props) {
                             <p className="text-lg text-gray-600">Designed for every mood and occasion.</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {[
                                 { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376330/birthday-collection-hezal_accessories_rhwvs7.png', alt: 'Unique Birthday/Barkday Collection for pets' },
                                 { name: 'Christmas Collection', link: '/products?collection=Christmas', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766376329/christmas-collection-hezal_accessories_fihusg.png', alt: 'Unique Christmas Collection for pets' },
@@ -323,6 +323,32 @@ export default function NewLayout( {landingImageUrl}: Props) {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                                         <div className="absolute bottom-10 left-10 text-white">
                                             <h3 className="text-3xl font-bold mb-2">{collection.name}</h3>
+                                            <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b-2 border-white pb-1">
+                                                Explore Collection <ArrowRight className="w-4 h-4" />
+                                            </span>
+                                        </div>
+                                    </article>
+                                </Link>
+                            ))}
+                        </div> */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mx-auto max-w-4xl">
+                            {[
+                                { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766392314/birthday-collection-hezal_accessories_stavfw.jpg', alt: 'Unique Birthday/Barkday Collection for pets' },
+                                { name: 'Christmas Collection', link: '/products?collection=Christmas', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766387475/WhatsApp_Image_2025-12-22_at_12.35.13_PM_qyyf6u.jpg', alt: 'Unique Christmas Collection for pets' },
+                                { name: 'Classic Print', link: '/products?collection=Classic+Prints', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766392703/WhatsApp_Image_2025-12-22_at_2.ds07.18_PM_f4pebw.jpg', alt: 'Unique Classic Print Collection for pets' },
+                                { name: 'Festive Collection', link: '/products?collection=Festive', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766396314/WhatsApp_Image_2025-12-22_at_2.18.48_PM_bzdyqb.jpg', alt: 'Unique Festive Collection for pets' }
+                            ].map((collection, idx) => (
+                                <Link key={idx} href={collection.link} className="block">
+                                    <article className="group relative h-[400px] rounded-[2.5rem] overflow-hidden cursor-pointer aspect-[4/3] md:aspect-square self-center bg-yellow-300">
+                                        <Image 
+                                            src={collection.image}
+                                            alt={collection.alt}
+                                            fill
+                                            className="object-contain object-center transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                                        <div className="absolute bottom-10 left-10 text-white">
+                                            <h3 className="text-2xl font-bold mb-2">{collection.name}</h3>
                                             <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b-2 border-white pb-1">
                                                 Explore Collection <ArrowRight className="w-4 h-4" />
                                             </span>

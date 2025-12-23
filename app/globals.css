@@ -564,10 +564,10 @@ body #nprogress .bar {
 
 @keyframes marquee-continuous-smalls {
   0% {
-    transform: translateX(150%);
+    transform: translateX(200%);
   }
   100% {
-    transform: translateX(-300%);
+    transform: translateX(-400%);
   }
 }
 
@@ -593,7 +593,7 @@ body #nprogress .bar {
     animation: marquee 30s linear infinite;
   }
 .animate-marquee-continuous-smalls {
-    animation: marquee-continuous-smalls 25s linear infinite;
+    animation: marquee-continuous-smalls 20s linear infinite;
   }
 }
 

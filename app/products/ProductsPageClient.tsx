@@ -374,27 +374,9 @@ export default function ProductsPageClient({
                       banners.map((banner, bannerIndex) => (
                         <div key={`${repeatIndex}-${bannerIndex}`} className="flex items-center space-x-4 px-6">
                           <span className="text-xl">🐾</span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-gray-800 font-bold text-base">
-                              {banner.title}
-                            </span>
-                            {banner.subtitle && (
-                              <>
-                                <span className="text-gray-700">•</span>
-                                <span className="text-gray-700 font-medium text-sm">
-                                  {banner.subtitle}
-                                </span>
-                              </>
-                            )}
-                            {/* {banner.description && (
-                              <>
-                                <span className="text-gray-700">•</span>
-                                <span className="text-gray-600 text-sm">
-                                  {banner.description}
-                                </span>
-                              </>
-                            )} */}
-                          </div>
+                          <span className="text-gray-800 font-bold text-base">
+                            {banner.title}
+                          </span>
                           <span className="text-xl">🐾</span>
                         </div>
                       ))
@@ -402,20 +384,13 @@ export default function ProductsPageClient({
                   </div>
                   <div className="flex sm:hidden animate-marquee-continuous-smalls space-x-6">
                     {/* Repeat banners multiple times for seamless scrolling on mobile */}
-                    {Array.from({ length: 3 }, (_, repeatIndex) => 
+                    {Array.from({ length: 5 }, (_, repeatIndex) => 
                       banners.map((banner, bannerIndex) => (
                         <div key={`${repeatIndex}-${bannerIndex}`} className="flex items-center space-x-3 px-4">
                           <span className="text-lg">🐾</span>
-                          <div className="flex flex-col">
-                            <span className="text-gray-800 font-bold text-sm">
-                              {banner.title}
-                            </span>
-                            {/* {banner.subtitle && (
-                              <span className="text-gray-700 font-medium text-xs">
-                                {banner.subtitle}
-                              </span>
-                            )} */}
-                          </div>
+                          <span className="text-gray-800 font-bold text-sm whitespace-nowrap">
+                            {banner.title}
+                          </span>
                           <span className="text-lg">🐾</span>
                         </div>
                       ))
@@ -988,7 +963,7 @@ export default function ProductsPageClient({
                   className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-bold transition-colors border ${
                     (searchParams.category || 'All') === category
                       ? 'bg-primary-pink text-white border-primary-pink'
-                      : 'bg-white text-gray-600 border-gray-200'
+                      : 'bg-white text-gray-900 border-primary-pink'
                   }`}
                 >
                   {category}
