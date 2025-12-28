@@ -101,11 +101,11 @@ export default function NewLayout( {landingImageUrl}: Props) {
 
        const topProducts = [
         {
-            name: 'Christmas Snowing collar-leash Set ',
+            name: 'Tricolour bow tie ',
             rating: '4.9',
             count: '24',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1764824930/j7otgqnlystjj15f8w6k.jpg',
-            url:'/products/51972e5f-8354-4ff9-b704-349e0498a742',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766277458/ql4vbllqjkylsufovhw9.jpg',
+            url:'/products/15861ce2-e012-4a77-886c-69f84329713c',
         },
         {
             name: 'Pawsitive Vibes tie on Bandana ',
