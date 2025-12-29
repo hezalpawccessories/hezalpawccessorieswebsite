@@ -515,43 +515,45 @@ export default function NewLayout( {landingImageUrl}: Props) {
             name: 'Tricolour bow tie ',
             rating: '4.9',
             count: '24',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766277458/ql4vbllqjkylsufovhw9.jpg',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1766277458/ql4vbllqjkylsufovhw9.jpg',
             url:'/products/15861ce2-e012-4a77-886c-69f84329713c',
         },
         {
-            name: 'Pawsitive Vibes tie on Bandana ',
+            name: 'Midnight Hearts tie on Bandana',
             rating: '4.8',
-            count: '18',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1756850974/rlivmormjfsvqvcoetxa.jpg',
-            url:'/products/2586cf22-2766-4ee6-9085-ac44fcc2ddd1',
+            count: '15',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1766987334/yz8rgvhcckmtqd5vhlzw.jpg',
+            url:'/products/38c7667f-0300-4097-8519-abf4e945e8e9',
         },
-        {
-            name: 'Big Day Bow Tie ',
-            rating: '4.9',
-            count: '30',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757941386/yrlkiw6takh5mgw9cv7n.jpg',
-            url:'/products/9a9ed83a-6d9f-4f2c-a74f-bf7621029c11',
-        },
-        
         {
             name: 'Treats and Treasure Jar gray lid ',  
             rating: '4.9',
             count: '20',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757415052/ghxf9ln7okvgjg86trdu.jpg',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1757415052/ghxf9ln7okvgjg86trdu.jpg',
             url:'/products/195a4585-a2bc-4851-ab2f-2215f8d92ece',
         },
+       
         {
-            name: 'Winter Pines Tie-On Bandana',
+            name: 'Big Day Bow Tie ',
+            rating: '4.9',
+            count: '30',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1757941386/yrlkiw6takh5mgw9cv7n.jpg',
+            url:'/products/9a9ed83a-6d9f-4f2c-a74f-bf7621029c11',
+        },
+        
+        
+         {
+            name: 'Pawsitive Vibes tie on Bandana ',
             rating: '4.8',
-            count: '15',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1763792783/uzdojkb87fs8keyeepkg.jpg',
-            url:'/products/38c7667f-0300-4097-8519-abf4e945e8e9',
+            count: '18',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1756850974/rlivmormjfsvqvcoetxa.jpg',
+            url:'/products/2586cf22-2766-4ee6-9085-ac44fcc2ddd1',
         },
         {
             name: 'Plaid Pawfect Collar',
             rating: '4.7',
             count: '12',
-            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1757957326/jokpwee4kbxaar6elk5q.jpg',
+            image: 'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_auto,f_auto,q_auto,c_fill,f_webp/v1757957326/jokpwee4kbxaar6elk5q.jpg',
             url:'/products/b4ead27a-80e2-4162-8703-7d40932d2683',
         },
        ]
@@ -744,10 +746,11 @@ export default function NewLayout( {landingImageUrl}: Props) {
                         </div> */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mx-auto max-w-4xl">
                             {[
-                                { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766392314/birthday-collection-hezal_accessories_stavfw.jpg', alt: 'Unique Birthday/Barkday Collection for pets' },
-                                { name: 'Christmas Collection', link: '/products?collection=Christmas', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766387475/WhatsApp_Image_2025-12-22_at_12.35.13_PM_qyyf6u.jpg', alt: 'Unique Christmas Collection for pets' },
-                                { name: 'Classic Print', link: '/products?collection=Classic+Prints', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766392703/WhatsApp_Image_2025-12-22_at_2.ds07.18_PM_f4pebw.jpg', alt: 'Unique Classic Print Collection for pets' },
-                                { name: 'Festive Collection', link: '/products?collection=Festive', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/v1766396314/WhatsApp_Image_2025-12-22_at_2.18.48_PM_bzdyqb.jpg', alt: 'Unique Festive Collection for pets' }
+                                
+                                { name: 'Valentines Collection', link: '/products?collection=Valentines', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766996207/WhatsApp_Image_2025-12-29_at_10.03.57_AM_tov4na.jpg', alt: 'Unique Valentines Collection for pets' },
+                                { name: 'Birthday/Barkday Collection', link: '/products?collection=Birthday%2FBarkday+collection', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766392314/birthday-collection-hezal_accessories_stavfw.jpg', alt: 'Unique Birthday/Barkday Collection for pets' },
+                                { name: 'Classic Print', link: '/products?collection=Classic+Prints', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766392703/WhatsApp_Image_2025-12-22_at_2.ds07.18_PM_f4pebw.jpg', alt: 'Unique Classic Print Collection for pets' },
+                                { name: 'Festive Collection', link: '/products?collection=Festive', image:'https://res.cloudinary.com/dt2qyj4lj/image/upload/w_1000,f_auto,q_auto,c_fill,f_webp/v1766396314/WhatsApp_Image_2025-12-22_at_2.18.48_PM_bzdyqb.jpg', alt: 'Unique Festive Collection for pets' }
                             ].map((collection, idx) => (
                                 <Link key={idx} href={collection.link} className="block">
                                     <article className="group relative h-[400px] rounded-[2.5rem] overflow-hidden cursor-pointer aspect-[4/3] md:aspect-square self-center bg-yellow-300">
