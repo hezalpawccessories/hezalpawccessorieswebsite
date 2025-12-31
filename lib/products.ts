@@ -21,6 +21,7 @@ export interface Product {
   saleQuantity?: number; // New field for sale quantity
   rating: number;
   reviews: number;
+  isPersonalized?: boolean; // New field for personalization
 }
 
 export const categories = [

@@ -101,6 +101,7 @@ export default function AdminDashboard() {
       saleQuantity: 0, // New field for sale quantity
       rating: 4.5,
       reviews: 0,
+      isPersonalized: false,
    })
 
    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
@@ -905,6 +906,7 @@ export default function AdminDashboard() {
          saleQuantity: 0,
          rating: 4.5,
          reviews: 0,
+         isPersonalized: false,
       })
       setUploadedImages([]) // Clear uploaded images
       setShowAddModal(false)
@@ -1139,7 +1141,7 @@ Order Date: ${new Date(order.timestamps.createdAt.seconds * 1000).toLocaleDateSt
 Total Amount: ₹${order.orderSummary.total}
 
 Items Ordered:
-${order.items.map(item => `• ${item.title} (Size: ${item.size}) - Qty: ${item.quantity} - ₹${item.price}`).join('\n')}
+${order.items.map(item => `• ${item.title} (Size: ${item.size}) - Qty: ${item.quantity} - ₹${item.price}${item.customName ? ` (Custom Name: ${item.customName})` : ''}`).join('\n')}
 
 Shipping Address:
 ${order.customerDetails.address}
@@ -1310,7 +1312,7 @@ Team Hezal Accessories 💜
 
          <div className='max-w-7xl mx-auto px-3 sm:px-5 lg:px-7 py-8 '>
             {/* Tabs */}
-            <div className='flex justify-between bg-white p-1 rounded-lg mb-8 shadow-lg w-full overflow-x-auto'>
+            <div className='flex justify-between bg-gray-100 p-1 rounded-lg mb-8 shadow-lg w-full overflow-x-auto'>
                {[
                   { id: 'products', label: 'Products', icon: <Package className='w-5 h-5 sm:w-5 sm:h-5' /> },
                   { id: 'add-product', label: 'Add Product', icon: <Plus className='w-5 h-5 sm:w-5 sm:h-5' /> },
@@ -2131,6 +2133,18 @@ Team Hezal Accessories 💜
                                  />
                                  On Sale
                               </label>
+
+                              {newProduct.category === 'Bandana/neck scarf' && (
+                                 <label className='flex items-center'>
+                                    <input
+                                       type='checkbox'
+                                       checked={newProduct.isPersonalized || false}
+                                       onChange={(e) => setNewProduct({ ...newProduct, isPersonalized: e.target.checked })}
+                                       className='mr-2'
+                                    />
+                                    Personalizable
+                                 </label>
+                              )}
                            </div>
 
                            {/* Sale Quantity Section */}
@@ -3258,6 +3272,18 @@ Team Hezal Accessories 💜
                               />
                               On Sale
                            </label>
+
+                           {selectedProduct.category === 'Bandana/neck scarf' && (
+                              <label className='flex items-center'>
+                                 <input
+                                    type='checkbox'
+                                    checked={selectedProduct.isPersonalized || false}
+                                    onChange={(e) => setSelectedProduct({ ...selectedProduct, isPersonalized: e.target.checked })}
+                                    className='mr-2'
+                                 />
+                                 Personalizable
+                              </label>
+                           )}
                         </div>
 
                         {/* Sale Quantity Section for Edit Modal */}

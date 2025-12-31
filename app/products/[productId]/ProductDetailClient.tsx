@@ -261,8 +261,8 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
       return
     }
 
-    if (product.category === 'Treat Jars' && !customName.trim()) {
-      toast.error('Please enter a custom name for the treat jar')
+    if ((product.category === 'Treat Jars' || product.isPersonalized) && !customName.trim()) {
+      toast.error('Please enter a custom name for personalization')
       return
     }
 
@@ -680,8 +680,8 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
                 </div>
               )}
 
-              {/* Custom Name for Treat Jars */}
-              {product.category === 'Treat Jars' && (
+              {/* Custom Name for Treat Jars & Personalized Items */}
+              {(product.category === 'Treat Jars' || product.isPersonalized) && (
                 <div>
                   <label className="block font-heading font-semibold text-text-dark mb-2">
                     Custom Name *
