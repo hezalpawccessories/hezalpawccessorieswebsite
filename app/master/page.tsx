@@ -800,23 +800,75 @@ export default function AdminDashboard() {
    loadLandingRecords()
    }, [])
 
-   const handleLogin = (e: React.FormEvent) => {
+   const handleLogin = async (e: React.FormEvent) => {
       e.preventDefault()
-      if (password === '123') {
-         setIsAuthenticated(true)
-         setPassword('')
-         if (typeof window !== 'undefined') {
-            localStorage.setItem('isAuthenticated', 'true')
+      
+      let isDev = false
+      if (typeof window !== 'undefined') {
+         const hostname = window.location.hostname
+         // Check if localhost or local IP (192.168.x.x)
+         isDev = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')
+      }
+      
+      
+
+      if (isDev) {
+         // Local development check
+         if (password === '123') {
+            setIsAuthenticated(true)
+            setPassword('')
+            if (typeof window !== 'undefined') {
+               localStorage.setItem('isAuthenticated', 'true')
+            }
+            toast.success('Welcome to Admin Dashboard (Dev Mode)!', {
+               description: 'You have successfully logged in',
+               duration: 3000,
+            })
+         } else {
+            toast.error('Access denied', {
+               description: 'Incorrect password entered',
+               duration: 3000,
+            })
          }
-         toast.success('Welcome to Admin Dashboard!', {
-            description: 'You have successfully logged in',
-            duration: 3000,
-         })
       } else {
-         toast.error('Access denied', {
-            description: 'Incorrect password entered',
-            duration: 3000,
-         })
+         // Production check via API
+         const loadingToast = toast.loading('Verifying credentials...')
+         
+         try {
+            const response = await fetch('/api/verify-admin', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ password }),
+            })
+            
+            const data = await response.json()
+            
+            toast.dismiss(loadingToast)
+            
+            if (data.success) {
+               setIsAuthenticated(true)
+               setPassword('')
+               if (typeof window !== 'undefined') {
+                  localStorage.setItem('isAuthenticated', 'true')
+               }
+               toast.success('Welcome to Admin Dashboard!', {
+                  description: 'You have successfully logged in',
+                  duration: 3000,
+               })
+            } else {
+               toast.error('Access denied', {
+                  description: data.message || 'Incorrect password entered',
+                  duration: 3000,
+               })
+            }
+         } catch (error) {
+            toast.dismiss(loadingToast)
+            console.error('Login error:', error)
+            toast.error('Login failed', {
+               description: 'An error occurred while verifying credentials',
+               duration: 3000,
+            })
+         }
       }
    }
 
