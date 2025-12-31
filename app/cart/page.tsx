@@ -74,6 +74,13 @@ export default function Cart() {
          setCouponCode('')
          window.dispatchEvent(new Event('cartUpdated'))
          
+         // Send order confirmation email
+         fetch('/api/send-order-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderDetails: data.orderDetails }),
+         }).catch(err => console.error('Failed to send order email:', err))
+         
          // Redirect to thank you page with order details
          const params = new URLSearchParams({
             orderId: data.orderDetails.orderId,

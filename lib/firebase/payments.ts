@@ -98,7 +98,7 @@ export const createPaymentLog = async (paymentData: Omit<PaymentLog, 'id' | 'tim
     }
 
     const docRef = await addDoc(paymentsCollection, paymentLog)
-    console.log('Payment log created with ID:', docRef.id)
+    // console.log('Payment log created with ID:', docRef.id)
     
     return {
       success: true,
@@ -167,7 +167,7 @@ export const updatePaymentStatus = async (
 
     await updateDoc(paymentRef, updateData)
     
-    console.log('Payment status updated:', paymentLogId, status)
+    // console.log('Payment status updated:', paymentLogId, status)
     return { success: true }
   } catch (error) {
     console.error('Error updating payment status:', error)
@@ -192,7 +192,7 @@ export const getPayments = async () => {
       } as PaymentLog)
     })
     
-    console.log('Retrieved payments:', payments.length)
+    // console.log('Retrieved payments:', payments.length)
     return { success: true, payments }
   } catch (error) {
     console.error('Error fetching payments:', error)
@@ -348,7 +348,7 @@ export const addRetryAttempt = async (paymentLogId: string, errorDetails?: Payme
 
     await updateDoc(paymentRef, updateData)
     
-    console.log('Retry attempt added:', paymentLogId)
+    // console.log('Retry attempt added:', paymentLogId)
     return { success: true }
   } catch (error) {
     console.error('Error adding retry attempt:', error)

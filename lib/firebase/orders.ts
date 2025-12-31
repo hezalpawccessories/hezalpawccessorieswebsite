@@ -95,7 +95,7 @@ export const createOrder = async (orderData: Omit<Order, 'id' | 'timestamps'>) =
     }
 
     const docRef = await addDoc(ordersCollection, order)
-    console.log('Order created with ID:', docRef.id)
+    // console.log('Order created with ID:', docRef.id)
     
     return {
       success: true,
@@ -136,7 +136,7 @@ export const updateOrderStatus = async (
 
     await updateDoc(orderRef, updateData)
     
-    console.log('Order status updated:', orderId, status)
+    // console.log('Order status updated:', orderId, status)
     return { success: true }
   } catch (error) {
     console.error('Error updating order status:', error)
@@ -175,7 +175,7 @@ export const updatePaymentStatus = async (
 
     await updateDoc(orderRef, updateData)
     
-    console.log('Payment status updated:', orderId, paymentData.paymentStatus)
+    // console.log('Payment status updated:', orderId, paymentData.paymentStatus)
     return { success: true }
   } catch (error) {
     console.error('Error updating payment status:', error)
@@ -200,7 +200,7 @@ export const getOrders = async () => {
       } as Order)
     })
     
-    console.log('Retrieved orders:', orders.length)
+    // console.log('Retrieved orders:', orders.length)
     return { success: true, orders }
   } catch (error) {
     console.error('Error fetching orders:', error)
@@ -347,7 +347,7 @@ export const addTrackingInfo = async (
 
     await updateDoc(orderRef, updateData)
     
-    console.log('Tracking info added:', orderId, trackingData.trackingNumber)
+    // console.log('Tracking info added:', orderId, trackingData.trackingNumber)
     return { success: true }
   } catch (error) {
     console.error('Error adding tracking info:', error)
@@ -383,7 +383,7 @@ export const updateEmailTrackingStatus = async (
 
     await updateDoc(orderRef, updateData)
     
-    console.log('Email tracking status updated:', orderId, emailData.mailSent)
+    // console.log('Email tracking status updated:', orderId, emailData.mailSent)
     return { success: true }
   } catch (error) {
     console.error('Error updating email tracking status:', error)
