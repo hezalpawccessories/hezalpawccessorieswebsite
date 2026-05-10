@@ -7,11 +7,16 @@ import Image from 'next/image'
 import { ShoppingCart } from 'lucide-react'
 
 export default function Navbar() {
-   const [isAuthenticated, setIsAuthenticated] = useState(
-      (typeof window !== 'undefined' && localStorage.getItem('isAuthenticated') === 'true') || false
-   )
+   const [isAuthenticated, setIsAuthenticated] = useState(false)
    const [cartItemsCount, setCartItemsCount] = useState(0)
    const pathname = usePathname()
+
+   // Check auth state after hydration to keep server/client markup stable
+   useEffect(() => {
+      if (typeof window !== 'undefined') {
+         setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true')
+      }
+   }, [])
 
    // Check if we should show the cart button (not on landing page or master page)
    const showCartButton = pathname !== '/' && pathname !== '/master' && pathname !== '/cart'

@@ -34,6 +34,8 @@ export default function NavigationLink({
 
   const isExternal = href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')
   const isNewTab = target === '_blank'
+  const shouldUseRouteSkeleton =
+    href.startsWith('/products') || href.startsWith('/cart')
 
   const handleClick = async (e: MouseEvent<HTMLAnchorElement>) => {
     // Call custom onClick if provided
@@ -68,8 +70,10 @@ export default function NavigationLink({
         return
       }
 
-      // Show loader for internal navigation
-      setIsLoading(true)
+      // Let App Router loading.tsx handle skeletons for key commerce routes
+      if (!shouldUseRouteSkeleton) {
+        setIsLoading(true)
+      }
 
       // Use Next.js router for internal navigation
       try {

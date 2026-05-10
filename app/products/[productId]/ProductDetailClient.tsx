@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import NavigationLink from '@/components/NavigationLink'
@@ -41,6 +42,7 @@ interface CartItem {
 }
 
 export default function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
+  const router = useRouter()
   // State management
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -132,7 +134,7 @@ export default function ProductDetailClient({ product, relatedProducts }: Produc
 
   // Handle cart indicator click - navigate to cart page
   const handleCartIndicatorClick = () => {
-    window.location.href = '/cart'
+    router.push('/cart')
   }
 
   // Helper function to get price for specific size
